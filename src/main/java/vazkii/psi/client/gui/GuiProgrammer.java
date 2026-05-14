@@ -447,6 +447,10 @@ public class GuiProgrammer extends Screen {
 			tooltip = legitTooltip;
 		}
 
+		for(Renderable renderable : getButtons()) {
+			renderable.render(graphics, mouseX, mouseY, partialTicks);
+		}
+
 		if(!takingScreenshot && tooltip != null && !tooltip.isEmpty() && pieceAtCursor == null && mouseMoved) {
 			graphics.renderTooltip(getMinecraft().font, tooltip, Optional.empty(), mouseX, mouseY);
 		}
@@ -954,7 +958,10 @@ public class GuiProgrammer extends Screen {
 	}
 
 	public List<Renderable> getButtons() {
-		return Collections.emptyList();
+		return children().stream()
+				.filter(Renderable.class::isInstance)
+				.map(Renderable.class::cast)
+				.collect(Collectors.toList());
 	}
 
 	@Override

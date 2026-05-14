@@ -11,7 +11,6 @@ package vazkii.psi.common.block.tile.container;
 import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
@@ -145,11 +144,7 @@ public class ContainerCADAssembler extends AbstractContainerMenu {
 		});
 	}
 
-	public static ContainerCADAssembler fromNetwork(int windowId, Inventory playerInventory, FriendlyByteBuf buf) {
-		if(buf == null) {
-			return new ContainerCADAssembler(windowId, playerInventory, null);
-		}
-		BlockPos pos = buf.readBlockPos();
+	public static ContainerCADAssembler fromNetwork(int windowId, Inventory playerInventory, BlockPos pos) {
 		return new ContainerCADAssembler(windowId, playerInventory, (TileCADAssembler) playerInventory.player.level().getBlockEntity(pos));
 	}
 

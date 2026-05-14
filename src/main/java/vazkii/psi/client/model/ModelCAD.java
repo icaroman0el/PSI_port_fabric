@@ -8,17 +8,19 @@
  */
 package vazkii.psi.client.model;
 
+import net.fabricmc.fabric.api.client.model.loading.v1.FabricBakedModelManager;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -27,13 +29,31 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
+import vazkii.psi.api.cad.EnumCADComponent;
+import vazkii.psi.api.cad.ICAD;
+import vazkii.psi.api.cad.ICADAssembly;
+import vazkii.psi.common.Psi;
+
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class ModelCAD implements BakedModel {
 
-	private final ItemOverrides itemHandler = ItemOverrides.EMPTY;
+	public static final ResourceLocation DEFAULT_MODEL = Psi.location("item/cad_iron");
+	public static final ResourceLocation[] CAD_MODELS = {
+			Psi.location("item/cad_iron"),
+			Psi.location("item/cad_gold"),
+			Psi.location("item/cad_psimetal"),
+			Psi.location("item/cad_ivory_psimetal"),
+			Psi.location("item/cad_ebony_psimetal"),
+			Psi.location("item/cad_creative")
+	};
+
+	private final BakedModel original;
+
+	public ModelCAD(BakedModel original) {
+		this.original = original;
+	}
 
 	/**
 	 * @deprecated Forge: Use {@link #getQuads(BlockState, Direction, RandomSource,
@@ -43,31 +63,31 @@ public class ModelCAD implements BakedModel {
 	@Deprecated
 	@Override
 	public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource random) {
-		return Collections.emptyList();
+		return original.getQuads(state, side, random);
 	}
 
 	public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @org.jetbrains.annotations.Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData data, @org.jetbrains.annotations.Nullable RenderType renderType) {
-		return Collections.emptyList();
+		return original.getQuads(state, side, rand);
 	}
 
 	@Override
 	public boolean useAmbientOcclusion() {
-		return true;
+		return original.useAmbientOcclusion();
 	}
 
 	@Override
 	public boolean isGui3d() {
-		return true;
+		return original.isGui3d();
 	}
 
 	@Override
 	public boolean usesBlockLight() {
-		return true;
+		return original.usesBlockLight();
 	}
 
 	@Override
 	public boolean isCustomRenderer() {
-		return false;
+		return original.isCustomRenderer();
 	}
 
 	/**
@@ -77,24 +97,50 @@ public class ModelCAD implements BakedModel {
 	@Override
 	@Deprecated
 	public TextureAtlasSprite getParticleIcon() {
-		return this.getParticleIcon(ModelData.EMPTY);
+		return original.getParticleIcon();
 	}
 
 	@NotNull
 	public TextureAtlasSprite getParticleIcon(@NotNull ModelData data) {
-		return Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(MissingTextureAtlasSprite.getLocation());
+		return original.getParticleIcon();
 	}
 
 	@NotNull
 	@Override
 	public ItemOverrides getOverrides() {
-		return itemHandler;
+		return original.getOverrides();
 	}
 
 	@NotNull
 	@Override
 	public ItemTransforms getTransforms() {
-		return ItemTransforms.NO_TRANSFORMS;
+		return original.getTransforms();
+	}
+
+	private static BakedModel getModel(ResourceLocation modelId) {
+		return ((FabricBakedModelManager) Minecraft.getInstance().getModelManager()).getModel(modelId);
+	}
+
+	private static ResourceLocation getModelForStack(ItemStack stack) {
+		if(stack.getItem() instanceof ICAD cad) {
+			ItemStack assemblyStack = cad.getComponentInSlot(stack, EnumCADComponent.ASSEMBLY);
+			if(assemblyStack.getItem() instanceof ICADAssembly assembly) {
+				return assembly.getCADModel(assemblyStack, stack);
+			}
+		}
+
+		return DEFAULT_MODEL;
+	}
+
+	@Override
+	public boolean isVanillaAdapter() {
+		return false;
+	}
+
+	@Override
+	public void emitItemQuads(ItemStack stack, java.util.function.Supplier<RandomSource> randomSupplier, RenderContext context) {
+		BakedModel model = getModel(getModelForStack(stack));
+		context.fallbackConsumer().accept(model == null ? original : model);
 	}
 
 }

@@ -8,6 +8,7 @@
  */
 package vazkii.psi.common;
 
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
@@ -52,6 +53,9 @@ public class Psi implements ModInitializer {
 		ModBlocks.BLOCK_TYPES.register();
 		ModBlocks.MENU.register();
 		ModItems.ITEMS.register();
+		if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+			vazkii.psi.client.render.spell.SpellPieceMaterial.SPELL_PIECE_MATERIAL.register();
+		}
 		PsiCreativeTab.register();
 		ModSpellPieces.SPELL_PIECES.register();
 		ModSpellPieces.ADVANCEMENT_GROUPS.register();

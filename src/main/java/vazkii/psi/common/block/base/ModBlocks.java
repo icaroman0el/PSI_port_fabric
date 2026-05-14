@@ -8,6 +8,8 @@
  */
 package vazkii.psi.common.block.base;
 
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
@@ -18,7 +20,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
-import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -47,7 +48,7 @@ public class ModBlocks {
 	public static final DeferredHolder<Block, Block> psimetalPlateWhiteLight = BLOCKS.register(LibBlockNames.PSIMETAL_PLATE_WHITE_LIGHT, () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).instrument(NoteBlockInstrument.IRON_XYLOPHONE).requiresCorrectToolForDrops().strength(5, 10).sound(SoundType.METAL).lightLevel((blockstate) -> 15)));
 	public static final DeferredHolder<Block, Block> psimetalEbony = BLOCKS.register(LibBlockNames.EBONY_PSIMETAL_BLOCK, () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).instrument(NoteBlockInstrument.IRON_XYLOPHONE).requiresCorrectToolForDrops().strength(5, 10).sound(SoundType.METAL)));
 	public static final DeferredHolder<Block, Block> psimetalIvory = BLOCKS.register(LibBlockNames.IVORY_PSIMETAL_BLOCK, () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).instrument(NoteBlockInstrument.IRON_XYLOPHONE).requiresCorrectToolForDrops().strength(5, 10).sound(SoundType.METAL)));
-	public static final DeferredHolder<MenuType<?>, MenuType<ContainerCADAssembler>> containerCADAssembler = MENU.register(LibBlockNames.CAD_ASSEMBLER, () -> IMenuTypeExtension.create(ContainerCADAssembler::fromNetwork));
+	public static final DeferredHolder<MenuType<?>, MenuType<ContainerCADAssembler>> containerCADAssembler = MENU.register(LibBlockNames.CAD_ASSEMBLER, () -> new ExtendedScreenHandlerType<ContainerCADAssembler, BlockPos>(ContainerCADAssembler::fromNetwork, BlockPos.STREAM_CODEC));
 	private static final BlockBehaviour.StateArgumentPredicate<EntityType<?>> NO_SPAWN = (state, world, pos, et) -> false;
 	private static final BlockBehaviour.StatePredicate NO_SUFFOCATION = (state, world, pos) -> false;
 	public static final DeferredHolder<Block, BlockConjured> conjured = BLOCKS.register(LibBlockNames.CONJURED, () -> new BlockConjured(BlockBehaviour.Properties.of().mapColor(MapColor.NONE).instrument(NoteBlockInstrument.HAT).strength(0.3F).sound(SoundType.GLASS).noOcclusion().noLootTable().lightLevel(state -> state.getValue(BlockConjured.LIGHT) ? 15 : 0).noOcclusion().isValidSpawn(NO_SPAWN).isRedstoneConductor(NO_SUFFOCATION).isSuffocating(NO_SUFFOCATION).isViewBlocking(NO_SUFFOCATION)));

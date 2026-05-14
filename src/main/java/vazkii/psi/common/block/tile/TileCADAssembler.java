@@ -8,6 +8,7 @@
  */
 package vazkii.psi.common.block.tile;
 
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -16,6 +17,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
@@ -43,7 +45,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class TileCADAssembler extends BlockEntity implements ITileCADAssembler, MenuProvider {
+public class TileCADAssembler extends BlockEntity implements ITileCADAssembler, MenuProvider, ExtendedScreenHandlerFactory<BlockPos> {
 	private final CADStackHandler inventory = new CADStackHandler();
 	private ItemStack cachedCAD = null;
 
@@ -246,6 +248,11 @@ public class TileCADAssembler extends BlockEntity implements ITileCADAssembler, 
 	@Override
 	public AbstractContainerMenu createMenu(int i, @NotNull Inventory playerInventory, @NotNull Player playerEntity) {
 		return new ContainerCADAssembler(i, playerInventory, this);
+	}
+
+	@Override
+	public BlockPos getScreenOpeningData(ServerPlayer player) {
+		return worldPosition;
 	}
 
 	private class CADStackHandler extends ItemStackHandler {

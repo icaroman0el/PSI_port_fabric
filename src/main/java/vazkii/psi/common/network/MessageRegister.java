@@ -8,16 +8,22 @@
  */
 package vazkii.psi.common.network;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import org.jetbrains.annotations.NotNull;
@@ -36,8 +42,17 @@ public class MessageRegister {
 		}
 	};
 	private static final String VERSION = "3";
+	private static boolean registered;
 
-	public static void register() {}
+	public static void register() {
+		if(registered) {
+			return;
+		}
+
+		registered = true;
+		PayloadTypeRegistry.playC2S().register(MessageSpellModified.TYPE, MessageSpellModified.CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(MessageSpellModified.TYPE, (payload, context) -> payload.handle(new FabricPayloadContext(context.player())));
+	}
 
 	@SubscribeEvent
 	public static void onRegisterPayloadHandler(RegisterPayloadHandlersEvent event) {
@@ -64,6 +79,11 @@ public class MessageRegister {
 	}
 
 	public static <MSG extends CustomPacketPayload> void sendToServer(MSG message) {
+		if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+			vazkii.psi.client.network.ClientNetworkHelper.sendToServer(message);
+			return;
+		}
+
 		PacketDistributor.sendToServer(message);
 	}
 
@@ -81,5 +101,8 @@ public class MessageRegister {
 
 	public static <MSG extends CustomPacketPayload> void sendToPlayersInDimension(ServerLevel level, MSG message) {
 		PacketDistributor.sendToPlayersInDimension(level, message);
+	}
+
+	private record FabricPayloadContext(Player player) implements IPayloadContext {
 	}
 }
