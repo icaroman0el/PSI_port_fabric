@@ -53,13 +53,13 @@ public interface IPsimetalTool {
 		if(isItemValidForRegen(stack, entityIn)) {
 			Player player = (Player) entityIn;
 			PlayerDataHandler.PlayerData data = PlayerDataHandler.get(player);
-			int regenTime = stack.getOrDefault(ModDataComponents.REGEN_TIME, 0);
+			int regenTime = stack.getOrDefault(ModDataComponents.REGEN_TIME.get(), 0);
 
 			if(!data.overflowed && regenTime % 16 == 0 && (float) data.getAvailablePsi() / (float) data.getTotalPsi() > 0.5F) {
 				data.deductPsi(150, 0, true);
 				stack.setDamageValue(stack.getDamageValue() - 1);
 			}
-			stack.set(ModDataComponents.REGEN_TIME, regenTime + 1);
+			stack.set(ModDataComponents.REGEN_TIME.get(), regenTime + 1);
 		}
 	}
 

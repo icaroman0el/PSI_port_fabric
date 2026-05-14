@@ -31,7 +31,7 @@ import static vazkii.psi.api.spell.SpellContext.MAX_DISTANCE;
 public interface IDetonationHandler {
 
 	static IDetonationHandler detonator(Entity entity) {
-		return entity.getCapability(PsiAPI.DETONATION_HANDLER_CAPABILITY);
+		return PsiAPI.getEntityCapability(entity, PsiAPI.DETONATION_HANDLER_CAPABILITY);
 	}
 
 	static void performDetonation(Level world, Player player) {
@@ -69,7 +69,7 @@ public interface IDetonationHandler {
 					if(entity == null) {
 						return false;
 					}
-					IDetonationHandler detonator = entity.getCapability(PsiAPI.DETONATION_HANDLER_CAPABILITY);
+					IDetonationHandler detonator = PsiAPI.getEntityCapability(entity, PsiAPI.DETONATION_HANDLER_CAPABILITY);
 					if(detonator != null) {
 						Vec3 locus = detonator.objectLocus();
 						if(locus == null || locus.distanceToSqr(center.getX(), center.getY(), center.getZ()) > range * range) {
@@ -81,7 +81,7 @@ public interface IDetonationHandler {
 				});
 
 		List<IDetonationHandler> handlers = charges.stream()
-				.map(e -> Objects.requireNonNull(e.getCapability(PsiAPI.DETONATION_HANDLER_CAPABILITY)))
+				.map(e -> Objects.requireNonNull(PsiAPI.getEntityCapability(e, PsiAPI.DETONATION_HANDLER_CAPABILITY)))
 				.collect(Collectors.toList());
 
 		if(!NeoForge.EVENT_BUS.post(new DetonationEvent(player, center, range, handlers)).isCanceled()) {

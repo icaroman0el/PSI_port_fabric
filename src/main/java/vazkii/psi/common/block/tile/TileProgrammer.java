@@ -101,7 +101,6 @@ public class TileProgrammer extends BlockEntity {
 		return player.isAlive() && player.distanceToSqr((double) this.worldPosition.getX() + 0.5D, (double) this.worldPosition.getY() + 0.5D, (double) this.worldPosition.getZ() + 0.5D) <= 64.0D;
 	}
 
-	@Override
 	public void onDataPacket(@NotNull Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.@NotNull Provider pRegistries) {
 		this.readPacketNBT(pkt.getTag());
 	}

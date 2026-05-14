@@ -1,26 +1,25 @@
 plugins {
+    id 'fabric-loom' version '1.10.5'
     id 'java-library'
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
     id 'pmd'
     id 'com.diffplug.spotless' version '7.2.1'
-    id 'net.neoforged.moddev' version '2.0.107'
 }
 
-tasks.named('wrapper', Wrapper).configure {
-    distributionType = Wrapper.DistributionType.BIN
-}
-
-version = minecraft_version + "-" + mod_version
+version = "${minecraft_version}-${mod_version}"
 group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
 
 repositories {
     mavenLocal()
     maven {
-        // for Patchouli and JEI
-        name "blamejared"
-        url "https://maven.blamejared.com/"
+        name = "BlameJared"
+        url = "https://maven.blamejared.com/"
         content {
             includeGroup "vazkii.patchouli"
             includeGroup "mezz.jei"
@@ -28,8 +27,25 @@ repositories {
     }
 }
 
-base {
-    archivesName = mod_id
+loom {
+    mods {
+        psi {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+sourceSets.main.resources.srcDir 'src/generated/resources'
+
+sourceSets.main.java {
+    exclude 'vazkii/psi/data/DataGenerator.java'
+    exclude 'vazkii/psi/data/PsiBlockLootProvider.java'
+    exclude 'vazkii/psi/data/PsiBlockModelGenerator.java'
+    exclude 'vazkii/psi/data/PsiBlockTagProvider.java'
+    exclude 'vazkii/psi/data/PsiDamageTypeTagsProvider.java'
+    exclude 'vazkii/psi/data/PsiItemModelGenerator.java'
+    exclude 'vazkii/psi/data/PsiItemTagProvider.java'
+    exclude 'vazkii/psi/data/PsiRecipeGenerator.java'
 }
 
 spotless {
@@ -50,91 +66,44 @@ tasks.register('checkSyntax') {
     dependsOn spotlessJavaCheck, pmdMain
 }
 
-// Mojang ships Java 21 to end users starting in 1.20.5, so mods should target Java 21.
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
-
-neoForge {
-    version = project.neo_version
-    validateAccessTransformers = true
-
-    runs {
-        configureEach {
-            systemProperty 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            systemProperty 'forge.logging.console.level', 'debug'
-        }
-
-        client {
-            client()
-            gameDirectory = project.file('runs/client')
-            systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-        }
-
-        server {
-            server()
-            gameDirectory = project.file('runs/server')
-            systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-            programArguments.addAll('--nogui')
-        }
-
-        data {
-            data()
-            gameDirectory = project.file('runs/data')
-            // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
-            // workingDirectory project.file('run-data')
-
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            programArguments.addAll('--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath())
-        }
-    }
-
-    mods {
-        testproject {
-            sourceSet sourceSets.main
-        }
-    }
-
-    parchment {
-        minecraftVersion = project.minecraft_version
-        mappingsVersion = project.parchment_version
-    }
-}
-
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-configurations {
-    runtimeClasspath.extendsFrom localRuntime
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
 }
 
 dependencies {
-    compileOnly('org.jetbrains:annotations:26.0.2')
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
-    // Example optional mod dependency with JEI
-    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
-    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
-    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
-    // We add the full version to localRuntime, not runtimeOnly, so that we do not publish a dependency on it
-    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    compileOnly "org.jetbrains:annotations:${jetbrains_annotations_version}"
+    compileOnly "com.google.code.findbugs:jsr305:3.0.2"
 
-    compileOnly "vazkii.patchouli:Patchouli:${patchouli_version}-NEOFORGE:api"
-    runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}-NEOFORGE"
+    modCompileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    modCompileOnly "mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}"
+    modLocalRuntime "mezz.jei:jei-${minecraft_version}-fabric:${jei_version}"
+
+    modImplementation "vazkii.patchouli:Patchouli:${patchouli_version}-FABRIC"
 }
 
 tasks.withType(ProcessResources).configureEach {
     var replaceProperties = [
-            minecraft_version      : minecraft_version,
-            minecraft_version_range: minecraft_version_range,
-            neo_version            : neo_version,
-            neo_version_range      : neo_version_range,
-            loader_version_range   : loader_version_range,
-            mod_id                 : mod_id,
-            mod_name               : mod_name,
-            mod_license            : mod_license,
-            mod_version            : version,
-            mod_authors            : mod_authors,
-            mod_description        : mod_description
+            minecraft_version       : minecraft_version,
+            minecraft_version_range : minecraft_version_range,
+            fabric_loader_version   : fabric_loader_version,
+            fabric_api_version      : fabric_api_version,
+            patchouli_version       : patchouli_version,
+            mod_id                  : mod_id,
+            mod_name                : mod_name,
+            mod_license             : mod_license,
+            mod_version             : version,
+            mod_authors             : mod_authors,
+            mod_description         : mod_description
     ]
     inputs.properties replaceProperties
 
-    filesMatching(['META-INF/neoforge.mods.toml']) {
+    filesMatching(['fabric.mod.json']) {
         expand replaceProperties
     }
 
@@ -146,25 +115,11 @@ tasks.withType(ProcessResources).configureEach {
 
 jar {
     archiveFileName = "${mod_name}-${version}.jar"
-
-    manifest {
-        attributes([
-                "Specification-Title": "${mod_id}",
-                "Specification-Vendor": "vazkii",
-                "Specification-Version": "1",
-                "Implementation-Title": "${mod_id}",
-                "Implementation-Version": "${version}",
-                "Implementation-Vendor" :"vazkii",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConfigs": "psi.mixins.json"
-        ])
-    }
 }
-
-
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.release = 21
 }
 
 idea {
@@ -174,44 +129,13 @@ idea {
     }
 }
 
-
-task sourcesJar(type: Jar) {
-    archiveClassifier = "sources"
-    from sourceSets.main.allJava
-}
-
-artifacts {
-    archives sourcesJar
-}
-
-publish.dependsOn(project.tasks.getByName("assemble"))
-publish.mustRunAfter(project.tasks.getByName("build"))
-
 publishing {
-
     publications {
-
         mavenJava(MavenPublication) {
-
             groupId project.group
             artifactId project.archivesBaseName
             version project.version
             from components.java
-
-            // Allows the maven pom file to be modified.
-            pom.withXml {
-
-                // Go through all the dependencies.
-                asNode().dependencies.dependency.each { dep ->
-
-                    println 'Surpressing artifact ' + dep.artifactId.last().value().last() + ' from maven dependencies.'
-                    assert dep.parent().remove(dep)
-                }
-            }
-
-            artifact sourcesJar {
-                archiveClassifier = 'sources'
-            }
         }
     }
 
@@ -219,14 +143,5 @@ publishing {
         maven {
             url "file://" + System.getenv("local_maven")
         }
-
     }
-}
-
-// Disables Gradle's custom module metadata from being published to maven. The
-// metadata includes mapped dependencies which are not reasonably consumable by
-// other mod developers.
-tasks.withType(GenerateModuleMetadata) {
-
-    enabled = false
 }

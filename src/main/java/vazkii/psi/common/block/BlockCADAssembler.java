@@ -25,7 +25,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 
@@ -63,8 +62,8 @@ public class BlockCADAssembler extends HorizontalDirectionalBlock implements Ent
 
 	@Override
 	public int getAnalogOutputSignal(@NotNull BlockState blockState, Level worldIn, @NotNull BlockPos pos) {
-		IItemHandler handler = worldIn.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
-		if(handler != null) {
+		if(worldIn.getBlockEntity(pos) instanceof TileCADAssembler assembler) {
+			IItemHandler handler = assembler.getInventory();
 			return ItemHandlerHelper.calcRedstoneFromInventory(handler);
 		}
 		return 0;
@@ -77,7 +76,7 @@ public class BlockCADAssembler extends HorizontalDirectionalBlock implements Ent
 		} else {
 			MenuProvider container = state.getMenuProvider(world, pos);
 			if(container != null) {
-				playerIn.openMenu(container, pos);
+				playerIn.openMenu(container);
 			}
 		}
 		return InteractionResult.CONSUME;

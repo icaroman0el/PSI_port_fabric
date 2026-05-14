@@ -30,7 +30,7 @@ public final class ShaderHandler {
 	@SubscribeEvent
 	static void registerShaders(RegisterShadersEvent event) throws IOException {
 		event.registerShader(
-				new ShaderInstance(event.getResourceProvider(), Psi.location(LibResources.SHADER_PSI_BAR), DefaultVertexFormat.POSITION_TEX_COLOR),
+				new ShaderInstance(event.getResourceProvider(), Psi.location(LibResources.SHADER_PSI_BAR).toString(), DefaultVertexFormat.POSITION_TEX_COLOR),
 				shader -> psiBarShader = shader
 		);
 	}

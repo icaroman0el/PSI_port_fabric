@@ -8,7 +8,6 @@
  */
 package vazkii.psi.common.network.message;
 
-import net.minecraft.client.GuiMessage;
 import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
@@ -26,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import vazkii.psi.common.Psi;
 
 import java.nio.ByteBuffer;
-import java.util.ListIterator;
 
 public class MessageSpamlessChat implements CustomPacketPayload {
 
@@ -53,18 +51,7 @@ public class MessageSpamlessChat implements CustomPacketPayload {
 		this.signature = new MessageSignature(ByteBuffer.allocate(256).putInt(this.magic).array());
 	}
 
-	public static void deleteMessage(ChatComponent chatGui, MessageSignature pMessageSignature) {
-		ListIterator<GuiMessage> listiterator = chatGui.allMessages.listIterator();
-
-		while(listiterator.hasNext()) {
-			GuiMessage guimessage = listiterator.next();
-			if(pMessageSignature.equals(guimessage.signature())) {
-				listiterator.remove();
-				break;
-			}
-		}
-		chatGui.refreshTrimmedMessages();
-	}
+	public static void deleteMessage(ChatComponent chatGui, MessageSignature pMessageSignature) {}
 
 	@Override
 	public @NotNull Type<? extends CustomPacketPayload> type() {

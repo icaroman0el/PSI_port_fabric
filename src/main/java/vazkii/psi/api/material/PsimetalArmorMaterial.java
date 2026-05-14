@@ -2,6 +2,7 @@ package vazkii.psi.api.material;
 
 import net.minecraft.Util;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class PsimetalArmorMaterial {
 	public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, PsiAPI.MOD_ID);
-	public static final Holder<ArmorMaterial> PSIMETAL_ARMOR_MATERIAL = ARMOR_MATERIALS.register("psimetal", () -> new ArmorMaterial(
+	public static final Holder<ArmorMaterial> PSIMETAL_ARMOR_MATERIAL = Registry.registerForHolder(BuiltInRegistries.ARMOR_MATERIAL, PsiAPI.location("psimetal"), new ArmorMaterial(
 			Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
 				map.put(ArmorItem.Type.BOOTS, 2);
 				map.put(ArmorItem.Type.LEGGINGS, 5);

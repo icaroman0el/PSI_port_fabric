@@ -58,11 +58,11 @@ public class ItemVectorRuler extends Item implements IHUDItem {
 
 		ItemStack stack = ctx.getPlayer().getItemInHand(ctx.getHand());
 
-		if(!stack.has(ModDataComponents.SRC_POS) || ctx.getPlayer().isShiftKeyDown()) {
-			stack.set(ModDataComponents.SRC_POS, pos);
-			stack.remove(ModDataComponents.DST_POS);
+		if(!stack.has(ModDataComponents.SRC_POS.get()) || ctx.getPlayer().isShiftKeyDown()) {
+			stack.set(ModDataComponents.SRC_POS.get(), pos);
+			stack.remove(ModDataComponents.DST_POS.get());
 		} else {
-			stack.set(ModDataComponents.DST_POS, pos);
+			stack.set(ModDataComponents.DST_POS.get(), pos);
 		}
 
 		return InteractionResult.SUCCESS;
@@ -75,13 +75,13 @@ public class ItemVectorRuler extends Item implements IHUDItem {
 	}
 
 	public Vector3 getVector(ItemStack stack) {
-		BlockPos src = stack.getOrDefault(ModDataComponents.SRC_POS, BlockPos.ZERO);
+		BlockPos src = stack.getOrDefault(ModDataComponents.SRC_POS.get(), BlockPos.ZERO);
 
-		if(!stack.has(ModDataComponents.DST_POS)) {
+		if(!stack.has(ModDataComponents.DST_POS.get())) {
 			return Vector3.fromBlockPos(src);
 		}
 
-		BlockPos dst = stack.getOrDefault(ModDataComponents.DST_POS, BlockPos.ZERO);
+		BlockPos dst = stack.getOrDefault(ModDataComponents.DST_POS.get(), BlockPos.ZERO);
 
 		return Vector3.fromBlockPos(dst.subtract(src));
 	}
@@ -93,6 +93,6 @@ public class ItemVectorRuler extends Item implements IHUDItem {
 
 		Font font = Minecraft.getInstance().font;
 		int w = font.width(s);
-		graphics.drawString(font, s, screenWidth / 2f - w / 2f, screenHeight / 2f + 10, 0xFFFFFFFF, false);
+		graphics.drawString(font, s, screenWidth / 2 - w / 2, screenHeight / 2 + 10, 0xFFFFFFFF, false);
 	}
 }

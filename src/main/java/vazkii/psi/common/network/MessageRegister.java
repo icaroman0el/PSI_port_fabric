@@ -37,6 +37,8 @@ public class MessageRegister {
 	};
 	private static final String VERSION = "3";
 
+	public static void register() {}
+
 	@SubscribeEvent
 	public static void onRegisterPayloadHandler(RegisterPayloadHandlersEvent event) {
 		final PayloadRegistrar registrar = event.registrar(PsiAPI.MOD_ID)

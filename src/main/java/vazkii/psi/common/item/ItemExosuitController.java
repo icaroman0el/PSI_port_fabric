@@ -48,7 +48,7 @@ public class ItemExosuitController extends Item implements ISocketableController
 			ItemStack[] stacks = getControlledStacks(playerIn, itemStackIn);
 
 			for(ItemStack stack : stacks) {
-				ISocketable socketable = stack.getCapability(PsiAPI.SOCKETABLE_CAPABILITY);
+				ISocketable socketable = PsiAPI.getItemCapability(stack, PsiAPI.SOCKETABLE_CAPABILITY);
 				if(socketable != null) {
 					socketable.setSelectedSlot(3);
 				}
@@ -75,16 +75,16 @@ public class ItemExosuitController extends Item implements ISocketableController
 
 	@Override
 	public int getDefaultControlSlot(ItemStack stack) {
-		return stack.getOrDefault(ModDataComponents.SELECTED_CONTROL_SLOT, 0);
+		return stack.getOrDefault(ModDataComponents.SELECTED_CONTROL_SLOT.get(), 0);
 	}
 
 	@Override
 	public void setSelectedSlot(Player player, ItemStack stack, int controlSlot, int slot) {
-		stack.set(ModDataComponents.SELECTED_CONTROL_SLOT, controlSlot);
+		stack.set(ModDataComponents.SELECTED_CONTROL_SLOT.get(), controlSlot);
 
 		ItemStack[] stacks = getControlledStacks(player, stack);
 		if(controlSlot < stacks.length && !stacks[controlSlot].isEmpty()) {
-			ISocketable socketable = stacks[controlSlot].getCapability(PsiAPI.SOCKETABLE_CAPABILITY);
+			ISocketable socketable = PsiAPI.getItemCapability(stacks[controlSlot], PsiAPI.SOCKETABLE_CAPABILITY);
 			if(socketable != null)
 				socketable.setSelectedSlot(slot);
 		}

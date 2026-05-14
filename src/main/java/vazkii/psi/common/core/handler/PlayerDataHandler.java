@@ -79,6 +79,7 @@ public class PlayerDataHandler {
 	public static final Set<SpellContext> delayedContexts = new LinkedHashSet<>();
 	private static final WeakHashMap<Player, PlayerData> remotePlayerData = new WeakHashMap<>();
 	private static final WeakHashMap<Player, PlayerData> playerData = new WeakHashMap<>();
+	private static final Map<UUID, CompoundTag> persistentData = new HashMap<>();
 	private static final String DATA_TAG = "PsiData";
 
 	@NotNull
@@ -102,17 +103,12 @@ public class PlayerDataHandler {
 	}
 
 	public static CompoundTag getDataCompoundForPlayer(Player player) {
-		CompoundTag forgeData = player.getPersistentData();
-		if(!forgeData.contains(Player.PERSISTED_NBT_TAG)) {
-			forgeData.put(Player.PERSISTED_NBT_TAG, new CompoundTag());
+		CompoundTag playerPersistentData = persistentData.computeIfAbsent(player.getUUID(), ignored -> new CompoundTag());
+		if(!playerPersistentData.contains(DATA_TAG)) {
+			playerPersistentData.put(DATA_TAG, new CompoundTag());
 		}
 
-		CompoundTag persistentData = forgeData.getCompound(Player.PERSISTED_NBT_TAG);
-		if(!persistentData.contains(DATA_TAG)) {
-			persistentData.put(DATA_TAG, new CompoundTag());
-		}
-
-		return persistentData.getCompound(DATA_TAG);
+		return playerPersistentData.getCompound(DATA_TAG);
 	}
 
 	@EventBusSubscriber(modid = PsiAPI.MOD_ID)
@@ -726,7 +722,7 @@ public class PlayerDataHandler {
 			if(player != null) {
 				return (int) player.getAttributeValue(ModAttributes.TOTAL_PSI);
 			}
-			return (int) ModAttributes.TOTAL_PSI.get().getDefaultValue();
+			return (int) ModAttributes.TOTAL_PSI.value().getDefaultValue();
 		}
 
 		@Override
@@ -735,7 +731,7 @@ public class PlayerDataHandler {
 			if(player != null) {
 				return (int) player.getAttributeValue(ModAttributes.REGEN);
 			}
-			return (int) ModAttributes.REGEN.get().getDefaultValue();
+			return (int) ModAttributes.REGEN.value().getDefaultValue();
 		}
 
 		@Override

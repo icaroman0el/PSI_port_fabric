@@ -10,10 +10,6 @@ package vazkii.psi.common.spell.operator.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.ComparatorBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.state.BlockState;
 
 import vazkii.psi.api.internal.Vector3;
 import vazkii.psi.api.spell.*;
@@ -44,10 +40,7 @@ public class PieceOperatorBlockComparatorStrength extends PieceOperator {
 			throw new SpellRuntimeException(SpellRuntimeException.COMPARATOR);
 		}
 
-		BlockState state = Blocks.COMPARATOR.defaultBlockState()
-				.setValue(HorizontalDirectionalBlock.FACING, whichWay.getOpposite());
-
-		return ((ComparatorBlock) Blocks.COMPARATOR).getInputSignal(context.focalPoint.level(), pos.relative(whichWay), state) * 1.0;
+		return context.focalPoint.level().getSignal(pos.relative(whichWay), whichWay) * 1.0;
 	}
 
 	@Override

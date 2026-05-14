@@ -43,12 +43,12 @@ public record MessageChangeSocketableSlot(int slot) implements CustomPacketPaylo
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();
 			ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
-			ISocketable socketable = stack.getCapability(PsiAPI.SOCKETABLE_CAPABILITY);
+			ISocketable socketable = PsiAPI.getItemCapability(stack, PsiAPI.SOCKETABLE_CAPABILITY);
 			if(!stack.isEmpty() && socketable != null) {
 				socketable.setSelectedSlot(slot);
 			} else {
 				stack = player.getItemInHand(InteractionHand.OFF_HAND);
-				socketable = stack.getCapability(PsiAPI.SOCKETABLE_CAPABILITY);
+				socketable = PsiAPI.getItemCapability(stack, PsiAPI.SOCKETABLE_CAPABILITY);
 				if(!stack.isEmpty() && socketable != null) {
 					socketable.setSelectedSlot(slot);
 				}

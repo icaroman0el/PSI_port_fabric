@@ -25,7 +25,7 @@ public class PieceSelectorSuccessCounter extends PieceSelector {
 		if(!(context.tool.getItem() instanceof IPsiEventArmor)) {
 			throw new SpellRuntimeException(SpellRuntimeException.ARMOR);
 		}
-		return context.tool.getOrDefault(ModDataComponents.TIMES_CAST, 0) * 1.0;
+		return context.tool.getOrDefault(ModDataComponents.TIMES_CAST.get(), 0) * 1.0;
 	}
 
 	@Override

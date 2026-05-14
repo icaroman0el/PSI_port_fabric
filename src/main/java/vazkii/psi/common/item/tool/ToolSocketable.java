@@ -37,7 +37,7 @@ public class ToolSocketable implements ICapabilityProvider<ItemCapability<?, Voi
 	public ToolSocketable(ItemStack tool, int slots) {
 		this.tool = tool;
 		this.slots = Mth.clamp(slots, 1, MAX_ASSEMBLER_SLOTS - 1);
-		this.toolHandler = (ComponentItemHandler) tool.getCapability(Capabilities.ItemHandler.ITEM);
+		this.toolHandler = (ComponentItemHandler) PsiAPI.getItemCapability(tool, Capabilities.ItemHandler.ITEM);
 	}
 
 	@Override
@@ -82,12 +82,12 @@ public class ToolSocketable implements ICapabilityProvider<ItemCapability<?, Voi
 
 	@Override
 	public int getSelectedSlot() {
-		return tool.getOrDefault(ModDataComponents.SELECTED_SLOT, 0);
+		return tool.getOrDefault(ModDataComponents.SELECTED_SLOT.get(), 0);
 	}
 
 	@Override
 	public void setSelectedSlot(int slot) {
-		tool.set(ModDataComponents.SELECTED_SLOT, slot);
+		tool.set(ModDataComponents.SELECTED_SLOT.get(), slot);
 	}
 
 	@Override

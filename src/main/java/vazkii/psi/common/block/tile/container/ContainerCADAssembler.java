@@ -118,13 +118,20 @@ public class ContainerCADAssembler extends AbstractContainerMenu {
 
 				@Override
 				public boolean mayPlace(@NotNull ItemStack stack) {
-					return !stack.isEmpty() && stack.getItem().canEquip(stack, slot, player);
+					return !stack.isEmpty() && player.getEquipmentSlotForItem(stack) == slot;
 				}
 
 				@OnlyIn(Dist.CLIENT)
 				@Override
 				public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-					return Pair.of(InventoryMenu.BLOCK_ATLAS, InventoryMenu.TEXTURE_EMPTY_SLOTS.get(slot));
+					ResourceLocation texture = switch(slot) {
+					case HEAD -> InventoryMenu.EMPTY_ARMOR_SLOT_HELMET;
+					case CHEST -> InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE;
+					case LEGS -> InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS;
+					case FEET -> InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS;
+					default -> InventoryMenu.EMPTY_ARMOR_SLOT_SHIELD;
+					};
+					return Pair.of(InventoryMenu.BLOCK_ATLAS, texture);
 				}
 			});
 		}
@@ -139,6 +146,9 @@ public class ContainerCADAssembler extends AbstractContainerMenu {
 	}
 
 	public static ContainerCADAssembler fromNetwork(int windowId, Inventory playerInventory, FriendlyByteBuf buf) {
+		if(buf == null) {
+			return new ContainerCADAssembler(windowId, playerInventory, null);
+		}
 		BlockPos pos = buf.readBlockPos();
 		return new ContainerCADAssembler(windowId, playerInventory, (TileCADAssembler) playerInventory.player.level().getBlockEntity(pos));
 	}

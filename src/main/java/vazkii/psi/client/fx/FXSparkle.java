@@ -51,7 +51,6 @@ public class FXSparkle extends TextureSheetParticle {
 		public void end() {
 			RenderSystem.disableBlend();
 			RenderSystem.depthMask(true);
-			Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_PARTICLES).restoreLastBlurMipmap();
 		}
 
 		@Override

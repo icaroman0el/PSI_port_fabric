@@ -93,7 +93,7 @@ public class BlockProgrammer extends HorizontalDirectionalBlock implements Entit
 		}
 		boolean enabled = programmer.isEnabled();
 
-		ISpellAcceptor settable = pStack.getCapability(PsiAPI.SPELL_ACCEPTOR_CAPABILITY);
+		ISpellAcceptor settable = PsiAPI.getItemCapability(pStack, PsiAPI.SPELL_ACCEPTOR_CAPABILITY);
 		if(enabled && !pStack.isEmpty() && settable != null && programmer.spell != null && (pPlayer.isShiftKeyDown() || !settable.requiresSneakForSpellSet())) {
 			if(programmer.canCompile()) {
 				if(!pLevel.isClientSide) {

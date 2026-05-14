@@ -69,12 +69,11 @@ public class ItemPsimetalAxe extends AxeItem implements IPsimetalTool {
 		return IPsimetalTool.super.initCapabilities(stack, nbt);
 	}
 
-	@Override
 	public void setDamage(ItemStack stack, int damage) {
 		if(damage > stack.getMaxDamage()) {
 			damage = stack.getDamageValue();
 		}
-		super.setDamage(stack, damage);
+		stack.setDamageValue(damage);
 	}
 
 	@NotNull
@@ -100,7 +99,6 @@ public class ItemPsimetalAxe extends AxeItem implements IPsimetalTool {
 		IPsimetalTool.regen(stack, entityIn);
 	}
 
-	@Override
 	public boolean shouldCauseReequipAnimation(@NotNull ItemStack oldStack, @NotNull ItemStack newStack, boolean slotChanged) {
 		return slotChanged;
 	}

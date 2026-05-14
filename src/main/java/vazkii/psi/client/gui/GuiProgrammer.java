@@ -124,6 +124,10 @@ public class GuiProgrammer extends Screen {
 		compileResult = new SpellCompiler().compile(spell);
 	}
 
+	public Minecraft getMinecraft() {
+		return Minecraft.getInstance();
+	}
+
 	public static String convertIntToLetter(int i) {
 		if(!ConfigHandler.CLIENT.changeGridCoordinatesToLetterNumber.get()) {
 			return String.valueOf(i);
@@ -374,7 +378,7 @@ public class GuiProgrammer extends Screen {
 				}
 			}
 			String version = "Psi " + ModList.get().getModContainerById("psi").get().getModInfo().getVersion().toString();
-			graphics.drawString(getMinecraft().font, version, left + xSize / 2f - font.width(version) / 2f, (float) top - 22, 0xFFFFFF, true);
+			graphics.drawString(getMinecraft().font, version, left + xSize / 2 - font.width(version) / 2, top - 22, 0xFFFFFF, true);
 		}
 
 		SpellPiece pieceAtCursor = null;
@@ -400,12 +404,12 @@ public class GuiProgrammer extends Screen {
 			int topYText = topY;
 			if(spectator) {
 				String spectator = ChatFormatting.RED + I18n.get("psimisc.spectator");
-				graphics.drawString(getMinecraft().font, spectator, left + xSize / 2f - font.width(spectator) / 2f, topYText, 0xFFFFFF, true);
+				graphics.drawString(getMinecraft().font, spectator, left + xSize / 2 - font.width(spectator) / 2, topYText, 0xFFFFFF, true);
 				topYText -= 10;
 			}
 			if(piece != null) {
 				String pieceName = I18n.get(piece.getUnlocalizedName());
-				graphics.drawString(getMinecraft().font, pieceName, left + xSize / 2f - font.width(pieceName) / 2f, topYText, 0xFFFFFF, true);
+				graphics.drawString(getMinecraft().font, pieceName, left + xSize / 2 - font.width(pieceName) / 2, topYText, 0xFFFFFF, true);
 			}
 
 			String coords;
@@ -416,7 +420,7 @@ public class GuiProgrammer extends Screen {
 			}
 			graphics.drawString(getMinecraft().font, coords, left + 4, topY + ySize + 24, 0x44FFFFFF);
 			String version = "Psi " + ModList.get().getModContainerById("psi").get().getModInfo().getVersion().toString();
-			graphics.drawString(getMinecraft().font, version, left + xSize / 2f - font.width(version) / 2f, topY + ySize + 24 + font.wordWrapHeight(coords, font.width(coords)) + 5, 0x44FFFFFF, true);
+			graphics.drawString(getMinecraft().font, version, left + xSize / 2 - font.width(version) / 2, topY + ySize + 24 + font.wordWrapHeight(coords, font.width(coords)) + 5, 0x44FFFFFF, true);
 		}
 
 		if(Psi.magical) {
@@ -428,10 +432,10 @@ public class GuiProgrammer extends Screen {
 		//Add here comment
 		if(commentEnabled) {
 			String enterCommit = I18n.get("psimisc.enter_commit");
-			graphics.drawString(getMinecraft().font, enterCommit, left + xSize / 2f - font.width(enterCommit) / 2f, commentField.getY() + 24, 0xFFFFFF, true);
+			graphics.drawString(getMinecraft().font, enterCommit, left + xSize / 2 - font.width(enterCommit) / 2, commentField.getY() + 24, 0xFFFFFF, true);
 
 			String semicolonLine = I18n.get("psimisc.semicolon_line");
-			graphics.drawString(getMinecraft().font, semicolonLine, left + xSize / 2f - font.width(semicolonLine) / 2f, commentField.getY() + 34, 0xFFFFFF, true);
+			graphics.drawString(getMinecraft().font, semicolonLine, left + xSize / 2 - font.width(semicolonLine) / 2, commentField.getY() + 34, 0xFFFFFF, true);
 		}
 
 		List<Component> legitTooltip = null;
@@ -441,10 +445,6 @@ public class GuiProgrammer extends Screen {
 
 		if(hasAltDown()) {
 			tooltip = legitTooltip;
-		}
-
-		for(Renderable renderable : this.renderables) {
-			renderable.render(graphics, mouseX, mouseY, partialTicks);
 		}
 
 		if(!takingScreenshot && tooltip != null && !tooltip.isEmpty() && pieceAtCursor == null && mouseMoved) {
@@ -512,7 +512,6 @@ public class GuiProgrammer extends Screen {
 	}
 
 	public void onSelectedChanged() {
-		renderables.removeAll(configWidget.configButtons);
 		children().removeAll(configWidget.configButtons);
 		configWidget.configButtons.clear();
 
@@ -955,7 +954,7 @@ public class GuiProgrammer extends Screen {
 	}
 
 	public List<Renderable> getButtons() {
-		return this.renderables;
+		return Collections.emptyList();
 	}
 
 	@Override

@@ -74,12 +74,11 @@ public class ItemPsimetalSword extends SwordItem implements IPsimetalTool {
 		return true;
 	}
 
-	@Override
 	public void setDamage(ItemStack stack, int damage) {
 		if(damage > stack.getMaxDamage()) {
 			damage = stack.getDamageValue();
 		}
-		super.setDamage(stack, damage);
+		stack.setDamageValue(damage);
 	}
 
 	@Override

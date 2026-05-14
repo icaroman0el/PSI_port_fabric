@@ -8,7 +8,6 @@
  */
 package vazkii.psi.common.core.capability;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.EntityCapability;
@@ -25,6 +24,7 @@ public record CapabilityTriggerSensor(
 		Player player) implements IDetonationHandler, ICapabilityProvider<EntityCapability<?, Void>, Void, CapabilityTriggerSensor> {
 
 	public static final String TRIGGER_TICK = PsiAPI.MOD_ID + ":LastTriggeredDetonation";
+	private static final java.util.Map<java.util.UUID, Long> LAST_TRIGGERED = new java.util.HashMap<>();
 
 	@Nullable
 	@Override
@@ -37,12 +37,11 @@ public record CapabilityTriggerSensor(
 
 	@Override
 	public void detonate() {
-		CompoundTag playerData = player.getPersistentData();
-		long detonated = playerData.getLong(TRIGGER_TICK);
+		long detonated = LAST_TRIGGERED.getOrDefault(player.getUUID(), Long.MIN_VALUE);
 		long worldTime = player.level().getGameTime();
 
 		if(detonated != worldTime) {
-			playerData.putLong(TRIGGER_TICK, worldTime);
+			LAST_TRIGGERED.put(player.getUUID(), worldTime);
 
 			PsiArmorEvent.post(new PsiArmorEvent(player, PsiArmorEvent.DETONATE));
 		}

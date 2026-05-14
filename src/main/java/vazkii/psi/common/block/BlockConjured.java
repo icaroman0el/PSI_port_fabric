@@ -65,7 +65,6 @@ public class BlockConjured extends Block implements EntityBlock, SimpleWaterlogg
 		}
 	}
 
-	@Override
 	public Integer getBeaconColorMultiplier(@NotNull BlockState state, LevelReader world, @NotNull BlockPos pos, @NotNull BlockPos beaconPos) {
 		BlockEntity inWorld = world.getBlockEntity(pos);
 		if(inWorld instanceof TileConjured) {
@@ -110,7 +109,6 @@ public class BlockConjured extends Block implements EntityBlock, SimpleWaterlogg
 		}
 	}
 
-	@Override
 	public int getLightEmission(BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos) {
 		return state.getValue(LIGHT) ? 15 : 0;
 	}

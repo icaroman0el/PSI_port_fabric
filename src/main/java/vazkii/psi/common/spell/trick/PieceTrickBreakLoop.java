@@ -54,7 +54,7 @@ public class PieceTrickBreakLoop extends PieceTrick {
 				}
 			} else {
 				if(!context.tool.isEmpty()) {
-					ISocketable socketableCap = context.tool.getCapability(PsiAPI.SOCKETABLE_CAPABILITY);
+					ISocketable socketableCap = PsiAPI.getItemCapability(context.tool, PsiAPI.SOCKETABLE_CAPABILITY);
 
 					if(socketableCap != null) {
 						socketableCap.setSelectedSlot(socketableCap.getLastSlot() + 1);

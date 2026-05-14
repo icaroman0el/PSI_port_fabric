@@ -58,11 +58,11 @@ public interface ISocketable {
 	}
 
 	static boolean isSocketable(ItemStack stack) {
-		return !stack.isEmpty() && stack.getCapability(PsiAPI.SOCKETABLE_CAPABILITY) != null;
+		return !stack.isEmpty() && PsiAPI.getItemCapability(stack, PsiAPI.SOCKETABLE_CAPABILITY) != null;
 	}
 
 	static ISocketable socketable(ItemStack stack) {
-		ISocketable capability = stack.getCapability(PsiAPI.SOCKETABLE_CAPABILITY);
+		ISocketable capability = PsiAPI.getItemCapability(stack, PsiAPI.SOCKETABLE_CAPABILITY);
 		if(capability == null) {
 			throw new NullPointerException();
 		}

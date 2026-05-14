@@ -39,11 +39,11 @@ public class ItemCADColorizer extends ItemCADComponent implements ICADColorizer 
 
 	@Override
 	public String getContributorName(ItemStack stack) {
-		return stack.getOrDefault(ModDataComponents.CONTRIBUTOR, "");
+		return stack.getOrDefault(ModDataComponents.CONTRIBUTOR.get(), "");
 	}
 
 	@Override
 	public void setContributorName(ItemStack stack, String name) {
-		stack.set(ModDataComponents.CONTRIBUTOR, name);
+		stack.set(ModDataComponents.CONTRIBUTOR.get(), name);
 	}
 }

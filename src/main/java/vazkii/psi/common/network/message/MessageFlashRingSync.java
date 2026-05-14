@@ -36,12 +36,12 @@ public record MessageFlashRingSync(Spell spell) implements CustomPacketPayload {
 			Player player = ctx.player();
 			ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
 			if(!stack.isEmpty() && stack.getItem() instanceof ItemFlashRing) {
-				stack.getCapability(PsiAPI.SPELL_ACCEPTOR_CAPABILITY).setSpell(player, spell);
+				PsiAPI.getItemCapability(stack, PsiAPI.SPELL_ACCEPTOR_CAPABILITY).setSpell(player, spell);
 				ISpellAcceptor.acceptor(stack).setSpell(player, spell);
 			} else {
 				stack = player.getItemInHand(InteractionHand.OFF_HAND);
 				if(!stack.isEmpty() && stack.getItem() instanceof ItemFlashRing) {
-					stack.getCapability(PsiAPI.SPELL_ACCEPTOR_CAPABILITY).setSpell(player, spell);
+					PsiAPI.getItemCapability(stack, PsiAPI.SPELL_ACCEPTOR_CAPABILITY).setSpell(player, spell);
 					ISpellAcceptor.acceptor(stack).setSpell(player, spell);
 				}
 			}

@@ -68,12 +68,11 @@ public class ItemPsimetalArmor extends ArmorItem implements IPsimetalTool, IPsiE
 		}
 	}
 
-	@Override
 	public void setDamage(ItemStack stack, int damage) {
 		if(damage > stack.getMaxDamage()) {
 			damage = stack.getDamageValue();
 		}
-		super.setDamage(stack, damage);
+		stack.setDamageValue(damage);
 	}
 
 	@NotNull
@@ -102,7 +101,7 @@ public class ItemPsimetalArmor extends ArmorItem implements IPsimetalTool, IPsiE
 		ItemStack playerCad = PsiAPI.getPlayerCAD(event.getEntity());
 
 		if(IPsimetalTool.isEnabled(stack) && !playerCad.isEmpty()) {
-			int timesCast = stack.getOrDefault(ModDataComponents.TIMES_CAST, 0);
+			int timesCast = stack.getOrDefault(ModDataComponents.TIMES_CAST.get(), 0);
 
 			ItemStack bullet = ISocketable.socketable(stack).getSelectedBullet();
 			ItemCAD.cast(event.getEntity().getCommandSenderWorld(), event.getEntity(), data, bullet, playerCad, getCastCooldown(stack), 0, getCastVolume(), (SpellContext context) -> {
@@ -112,7 +111,7 @@ public class ItemPsimetalArmor extends ArmorItem implements IPsimetalTool, IPsiE
 				context.loopcastIndex = timesCast;
 			}, (int) (data.calculateDamageDeduction((float) event.damage) * 0.75));
 
-			stack.set(ModDataComponents.TIMES_CAST, timesCast + 1);
+			stack.set(ModDataComponents.TIMES_CAST.get(), timesCast + 1);
 		}
 	}
 
@@ -145,12 +144,10 @@ public class ItemPsimetalArmor extends ArmorItem implements IPsimetalTool, IPsiE
 		});
 	}
 
-	@Override
 	public boolean isRepairable(@NotNull ItemStack stack) {
-		return super.isRepairable(stack);
+		return true;
 	}
 
-	@Override
 	public ResourceLocation getArmorTexture(@NotNull ItemStack stack, @NotNull Entity entity, @NotNull EquipmentSlot slot, ArmorMaterial.@NotNull Layer layer, boolean innerModel) {
 		return LibResources.MODEL_PSIMETAL_EXOSUIT;
 	}
@@ -167,13 +164,13 @@ public class ItemPsimetalArmor extends ArmorItem implements IPsimetalTool, IPsiE
 		@Override
 		public void setSelectedSlot(int slot) {
 			super.setSelectedSlot(slot);
-			tool.set(ModDataComponents.TIMES_CAST, 0);
+			tool.set(ModDataComponents.TIMES_CAST.get(), 0);
 		}
 
 		@Override
 		public void setBulletInSocket(int slot, ItemStack bullet) {
 			super.setBulletInSocket(slot, bullet);
-			tool.set(ModDataComponents.TIMES_CAST, 0);
+			tool.set(ModDataComponents.TIMES_CAST.get(), 0);
 		}
 
 	}

@@ -8,26 +8,19 @@
  */
 package vazkii.psi.common;
 
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.registries.NewRegistryEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import vazkii.psi.api.PsiAPI;
 import vazkii.psi.api.material.PsimetalArmorMaterial;
-import vazkii.psi.client.core.proxy.ClientProxy;
 import vazkii.psi.client.fx.ModParticles;
 import vazkii.psi.common.attribute.base.ModAttributes;
 import vazkii.psi.common.block.base.ModBlocks;
-import vazkii.psi.common.core.handler.ConfigHandler;
+import vazkii.psi.common.core.PsiCreativeTab;
 import vazkii.psi.common.core.handler.ContributorSpellCircleHandler;
 import vazkii.psi.common.core.handler.InternalMethodHandler;
 import vazkii.psi.common.core.proxy.IProxy;
@@ -39,48 +32,40 @@ import vazkii.psi.common.item.component.DefaultStats;
 import vazkii.psi.common.network.MessageRegister;
 import vazkii.psi.common.spell.base.ModSpellPieces;
 
-@Mod(PsiAPI.MOD_ID)
-public class Psi {
+public class Psi implements ModInitializer {
 
 	public static final Logger logger = LogManager.getLogger(PsiAPI.MOD_ID);
 
 	public static boolean magical;
 	public static IProxy proxy;
 
-	public Psi(IEventBus bus, Dist dist, ModContainer container) {
-		ModAttributes.ATTRIBUTES.register(bus);
-		ModDataComponents.DATA_COMPONENT_TYPES.register(bus);
-		PsimetalArmorMaterial.ARMOR_MATERIALS.register(bus);
-		ModCraftingRecipes.RECIPE_TYPES.register(bus);
-		ModCraftingRecipes.RECIPE_SERIALIZERS.register(bus);
-		ModCraftingRecipes.CONDITION_CODECS.register(bus);
-		ModParticles.PARTICLE_TYPES.register(bus);
-		ModBlocks.BLOCKS.register(bus);
-		ModBlocks.BLOCK_TYPES.register(bus);
-		ModBlocks.MENU.register(bus);
-		ModItems.ITEMS.register(bus);
-		ModSpellPieces.SPELL_PIECES.register(bus);
-		ModSpellPieces.ADVANCEMENT_GROUPS.register(bus);
-		bus.addListener(this::registerRegistries);
-		bus.addListener(this::commonSetup);
-		bus.addListener(MessageRegister::onRegisterPayloadHandler);
-		container.registerConfig(ModConfig.Type.CLIENT, ConfigHandler.CLIENT_SPEC);
-		container.registerConfig(ModConfig.Type.COMMON, ConfigHandler.COMMON_SPEC);
-		proxy = dist.isClient() ? new ClientProxy() : new ServerProxy();
-		proxy.registerHandlers(bus);
+	@Override
+	public void onInitialize() {
+		ModAttributes.ATTRIBUTES.register();
+		ModDataComponents.DATA_COMPONENT_TYPES.register();
+		PsimetalArmorMaterial.ARMOR_MATERIALS.register();
+		ModCraftingRecipes.RECIPE_TYPES.register();
+		ModCraftingRecipes.RECIPE_SERIALIZERS.register();
+		ModCraftingRecipes.CONDITION_CODECS.register();
+		ModParticles.PARTICLE_TYPES.register();
+		ModBlocks.BLOCKS.register();
+		ModBlocks.BLOCK_TYPES.register();
+		ModBlocks.MENU.register();
+		ModItems.ITEMS.register();
+		PsiCreativeTab.register();
+		ModSpellPieces.SPELL_PIECES.register();
+		ModSpellPieces.ADVANCEMENT_GROUPS.register();
+		MessageRegister.register();
+		commonSetup();
+		proxy = new ServerProxy();
 	}
 
 	public static ResourceLocation location(String path) {
 		return ResourceLocation.fromNamespaceAndPath(PsiAPI.MOD_ID, path);
 	}
 
-	private void registerRegistries(NewRegistryEvent event) {
-		event.register(PsiAPI.SPELL_PIECE_REGISTRY);
-		event.register(PsiAPI.ADVANCEMENT_GROUP_REGISTRY);
-	}
-
-	private void commonSetup(FMLCommonSetupEvent event) {
-		magical = ModList.get().isLoaded("magipsi");
+	private void commonSetup() {
+		magical = FabricLoader.getInstance().isModLoaded("magipsi");
 		PsiAPI.internalHandler = new InternalMethodHandler();
 
 		ContributorSpellCircleHandler.firstStart();

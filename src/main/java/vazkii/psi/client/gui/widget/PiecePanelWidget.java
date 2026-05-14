@@ -71,7 +71,7 @@ public class PiecePanelWidget extends AbstractWidget implements GuiEventListener
 			graphics.blit(GuiProgrammer.texture, searchField.getX() - 14, searchField.getY() - 2, 0, parent.ySize + 16, 12, 12);
 
 			String s = Math.min(Math.max(getPageCount(), 1), page + 1) + "/" + Math.max(getPageCount(), 1);
-			graphics.drawString(parent.getMinecraft().font, s, getX() + width / 2f - parent.getMinecraft().font.width(s) / 2f, getY() + height - 12, 0xFFFFFF, true);
+			graphics.drawString(parent.getMinecraft().font, s, getX() + width / 2 - parent.getMinecraft().font.width(s) / 2, getY() + height - 12, 0xFFFFFF, true);
 		}
 	}
 

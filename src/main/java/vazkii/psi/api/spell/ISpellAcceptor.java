@@ -30,25 +30,25 @@ import java.util.Objects;
 public interface ISpellAcceptor {
 
 	static boolean isAcceptor(ItemStack stack) {
-		return !stack.isEmpty() && Objects.nonNull(stack.getCapability(PsiAPI.SPELL_ACCEPTOR_CAPABILITY));
+		return !stack.isEmpty() && Objects.nonNull(PsiAPI.getItemCapability(stack, PsiAPI.SPELL_ACCEPTOR_CAPABILITY));
 	}
 
 	static boolean isContainer(ItemStack stack) {
-		ISpellAcceptor capability = stack.getCapability(PsiAPI.SPELL_ACCEPTOR_CAPABILITY);
+		ISpellAcceptor capability = PsiAPI.getItemCapability(stack, PsiAPI.SPELL_ACCEPTOR_CAPABILITY);
 		if(capability == null)
 			return false;
 		return capability.castableFromSocket();
 	}
 
 	static boolean hasSpell(ItemStack stack) {
-		ISpellAcceptor capability = stack.getCapability(PsiAPI.SPELL_ACCEPTOR_CAPABILITY);
+		ISpellAcceptor capability = PsiAPI.getItemCapability(stack, PsiAPI.SPELL_ACCEPTOR_CAPABILITY);
 		if(capability == null)
 			return false;
 		return capability.containsSpell();
 	}
 
 	static ISpellAcceptor acceptor(ItemStack stack) {
-		return Objects.requireNonNull(stack.getCapability(PsiAPI.SPELL_ACCEPTOR_CAPABILITY));
+		return Objects.requireNonNull(PsiAPI.getItemCapability(stack, PsiAPI.SPELL_ACCEPTOR_CAPABILITY));
 	}
 
 	void setSpell(Player player, Spell spell);

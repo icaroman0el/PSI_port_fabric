@@ -12,13 +12,16 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.capabilities.ItemCapability;
 import net.neoforged.neoforge.common.SimpleTier;
+import net.neoforged.neoforge.items.ComponentItemHandler;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import vazkii.psi.api.cad.ICAD;
@@ -31,7 +34,15 @@ import vazkii.psi.api.spell.ISpellAcceptor;
 import vazkii.psi.api.spell.ISpellImmune;
 import vazkii.psi.api.spell.SpellPiece;
 import vazkii.psi.api.spell.detonator.IDetonationHandler;
+import vazkii.psi.common.core.capability.CapabilityTriggerSensor;
+import vazkii.psi.common.core.handler.capability.CADData;
+import vazkii.psi.common.entity.EntitySpellCharge;
+import vazkii.psi.common.entity.EntitySpellCircle;
+import vazkii.psi.common.item.ItemFlashRing;
+import vazkii.psi.common.item.ItemSpellBullet;
+import vazkii.psi.common.item.armor.ItemPsimetalArmor;
 import vazkii.psi.common.item.base.ModItems;
+import vazkii.psi.common.item.tool.ToolSocketable;
 
 import java.util.Collection;
 
@@ -116,6 +127,86 @@ public final class PsiAPI {
 
 		int cadSlot = getPlayerCADSlot(player);
 		return cadSlot < 9 || cadSlot == 40;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T getItemCapability(ItemStack stack, ItemCapability<T, Void> capability) {
+		if(stack == null || stack.isEmpty()) {
+			return null;
+		}
+
+		if(capability == Capabilities.ItemHandler.ITEM) {
+			if(stack.is(ModItems.cad.get())) {
+				return (T) new ComponentItemHandler(stack, vazkii.psi.common.item.base.ModDataComponents.BULLETS.get(), ISocketable.MAX_ASSEMBLER_SLOTS);
+			}
+			if(isPsimetalSocketable(stack)) {
+				return (T) new ComponentItemHandler(stack, vazkii.psi.common.item.base.ModDataComponents.BULLETS.get(), 3);
+			}
+			return null;
+		}
+
+		if(stack.is(ModItems.cad.get())) {
+			CADData cadData = new CADData(stack);
+			return (T) cadData.getCapability(capability, null);
+		}
+
+		if(isPsimetalTool(stack)) {
+			ToolSocketable socketable = new ToolSocketable(stack, 3);
+			return (T) socketable.getCapability(capability, null);
+		}
+
+		if(isPsimetalArmor(stack)) {
+			ItemPsimetalArmor.ArmorSocketable socketable = new ItemPsimetalArmor.ArmorSocketable(stack, 3);
+			return (T) socketable.getCapability(capability, null);
+		}
+
+		if(capability == SPELL_ACCEPTOR_CAPABILITY) {
+			if(stack.getItem() instanceof ItemSpellBullet) {
+				return (T) new ItemSpellBullet.SpellAcceptor(stack);
+			}
+			if(stack.getItem() instanceof ItemFlashRing) {
+				return (T) new ItemFlashRing.SpellAcceptor(stack);
+			}
+		}
+
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T getEntityCapability(Entity entity, EntityCapability<T, Void> capability) {
+		if(entity == null) {
+			return null;
+		}
+		if(capability == SPELL_IMMUNE_CAPABILITY && entity instanceof EntitySpellCircle spellCircle) {
+			return (T) spellCircle;
+		}
+		if(capability == DETONATION_HANDLER_CAPABILITY) {
+			if(entity instanceof Player player) {
+				return (T) new CapabilityTriggerSensor(player);
+			}
+			if(entity instanceof EntitySpellCharge charge) {
+				return (T) charge;
+			}
+		}
+		return null;
+	}
+
+	private static boolean isPsimetalTool(ItemStack stack) {
+		return stack.is(ModItems.psimetalShovel.get())
+				|| stack.is(ModItems.psimetalPickaxe.get())
+				|| stack.is(ModItems.psimetalAxe.get())
+				|| stack.is(ModItems.psimetalSword.get());
+	}
+
+	private static boolean isPsimetalArmor(ItemStack stack) {
+		return stack.is(ModItems.psimetalExosuitHelmet.get())
+				|| stack.is(ModItems.psimetalExosuitChestplate.get())
+				|| stack.is(ModItems.psimetalExosuitLeggings.get())
+				|| stack.is(ModItems.psimetalExosuitBoots.get());
+	}
+
+	private static boolean isPsimetalSocketable(ItemStack stack) {
+		return isPsimetalTool(stack) || isPsimetalArmor(stack);
 	}
 
 	public static ResourceLocation location(String path) {

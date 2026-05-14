@@ -161,8 +161,8 @@ public class BulletUpgradeRecipe extends ShapelessRecipe {
 											if(aingredient.length == 0) {
 												return DataResult.error(() -> "No ingredients for shapeless recipe");
 											} else {
-												return aingredient.length > ShapedRecipePattern.getMaxHeight() * ShapedRecipePattern.getMaxWidth()
-														? DataResult.error(() -> "Too many ingredients for shapeless recipe. The maximum is: %s".formatted(ShapedRecipePattern.getMaxHeight() * ShapedRecipePattern.getMaxHeight()))
+												return aingredient.length > 9
+														? DataResult.error(() -> "Too many ingredients for shapeless recipe. The maximum is: %s".formatted(9))
 														: DataResult.success(NonNullList.of(Ingredient.EMPTY, aingredient));
 											}
 										},

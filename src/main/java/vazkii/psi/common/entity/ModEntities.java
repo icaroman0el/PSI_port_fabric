@@ -32,34 +32,19 @@ public final class ModEntities {
 	public static void register(RegisterEvent evt) {
 		evt.register(Registries.ENTITY_TYPE, helper -> {
 			spellProjectile = EntityType.Builder.of((EntityType.EntityFactory<EntitySpellProjectile>) EntitySpellProjectile::new, MISC)
-					.setTrackingRange(256)
-					.setUpdateInterval(10)
-					.setShouldReceiveVelocityUpdates(true)
 					.sized(0, 0)
 					.build("");
 			spellCircle = EntityType.Builder.of(EntitySpellCircle::new, MISC)
-					.setTrackingRange(256)
-					.setUpdateInterval(10)
-					.setShouldReceiveVelocityUpdates(false)
 					.sized(3.0f, 0.3f)
 					.fireImmune()
 					.build("");
 			spellGrenade = EntityType.Builder.of((EntityType.EntityFactory<EntitySpellGrenade>) EntitySpellGrenade::new, MISC)
-					.setTrackingRange(256)
-					.setUpdateInterval(10)
-					.setShouldReceiveVelocityUpdates(true)
 					.sized(0, 0)
 					.build("");
 			spellCharge = EntityType.Builder.of((EntityType.EntityFactory<EntitySpellCharge>) EntitySpellCharge::new, MISC)
-					.setTrackingRange(256)
-					.setUpdateInterval(10)
-					.setShouldReceiveVelocityUpdates(true)
 					.sized(0, 0)
 					.build("");
 			spellMine = EntityType.Builder.of((EntityType.EntityFactory<EntitySpellMine>) EntitySpellMine::new, MISC)
-					.setTrackingRange(256)
-					.setUpdateInterval(10)
-					.setShouldReceiveVelocityUpdates(true)
 					.sized(0, 0)
 					.build("");
 

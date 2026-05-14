@@ -38,7 +38,7 @@ public interface ICAD {
 
 	static void setComponent(ItemStack stack, ItemStack componentStack) {
 		@Nullable
-		List<Item> items = stack.getOrDefault(ModDataComponents.COMPONENTS, new ArrayList<>(Collections.nCopies(EnumCADComponent.values().length, Items.AIR)));
+		List<Item> items = stack.getOrDefault(ModDataComponents.COMPONENTS.get(), new ArrayList<>(Collections.nCopies(EnumCADComponent.values().length, Items.AIR)));
 		if(!componentStack.isEmpty() && componentStack.getItem() instanceof ICADComponent component) {
 			if(!(items instanceof ArrayList<Item>)) {
 				items = new ArrayList<>(items);
@@ -46,7 +46,7 @@ public interface ICAD {
 
 			EnumCADComponent componentType = component.getComponentType(componentStack);
 			items.set(componentType.ordinal(), componentStack.getItem());
-			stack.set(ModDataComponents.COMPONENTS, items);
+			stack.set(ModDataComponents.COMPONENTS.get(), items);
 		}
 	}
 
@@ -61,8 +61,8 @@ public interface ICAD {
 			return;
 		}
 
-		List<Item> fromComponents = from.get(ModDataComponents.COMPONENTS);
-		to.set(ModDataComponents.COMPONENTS, new ArrayList<>(Objects.requireNonNullElseGet(fromComponents, () -> Collections.nCopies(EnumCADComponent.values().length, Items.AIR))));
+		List<Item> fromComponents = from.get(ModDataComponents.COMPONENTS.get());
+		to.set(ModDataComponents.COMPONENTS.get(), new ArrayList<>(Objects.requireNonNullElseGet(fromComponents, () -> Collections.nCopies(EnumCADComponent.values().length, Items.AIR))));
 	}
 
 	/**

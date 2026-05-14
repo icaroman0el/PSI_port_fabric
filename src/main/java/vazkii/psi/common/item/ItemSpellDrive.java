@@ -42,10 +42,10 @@ public class ItemSpellDrive extends Item {
 
 	public static void setSpell(ItemStack stack, Spell spell) {
 		if(spell != null) {
-			stack.set(ModDataComponents.SPELL, spell);
+			stack.set(ModDataComponents.SPELL.get(), spell);
 			stack.set(DataComponents.RARITY, Rarity.RARE);
 		} else {
-			stack.remove(ModDataComponents.SPELL);
+			stack.remove(ModDataComponents.SPELL.get());
 			stack.set(DataComponents.RARITY, Rarity.COMMON);
 		}
 
@@ -53,7 +53,7 @@ public class ItemSpellDrive extends Item {
 
 	@Nullable
 	public static Spell getSpell(ItemStack stack) {
-		return stack.has(ModDataComponents.SPELL) ? stack.get(ModDataComponents.SPELL) : null;
+		return stack.has(ModDataComponents.SPELL.get()) ? stack.get(ModDataComponents.SPELL.get()) : null;
 	}
 
 	@NotNull

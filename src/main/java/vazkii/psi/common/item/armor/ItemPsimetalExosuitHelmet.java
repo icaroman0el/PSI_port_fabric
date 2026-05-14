@@ -55,11 +55,11 @@ public class ItemPsimetalExosuitHelmet extends ItemPsimetalArmor implements ISen
 
 	@Override
 	public ItemStack getAttachedSensor(ItemStack stack) {
-		return new ItemStack(stack.getOrDefault(ModDataComponents.SENSOR, Items.AIR));
+		return new ItemStack(stack.getOrDefault(ModDataComponents.SENSOR.get(), Items.AIR));
 	}
 
 	@Override
 	public void attachSensor(ItemStack stack, ItemStack sensor) {
-		stack.set(ModDataComponents.SENSOR, sensor.getItem());
+		stack.set(ModDataComponents.SENSOR.get(), sensor.getItem());
 	}
 }

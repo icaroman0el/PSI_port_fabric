@@ -66,8 +66,8 @@ public class SpellGridComponent implements ICustomComponent {
 		graphics.blit(texture, 0, 0, 0, 0, 174, 184);
 
 		// Draw the name label and spell name
-		graphics.drawString(context.getGui().getMinecraft().font, I18n.get("psimisc.name"), 7, 171, 0xFFFFFF, true);
-		graphics.drawString(context.getGui().getMinecraft().font, spellName, 44, 170, 0xFFFFFF, true);
+		graphics.drawString(net.minecraft.client.Minecraft.getInstance().font, I18n.get("psimisc.name"), 7, 171, 0xFFFFFF, true);
+		graphics.drawString(net.minecraft.client.Minecraft.getInstance().font, spellName, 44, 170, 0xFFFFFF, true);
 
 		// Pad the spell pieces and draw them
 		graphics.pose().translate(7f, 7f, 0f);

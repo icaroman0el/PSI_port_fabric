@@ -108,7 +108,7 @@ public class PieceTrickBreakBlock extends PieceTrick {
 		player.getInventory().items.set(player.getInventory().selected, stack);
 
 		// Harvest check
-		boolean canHarvest = state.canHarvestBlock(world, pos, player);
+		boolean canHarvest = stack.isCorrectToolForDrops(state);
 
 		// Swap back the main hand
 		player.getInventory().items.set(player.getInventory().selected, oldHeldStack);

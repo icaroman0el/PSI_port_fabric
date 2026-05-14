@@ -51,12 +51,12 @@ public class CADData implements ICapabilityProvider<ItemCapability<?, Void>, Voi
 
 	public CADData(ItemStack cad) {
 		this.cad = cad;
-		this.cadHandler = (ComponentItemHandler) cad.getCapability(Capabilities.ItemHandler.ITEM);
-		Data cadData = cad.get(ModDataComponents.CAD_DATA);
+		this.cadHandler = (ComponentItemHandler) PsiAPI.getItemCapability(cad, Capabilities.ItemHandler.ITEM);
+		Data cadData = cad.get(ModDataComponents.CAD_DATA.get());
 
 		if(cadData == null) {
 			cadData = new Data(0, 0, new ArrayList<>());
-			cad.set(ModDataComponents.CAD_DATA, cadData);
+			cad.set(ModDataComponents.CAD_DATA.get(), cadData);
 		}
 
 		this.data = cadData;
@@ -159,12 +159,12 @@ public class CADData implements ICapabilityProvider<ItemCapability<?, Void>, Voi
 
 	@Override
 	public int getSelectedSlot() {
-		return cad.getOrDefault(ModDataComponents.SELECTED_SLOT, 0);
+		return cad.getOrDefault(ModDataComponents.SELECTED_SLOT.get(), 0);
 	}
 
 	@Override
 	public void setSelectedSlot(int slot) {
-		cad.set(ModDataComponents.SELECTED_SLOT, slot);
+		cad.set(ModDataComponents.SELECTED_SLOT.get(), slot);
 	}
 
 	@Override

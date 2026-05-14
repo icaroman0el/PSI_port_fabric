@@ -296,7 +296,7 @@ public class ItemCAD extends Item implements ICAD {
 
 			CompoundTag compound = patch.copyTag();
 
-			ICADData data = pStack.getCapability(PsiAPI.CAD_DATA_CAPABILITY);
+			ICADData data = PsiAPI.getItemCapability(pStack, PsiAPI.CAD_DATA_CAPABILITY);
 			if(data != null) {
 				if(compound.contains(TAG_TIME_LEGACY)) {
 					data.setTime(compound.getInt(TAG_TIME_LEGACY));
@@ -377,11 +377,11 @@ public class ItemCAD extends Item implements ICAD {
 	}
 
 	private ICADData getCADData(ItemStack stack) {
-		return Objects.requireNonNullElse(stack.getCapability(PsiAPI.CAD_DATA_CAPABILITY), new CADData(stack));
+		return Objects.requireNonNullElse(PsiAPI.getItemCapability(stack, PsiAPI.CAD_DATA_CAPABILITY), new CADData(stack));
 	}
 
 	private ISocketable getSocketable(ItemStack stack) {
-		return Objects.requireNonNullElse(stack.getCapability(PsiAPI.SOCKETABLE_CAPABILITY), new CADData(stack));
+		return Objects.requireNonNullElse(PsiAPI.getItemCapability(stack, PsiAPI.SOCKETABLE_CAPABILITY), new CADData(stack));
 	}
 
 	@Override
@@ -508,7 +508,7 @@ public class ItemCAD extends Item implements ICAD {
 
 	@Override
 	public ItemStack getComponentInSlot(ItemStack stack, EnumCADComponent type) {
-		List<Item> items = stack.getOrDefault(ModDataComponents.COMPONENTS, new ArrayList<>(Collections.nCopies(EnumCADComponent.values().length, Items.AIR)));
+		List<Item> items = stack.getOrDefault(ModDataComponents.COMPONENTS.get(), new ArrayList<>(Collections.nCopies(EnumCADComponent.values().length, Items.AIR)));
 		ItemStack component = new ItemStack(items.get(type.ordinal()));
 		if(type == EnumCADComponent.DYE && !component.isEmpty() && !this.contributorName.isEmpty()) {
 			((ICADColorizer) items.get(type.ordinal())).setContributorName(component, this.contributorName);
@@ -665,7 +665,6 @@ public class ItemCAD extends Item implements ICAD {
 		});
 	}
 
-	@Override
 	public boolean shouldCauseReequipAnimation(@NotNull ItemStack oldStack, @NotNull ItemStack newStack, boolean slotChanged) {
 		return !ItemStack.isSameItem(oldStack, newStack);
 	}

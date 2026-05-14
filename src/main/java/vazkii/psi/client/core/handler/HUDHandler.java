@@ -99,7 +99,7 @@ public final class HUDHandler {
 			return false;
 		}
 
-		IPsiBarDisplay display = stack.getCapability(PsiAPI.PSI_BAR_DISPLAY_CAPABILITY);
+		IPsiBarDisplay display = PsiAPI.getItemCapability(stack, PsiAPI.PSI_BAR_DISPLAY_CAPABILITY);
 		if(display != null)
 			return display.shouldShow(data);
 		return false;
@@ -250,7 +250,8 @@ public final class HUDHandler {
 	@OnlyIn(Dist.CLIENT)
 	private static void renderSocketableEquippedName(GuiGraphics graphics, DeltaTracker deltatracker) {
 		Minecraft mc = Minecraft.getInstance();
-		if(mc.player == null || mc.gui.toolHighlightTimer - 10 <= 0) {
+		int ticks = 10;
+		if(mc.player == null || ticks <= 0) {
 			return;
 		}
 
@@ -267,7 +268,6 @@ public final class HUDHandler {
 		ISocketable socketable = ISocketable.socketable(stack);
 		ItemStack bullet = socketable.getSelectedBullet();
 
-		int ticks = mc.gui.toolHighlightTimer - 10;
 		int alpha = Math.min(255, (int) ((ticks - deltatracker.getGameTimeDeltaPartialTick(false)) * 256.0F / 10.0F));
 		int color = ICADColorizer.DEFAULT_SPELL_COLOR + (alpha << 24);
 		int x = graphics.guiWidth() / 2 - mc.font.width(name) / 2;

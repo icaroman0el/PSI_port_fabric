@@ -26,7 +26,7 @@ public interface ISpellImmune {
 			return true;
 		}
 
-		var cap = e.getCapability(PsiAPI.SPELL_IMMUNE_CAPABILITY);
+		var cap = PsiAPI.getEntityCapability(e, PsiAPI.SPELL_IMMUNE_CAPABILITY);
 		return cap != null && cap.isImmune();
 	}
 

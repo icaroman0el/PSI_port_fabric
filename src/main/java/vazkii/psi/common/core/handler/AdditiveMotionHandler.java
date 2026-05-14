@@ -49,9 +49,7 @@ public class AdditiveMotionHandler {
 						//We want a player's motion to be handled client-side to ensure movement consistency
 						//Otherwise it feels jerky.
 						if(entity instanceof ServerPlayer) {
-							((ServerPlayer) entity).connection.aboveGroundTickCount += -2 * getMaximumFlyingTicks(entity);
 							MessageRegister.sendToPlayer((ServerPlayer) entity, motion);
-							((ServerPlayer) entity).connection.aboveGroundTickCount += -2 * getMaximumFlyingTicks(entity);
 						} else {
 							entity.push(vec.x, vec.y, vec.z);
 						}

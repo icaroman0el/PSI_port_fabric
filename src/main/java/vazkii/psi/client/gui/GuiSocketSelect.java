@@ -9,7 +9,6 @@
 package vazkii.psi.client.gui;
 
 import com.google.common.collect.ImmutableSet;
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 
@@ -27,7 +26,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import vazkii.psi.api.PsiAPI;
@@ -213,13 +211,13 @@ public class GuiSocketSelect extends Screen {
 					ysp -= 9;
 				}
 
-				graphics.drawString(this.font, name, xsp, ysp, 0xFFFFFF, true);
+				graphics.drawString(this.font, name, (int) xsp, (int) ysp, 0xFFFFFF, true);
 				if(seg == socketable.getSelectedSlot()) {
 					int color = 0x00FF00;
 					if(!cadStack.isEmpty()) {
 						color = 0xFF0000 - Psi.proxy.getColorForCAD(cadStack);
 					}
-					graphics.drawString(this.font, I18n.get("psimisc.selected"), xsp + width / 4.0f, ysp + font.lineHeight, color, true);
+					graphics.drawString(this.font, I18n.get("psimisc.selected"), (int) (xsp + width / 4), (int) (ysp + font.lineHeight), color, true);
 				}
 
 				mod = 0.8;
@@ -309,17 +307,11 @@ public class GuiSocketSelect extends Screen {
 		}
 
 		ImmutableSet<KeyMapping> set = ImmutableSet.of(mc.options.keyUp, mc.options.keyLeft, mc.options.keyDown, mc.options.keyRight, mc.options.keyShift, mc.options.keySprint, mc.options.keyJump);
-		for(KeyMapping k : set) {
-			KeyMapping.set(k.getKey(), isKeyDown(k));
-		}
+		for(KeyMapping k : set) {}
 	}
 
 	public boolean isKeyDown(KeyMapping keybind) {
-		InputConstants.Key key = keybind.getKey();
-		if(key.getType() == InputConstants.Type.MOUSE) {
-			return GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().getWindow(), key.getValue()) == 1;
-		}
-		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), key.getValue());
+		return keybind.isDown();
 	}
 
 	@Override

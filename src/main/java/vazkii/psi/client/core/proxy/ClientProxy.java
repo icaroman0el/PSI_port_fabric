@@ -15,11 +15,9 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.renderer.item.ItemPropertyFunction;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -55,7 +53,6 @@ import vazkii.psi.client.gui.GuiFlashRing;
 import vazkii.psi.client.gui.GuiProgrammer;
 import vazkii.psi.client.model.ArmorModels;
 import vazkii.psi.client.model.ModModelLayers;
-import vazkii.psi.client.model.ModelCAD;
 import vazkii.psi.client.model.ModelPsimetalExosuit;
 import vazkii.psi.client.render.entity.RenderSpellCircle;
 import vazkii.psi.client.render.entity.RenderSpellProjectile;
@@ -66,8 +63,6 @@ import vazkii.psi.common.block.base.ModBlocks;
 import vazkii.psi.common.block.tile.TileProgrammer;
 import vazkii.psi.common.core.proxy.IProxy;
 import vazkii.psi.common.entity.ModEntities;
-import vazkii.psi.common.item.base.ModItems;
-import vazkii.psi.common.lib.LibItemNames;
 import vazkii.psi.mixin.client.AccessorRenderBuffers;
 
 import java.util.Objects;
@@ -118,7 +113,7 @@ public class ClientProxy implements IProxy {
 		}, psimetalExosuitHelmet, psimetalExosuitChestplate, psimetalExosuitLeggings, psimetalExosuitBoots);
 
 		ResourceLocation activeProperty = Psi.location("active");
-		ItemPropertyFunction hasSpellPredicate = (stack, level, entity, seed) -> ISpellAcceptor.hasSpell(stack) ? 1.0F : 0.0F;
+		ClampedItemPropertyFunction hasSpellPredicate = (stack, level, entity, seed) -> ISpellAcceptor.hasSpell(stack) ? 1.0F : 0.0F;
 		ItemProperties.register(spellBullet.get(), activeProperty, hasSpellPredicate);
 		ItemProperties.register(chargeSpellBullet.get(), activeProperty, hasSpellPredicate);
 		ItemProperties.register(projectileSpellBullet.get(), activeProperty, hasSpellPredicate);
@@ -151,18 +146,9 @@ public class ClientProxy implements IProxy {
 		});
 	}
 
-	private void modelBake(ModelEvent.ModifyBakingResult event) {
-		event.getModels().computeIfPresent(ModelResourceLocation.inventory(BuiltInRegistries.ITEM.getKey(ModItems.cad.get())), (k, oldModel) -> new ModelCAD());
-	}
+	private void modelBake(ModelEvent.ModifyBakingResult event) {}
 
-	private void addCADModels(ModelEvent.RegisterAdditional event) {
-		event.register(ModelResourceLocation.standalone(Psi.location("item/" + LibItemNames.CAD_IRON)));
-		event.register(ModelResourceLocation.standalone(Psi.location("item/" + LibItemNames.CAD_GOLD)));
-		event.register(ModelResourceLocation.standalone(Psi.location("item/" + LibItemNames.CAD_PSIMETAL)));
-		event.register(ModelResourceLocation.standalone(Psi.location("item/" + LibItemNames.CAD_EBONY_PSIMETAL)));
-		event.register(ModelResourceLocation.standalone(Psi.location("item/" + LibItemNames.CAD_IVORY_PSIMETAL)));
-		event.register(ModelResourceLocation.standalone(Psi.location("item/" + LibItemNames.CAD_CREATIVE)));
-	}
+	private void addCADModels(ModelEvent.RegisterAdditional event) {}
 
 	@Override
 	public boolean hasAdvancement(ResourceLocation advancementLocation, Player playerEntity) {

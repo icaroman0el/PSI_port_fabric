@@ -65,7 +65,7 @@ public class GuiCADAssembler extends AbstractContainerScreen<ContainerCADAssembl
 			ICAD cadItem = (ICAD) cad.getItem();
 			String stats = I18n.get("psimisc.stats");
 			String s = ChatFormatting.BOLD + stats;
-			graphics.drawString(this.font, s, 213 - font.width(s) / 2f, 32, color, true);
+			graphics.drawString(this.font, s, 213 - font.width(s) / 2, 32, color, true);
 
 			for(EnumCADStat stat : EnumCADStat.class.getEnumConstants()) {
 				s = (Psi.magical ? ChatFormatting.LIGHT_PURPLE : ChatFormatting.AQUA) + I18n.get(stat.getName()) + ChatFormatting.RESET + ": " + cadItem.getStatValue(cad, stat);

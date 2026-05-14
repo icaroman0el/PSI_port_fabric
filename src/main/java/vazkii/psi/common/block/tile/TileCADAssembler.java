@@ -188,7 +188,7 @@ public class TileCADAssembler extends BlockEntity implements ITileCADAssembler, 
 					setSocketableStack(stack);
 
 					if(!stack.isEmpty()) {
-						socketable = stack.getCapability(PsiAPI.SOCKETABLE_CAPABILITY);
+						socketable = PsiAPI.getItemCapability(stack, PsiAPI.SOCKETABLE_CAPABILITY);
 					}
 				} else if(i == 1) // CORE
 				{

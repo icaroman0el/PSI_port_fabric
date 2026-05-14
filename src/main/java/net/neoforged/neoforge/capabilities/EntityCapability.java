@@ -1,0 +1,25 @@
+package net.neoforged.neoforge.capabilities;
+
+import net.minecraft.resources.ResourceLocation;
+
+public final class EntityCapability<T, C> {
+	private final ResourceLocation id;
+	private final Class<T> type;
+
+	private EntityCapability(ResourceLocation id, Class<T> type) {
+		this.id = id;
+		this.type = type;
+	}
+
+	public static <T> EntityCapability<T, Void> createVoid(ResourceLocation id, Class<T> type) {
+		return new EntityCapability<>(id, type);
+	}
+
+	public ResourceLocation id() {
+		return id;
+	}
+
+	public Class<T> type() {
+		return type;
+	}
+}

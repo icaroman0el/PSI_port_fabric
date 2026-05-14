@@ -58,7 +58,7 @@ public class PieceTrickSpinChamber extends PieceTrick {
 
 		ItemStack stack = context.tool.isEmpty() ? PsiAPI.getPlayerCAD(context.caster) : context.tool;
 		boolean updateLoopcast = (stack.getItem() instanceof ICAD) && (context.castFrom == PlayerDataHandler.get(context.caster).loopcastHand);
-		ISocketable capability = stack.getCapability(PsiAPI.SOCKETABLE_CAPABILITY);
+		ISocketable capability = PsiAPI.getItemCapability(stack, PsiAPI.SOCKETABLE_CAPABILITY);
 
 		if(capability == null) {
 			return null;

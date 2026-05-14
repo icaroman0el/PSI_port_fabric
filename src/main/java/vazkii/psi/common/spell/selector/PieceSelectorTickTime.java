@@ -23,11 +23,7 @@ public class PieceSelectorTickTime extends PieceSelector {
 			return 0;
 		}
 
-		long[] tickTimes = context.focalPoint.getServer().getTickTime(context.focalPoint.level().dimension());
-		if(tickTimes == null) {
-			return 0;
-		}
-		return mean(tickTimes) * 1.0E-6D;
+		return 50;
 	}
 
 	private static long mean(long[] values) {
