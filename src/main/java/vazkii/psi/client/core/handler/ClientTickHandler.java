@@ -19,6 +19,7 @@ import net.neoforged.neoforge.client.event.RenderFrameEvent;
 
 import vazkii.psi.api.PsiAPI;
 import vazkii.psi.api.exosuit.PsiArmorEvent;
+import vazkii.psi.common.core.handler.PlayerDataHandler;
 import vazkii.psi.common.network.MessageRegister;
 import vazkii.psi.common.network.message.MessageTriggerJumpSpell;
 
@@ -52,6 +53,10 @@ public class ClientTickHandler {
 	@SubscribeEvent
 	public static void clientTick(ClientTickEvent.Pre event) {
 		Minecraft mc = Minecraft.getInstance();
+		handleInputTick(mc);
+	}
+
+	private static void handleInputTick(Minecraft mc) {
 		boolean pressed = mc.options.keyJump.consumeClick();
 
 		if(mc.player != null && pressed && (!lastJumpKeyState && !mc.player.onGround())) {
@@ -66,6 +71,14 @@ public class ClientTickHandler {
 	public static void clientTick(ClientTickEvent.Post event) {
 		Minecraft mc = Minecraft.getInstance();
 
+		tickClient(mc);
+	}
+
+	public static void tickClient(Minecraft mc) {
+		handleInputTick(mc);
+		if(mc.player != null) {
+			PlayerDataHandler.tickPlayer(mc.player);
+		}
 		HUDHandler.tick();
 		Screen gui = mc.screen;
 

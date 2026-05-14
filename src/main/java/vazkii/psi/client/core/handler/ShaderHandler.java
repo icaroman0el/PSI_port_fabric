@@ -10,6 +10,7 @@ package vazkii.psi.client.core.handler;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 
+import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -33,6 +34,14 @@ public final class ShaderHandler {
 				new ShaderInstance(event.getResourceProvider(), Psi.location(LibResources.SHADER_PSI_BAR).toString(), DefaultVertexFormat.POSITION_TEX_COLOR),
 				shader -> psiBarShader = shader
 		);
+	}
+
+	public static void registerFabricShaders() {
+		CoreShaderRegistrationCallback.EVENT.register(context -> context.register(
+				Psi.location(LibResources.SHADER_PSI_BAR),
+				DefaultVertexFormat.POSITION_TEX_COLOR,
+				shader -> psiBarShader = shader
+		));
 	}
 
 	public static ShaderInstance getPsiBarShader() {

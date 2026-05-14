@@ -50,8 +50,44 @@ public class MessageRegister {
 		}
 
 		registered = true;
-		PayloadTypeRegistry.playC2S().register(MessageSpellModified.TYPE, MessageSpellModified.CODEC);
-		ServerPlayNetworking.registerGlobalReceiver(MessageSpellModified.TYPE, (payload, context) -> payload.handle(new FabricPayloadContext(context.player())));
+		registerC2S(MessageChangeControllerSlot.TYPE, MessageChangeControllerSlot.CODEC);
+		registerC2S(MessageChangeSocketableSlot.TYPE, MessageChangeSocketableSlot.CODEC);
+		registerC2S(MessageFlashRingSync.TYPE, MessageFlashRingSync.CODEC);
+		registerC2S(MessageSpellModified.TYPE, MessageSpellModified.CODEC);
+		registerC2S(MessageTriggerJumpSpell.TYPE, MessageTriggerJumpSpell.CODEC);
+
+		registerS2C(MessageAdditiveMotion.TYPE, MessageAdditiveMotion.CODEC);
+		registerS2C(MessageBlink.TYPE, MessageBlink.CODEC);
+		registerS2C(MessageDataSync.TYPE, MessageDataSync.CODEC);
+		registerS2C(MessageDeductPsi.TYPE, MessageDeductPsi.CODEC);
+		registerS2C(MessageEidosSync.TYPE, MessageEidosSync.CODEC);
+		registerS2C(MessageLoopcastSync.TYPE, MessageLoopcastSync.CODEC);
+		registerS2C(MessageParticleTrail.TYPE, MessageParticleTrail.CODEC);
+		registerS2C(MessagePsiOverflow.TYPE, MessagePsiOverflow.CODEC);
+		registerS2C(MessageSpamlessChat.TYPE, MessageSpamlessChat.CODEC);
+		registerS2C(MessageSpellError.TYPE, MessageSpellError.CODEC);
+		registerS2C(MessageVisualEffect.TYPE, MessageVisualEffect.CODEC);
+	}
+
+	private static <T extends CustomPacketPayload> void registerC2S(CustomPacketPayload.Type<T> type, StreamCodec<RegistryFriendlyByteBuf, T> codec) {
+		PayloadTypeRegistry.playC2S().register(type, codec);
+		ServerPlayNetworking.registerGlobalReceiver(type, (payload, context) -> {
+			if(payload instanceof MessageChangeControllerSlot message) {
+				message.handle(new FabricPayloadContext(context.player()));
+			} else if(payload instanceof MessageChangeSocketableSlot message) {
+				message.handle(new FabricPayloadContext(context.player()));
+			} else if(payload instanceof MessageFlashRingSync message) {
+				message.handle(new FabricPayloadContext(context.player()));
+			} else if(payload instanceof MessageSpellModified message) {
+				message.handle(new FabricPayloadContext(context.player()));
+			} else if(payload instanceof MessageTriggerJumpSpell message) {
+				message.handle(new FabricPayloadContext(context.player()));
+			}
+		});
+	}
+
+	private static <T extends CustomPacketPayload> void registerS2C(CustomPacketPayload.Type<T> type, StreamCodec<RegistryFriendlyByteBuf, T> codec) {
+		PayloadTypeRegistry.playS2C().register(type, codec);
 	}
 
 	@SubscribeEvent

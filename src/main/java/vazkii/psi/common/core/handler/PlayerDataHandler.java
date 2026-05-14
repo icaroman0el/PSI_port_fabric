@@ -11,6 +11,8 @@ package vazkii.psi.common.core.handler;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -81,6 +83,7 @@ public class PlayerDataHandler {
 	private static final WeakHashMap<Player, PlayerData> playerData = new WeakHashMap<>();
 	private static final Map<UUID, CompoundTag> persistentData = new HashMap<>();
 	private static final String DATA_TAG = "PsiData";
+	private static boolean fabricCallbacksRegistered;
 
 	@NotNull
 	public static PlayerData get(Player player) {
@@ -111,36 +114,64 @@ public class PlayerDataHandler {
 		return playerPersistentData.getCompound(DATA_TAG);
 	}
 
+	public static void registerFabricCallbacks() {
+		if(fabricCallbacksRegistered) {
+			return;
+		}
+
+		fabricCallbacksRegistered = true;
+		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			tickDelayedContexts();
+			for(ServerPlayer player : server.getPlayerList().getPlayers()) {
+				tickPlayer(player);
+			}
+		});
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> syncPlayerData(handler.player));
+	}
+
+	private static void tickDelayedContexts() {
+		List<SpellContext> delayedContextsCopy = new ArrayList<>(delayedContexts);
+		for(SpellContext context : delayedContextsCopy) {
+			context.delay--;
+
+			if(context.delay <= 0) {
+				delayedContexts.remove(context);
+				context.delay = 0; // Just in case it goes under 0
+				context.cspell.safeExecute(context);
+			}
+		}
+	}
+
+	public static void tickPlayer(Player player) {
+		if(player.isSpectator()) {
+			return;
+		}
+
+		ItemStack cadStack = PsiAPI.getPlayerCAD(player);
+		if(!cadStack.isEmpty() && cadStack.getItem() instanceof ICAD && PsiAPI.canCADBeUpdated(player)) {
+			((ICAD) cadStack.getItem()).incrementTime(cadStack);
+		}
+
+		PsiArmorEvent.post(new PsiArmorEvent(player, PsiArmorEvent.TICK));
+		PlayerDataHandler.get(player).tick();
+	}
+
+	private static void syncPlayerData(ServerPlayer player) {
+		MessageDataSync message = new MessageDataSync(get(player));
+		MessageRegister.sendToPlayer(player, message);
+	}
+
 	@EventBusSubscriber(modid = PsiAPI.MOD_ID)
 	public static class EventHandler {
 
 		@SubscribeEvent
 		public static void onServerTick(ServerTickEvent.Post event) {
-			List<SpellContext> delayedContextsCopy = new ArrayList<>(delayedContexts);
-			for(SpellContext context : delayedContextsCopy) {
-				context.delay--;
-
-				if(context.delay <= 0) {
-					delayedContexts.remove(context);
-					context.delay = 0; // Just in case it goes under 0
-					context.cspell.safeExecute(context);
-				}
-			}
+			tickDelayedContexts();
 		}
 
 		@SubscribeEvent
 		public static void onPlayerTick(PlayerTickEvent.Pre event) {
-			if(!event.getEntity().isSpectator()) {
-				Player player = event.getEntity();
-
-				ItemStack cadStack = PsiAPI.getPlayerCAD(player);
-				if(!cadStack.isEmpty() && cadStack.getItem() instanceof ICAD && PsiAPI.canCADBeUpdated(player)) {
-					((ICAD) cadStack.getItem()).incrementTime(cadStack);
-				}
-
-				PsiArmorEvent.post(new PsiArmorEvent(player, PsiArmorEvent.TICK));
-				PlayerDataHandler.get(player).tick();
-			}
+			tickPlayer(event.getEntity());
 		}
 
 		@SubscribeEvent
@@ -186,8 +217,7 @@ public class PlayerDataHandler {
 		@SubscribeEvent
 		public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
 			if(event.getEntity() instanceof ServerPlayer) {
-				MessageDataSync message = new MessageDataSync(get(event.getEntity()));
-				MessageRegister.sendToPlayer((ServerPlayer) event.getEntity(), message);
+				syncPlayerData((ServerPlayer) event.getEntity());
 			}
 		}
 

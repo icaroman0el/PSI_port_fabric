@@ -86,6 +86,14 @@ public final class HUDHandler {
 		event.registerAboveAll(PsiAPI.location("hud_item"), HUD_ITEM);
 	}
 
+	@OnlyIn(Dist.CLIENT)
+	public static void renderFabricHud(GuiGraphics graphics, DeltaTracker deltatracker) {
+		PSI_BAR.render(graphics, deltatracker);
+		SOCKETABLE_EQUIPPED_NAME.render(graphics, deltatracker);
+		REMAINING_ITEMS.render(graphics, deltatracker);
+		HUD_ITEM.render(graphics, deltatracker);
+	}
+
 	public static void tick() {
 		if(remainingTime < 0) {
 			return;
@@ -376,6 +384,10 @@ public final class HUDHandler {
 	@OnlyIn(Dist.CLIENT)
 	public static void usePsiBarShader(final float percentile, final boolean shatter, final boolean overflowed) {
 		var psiBarShader = ShaderHandler.getPsiBarShader();
+		if(psiBarShader == null) {
+			RenderSystem.setShaderTexture(0, psiBar);
+			return;
+		}
 		RenderSystem.setShader(ShaderHandler::getPsiBarShader);
 		RenderSystem.setShaderTexture(0, psiBar);
 		RenderSystem.setShaderTexture(1, shatter ? psiBarShatter : psiBarMask);

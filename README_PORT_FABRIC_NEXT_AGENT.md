@@ -25,10 +25,72 @@ $env:Path="$env:JAVA_HOME\bin;$env:Path"
 Useful commands:
 
 ```powershell
-.\gradlew.bat build --console=plain
+.\gradlew.bat build -x pmdMain --console=plain
 .\gradlew.bat runClient --console=plain
 .\gradlew.bat spotlessApply --console=plain
 ```
+
+## 2026-05-14 Runtime Checkpoint
+
+The older sections below still describe the original handoff state. The current
+port is further along:
+
+- Creative tab is visible on Fabric.
+- CAD Assembler opens through Fabric screen handler registration.
+- Spell Programmer opens and edits are sent to the server with
+  `MessageSpellModified`.
+- CAD item models render through the Fabric renderer path and have a first-person
+  pistol-like orientation.
+- Psimetal exosuit rendering uses Fabric armor rendering.
+- Client item color providers are registered for CADs, exosuit pieces, sensors,
+  and CAD colorizers.
+- Keybind/client tick handling is registered through Fabric.
+- Server/client player data ticking is registered through Fabric, including
+  delayed spell contexts and login data sync.
+- Psi player attributes (`total_psi` and `regen`) are registered on Fabric
+  players.
+- Core S2C/C2S Psi payloads are registered with Fabric networking and basic send
+  helpers are wired.
+- The psi bar HUD is registered with Fabric HUD rendering, and its custom shader
+  is registered with `CoreShaderRegistrationCallback`.
+
+Last successful verification command:
+
+```powershell
+.\gradlew.bat build -x pmdMain --console=plain
+```
+
+Known notes from the latest runtime logs:
+
+- If casts appear to fail, first check the chat/log for the vanilla Psi rule:
+  `The other CAD in your inventory is interfering with your cast. You can only
+  have one CAD on you at a time.`
+- Several recipes are still missing, especially CAD colorizers and psimetal
+  tools.
+- The active build still emits warnings for old client mixin targets
+  (`HumanoidArmorLayerMixin`, `ParticleEngineMixin`) and the deprecated Fabric
+  renderer fallback consumer in `ModelCAD`.
+
+Next recommended steps:
+
+1. Smoke test casting after the Fabric player tick, attribute, networking, HUD,
+   and shader fixes:
+   - one CAD only in inventory,
+   - one spell bullet,
+   - basic redstone to psidust cast,
+   - repeated casts after regen,
+   - psi bar movement on the right side.
+2. Verify CAD colorizers in the CAD Assembler now that item color providers and
+   C2S/S2C packets are registered.
+3. Add missing recipes for CAD colorizers and psimetal tools, or intentionally
+   hide unavailable entries from recipe lookups.
+4. Continue porting NeoForge event subscribers that are still inert on Fabric:
+   damage/jump/interaction hooks, world render hooks, FOV updates, remaining
+   armor events, and particle hooks.
+5. Revisit the temporary capability/component strategy. The current helper-based
+   approach works for some Psi-only behavior but is not a final Fabric component
+   model.
+6. Fix or remove the stale mixins one at a time and keep runtime startup green.
 
 If Gradle/Loom locks are held by VS Code Java/Gradle daemons, stop the Java daemon processes or run:
 

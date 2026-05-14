@@ -1,9 +1,13 @@
 package vazkii.psi.client;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.HumanoidModel;
@@ -13,6 +17,10 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
+import vazkii.psi.client.core.handler.ClientTickHandler;
+import vazkii.psi.client.core.handler.HUDHandler;
+import vazkii.psi.client.core.handler.KeybindHandler;
+import vazkii.psi.client.core.handler.ShaderHandler;
 import vazkii.psi.client.core.proxy.ClientProxy;
 import vazkii.psi.client.gui.GuiCADAssembler;
 import vazkii.psi.client.model.ArmorModels;
@@ -20,10 +28,15 @@ import vazkii.psi.client.model.ModModelLayers;
 import vazkii.psi.client.model.ModelArmor;
 import vazkii.psi.client.model.ModelCAD;
 import vazkii.psi.client.model.ModelPsimetalExosuit;
+import vazkii.psi.client.network.ClientNetworkHelper;
 import vazkii.psi.client.render.spell.SpellPieceMaterial;
 import vazkii.psi.common.Psi;
 import vazkii.psi.common.block.base.ModBlocks;
+import vazkii.psi.common.item.ItemCAD;
+import vazkii.psi.common.item.ItemExosuitSensor;
+import vazkii.psi.common.item.armor.ItemPsimetalArmor;
 import vazkii.psi.common.item.base.ModItems;
+import vazkii.psi.common.item.component.ItemCADColorizer;
 import vazkii.psi.common.lib.LibResources;
 
 public class PsiClient implements ClientModInitializer {
@@ -34,6 +47,55 @@ public class PsiClient implements ClientModInitializer {
 		MenuScreens.register(ModBlocks.containerCADAssembler.get(), GuiCADAssembler::new);
 		registerArmorRendering();
 		registerCADModels();
+		registerColorProviders();
+		registerClientEvents();
+		ShaderHandler.registerFabricShaders();
+		ClientNetworkHelper.registerReceivers();
+	}
+
+	private static void registerClientEvents() {
+		KeyBindingHelper.registerKeyBinding(KeybindHandler.keybind);
+		ClientTickEvents.END_CLIENT_TICK.register(ClientTickHandler::tickClient);
+		HudRenderCallback.EVENT.register(HUDHandler::renderFabricHud);
+	}
+
+	private static void registerColorProviders() {
+		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 1 ? ((ItemPsimetalArmor) stack.getItem()).getColor(stack) : 0xFFFFFFFF,
+				ModItems.psimetalExosuitBoots.get(),
+				ModItems.psimetalExosuitChestplate.get(),
+				ModItems.psimetalExosuitHelmet.get(),
+				ModItems.psimetalExosuitLeggings.get());
+
+		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 1 ? ((ItemExosuitSensor) stack.getItem()).getColor(stack) : 0xFFFFFFFF,
+				ModItems.exosuitSensorHeat.get(),
+				ModItems.exosuitSensorLight.get(),
+				ModItems.exosuitSensorStress.get(),
+				ModItems.exosuitSensorWater.get(),
+				ModItems.exosuitSensorTrigger.get());
+
+		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 1 ? ((ItemCAD) stack.getItem()).getSpellColor(stack) : 0xFFFFFFFF,
+				ModItems.cad.get());
+
+		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex != 1 ? -1 : ((ItemCADColorizer) stack.getItem()).getColor(stack),
+				ModItems.cadColorizerWhite.get(),
+				ModItems.cadColorizerOrange.get(),
+				ModItems.cadColorizerMagenta.get(),
+				ModItems.cadColorizerLightBlue.get(),
+				ModItems.cadColorizerYellow.get(),
+				ModItems.cadColorizerLime.get(),
+				ModItems.cadColorizerPink.get(),
+				ModItems.cadColorizerGray.get(),
+				ModItems.cadColorizerLightGray.get(),
+				ModItems.cadColorizerCyan.get(),
+				ModItems.cadColorizerPurple.get(),
+				ModItems.cadColorizerBlue.get(),
+				ModItems.cadColorizerBrown.get(),
+				ModItems.cadColorizerGreen.get(),
+				ModItems.cadColorizerRed.get(),
+				ModItems.cadColorizerBlack.get(),
+				ModItems.cadColorizerRainbow.get(),
+				ModItems.cadColorizerPsi.get(),
+				ModItems.cadColorizerEmpty.get());
 	}
 
 	private static void registerCADModels() {

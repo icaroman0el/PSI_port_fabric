@@ -24,6 +24,7 @@ import vazkii.psi.common.block.base.ModBlocks;
 import vazkii.psi.common.core.PsiCreativeTab;
 import vazkii.psi.common.core.handler.ContributorSpellCircleHandler;
 import vazkii.psi.common.core.handler.InternalMethodHandler;
+import vazkii.psi.common.core.handler.PlayerDataHandler;
 import vazkii.psi.common.core.proxy.IProxy;
 import vazkii.psi.common.core.proxy.ServerProxy;
 import vazkii.psi.common.crafting.ModCraftingRecipes;
@@ -43,6 +44,7 @@ public class Psi implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ModAttributes.ATTRIBUTES.register();
+		ModAttributes.registerFabricPlayerAttributes();
 		ModDataComponents.DATA_COMPONENT_TYPES.register();
 		PsimetalArmorMaterial.ARMOR_MATERIALS.register();
 		ModCraftingRecipes.RECIPE_TYPES.register();
@@ -60,6 +62,7 @@ public class Psi implements ModInitializer {
 		ModSpellPieces.SPELL_PIECES.register();
 		ModSpellPieces.ADVANCEMENT_GROUPS.register();
 		MessageRegister.register();
+		PlayerDataHandler.registerFabricCallbacks();
 		commonSetup();
 		proxy = new ServerProxy();
 	}

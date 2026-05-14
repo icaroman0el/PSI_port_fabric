@@ -1,11 +1,13 @@
 package vazkii.psi.common.attribute.base;
 
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
@@ -39,6 +41,12 @@ public final class ModAttributes {
 					Integer.MAX_VALUE
 			).setSyncable(true)
 	);
+
+	public static void registerFabricPlayerAttributes() {
+		FabricDefaultAttributeRegistry.register(EntityType.PLAYER, Player.createAttributes()
+				.add(TOTAL_PSI, TOTAL_PSI.value().getDefaultValue())
+				.add(REGEN, REGEN.value().getDefaultValue()));
+	}
 
 	@SubscribeEvent
 	public static void addAttributesToPlayer(EntityAttributeModificationEvent event) {
