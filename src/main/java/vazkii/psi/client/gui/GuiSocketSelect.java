@@ -9,6 +9,7 @@
 package vazkii.psi.client.gui;
 
 import com.google.common.collect.ImmutableSet;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 
@@ -311,7 +312,10 @@ public class GuiSocketSelect extends Screen {
 	}
 
 	public boolean isKeyDown(KeyMapping keybind) {
-		return keybind.isDown();
+		InputConstants.Key key = InputConstants.getKey(keybind.saveString());
+		return key.getType() == InputConstants.Type.KEYSYM
+				? InputConstants.isKeyDown(mc.getWindow().getWindow(), key.getValue())
+				: keybind.isDown();
 	}
 
 	@Override

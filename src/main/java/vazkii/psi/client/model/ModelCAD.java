@@ -9,6 +9,7 @@
 package vazkii.psi.client.model;
 
 import net.fabricmc.fabric.api.client.model.loading.v1.FabricBakedModelManager;
+import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -140,7 +141,7 @@ public class ModelCAD implements BakedModel {
 	@Override
 	public void emitItemQuads(ItemStack stack, java.util.function.Supplier<RandomSource> randomSupplier, RenderContext context) {
 		BakedModel model = getModel(getModelForStack(stack));
-		context.fallbackConsumer().accept(model == null ? original : model);
+		((FabricBakedModel) (model == null ? original : model)).emitItemQuads(stack, randomSupplier, context);
 	}
 
 }

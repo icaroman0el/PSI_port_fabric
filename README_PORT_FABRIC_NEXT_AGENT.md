@@ -2,6 +2,46 @@
 
 This repository is a work-in-progress port of VazkiiMods/Psi from the 1.21.1 NeoForge branch to Fabric 1.21.1.
 
+## 2026-05-15 Current Checkpoint
+
+The older handoff notes below are still useful as historical context, but several
+items listed there are now fixed.
+
+Confirmed working in manual testing:
+
+- Psi creative tab appears.
+- CAD Assembler and Spell Programmer GUIs open and work.
+- Spell editing/import works after the resource-location import fixes.
+- Basic, projectile, grenade, charge, loopcast, circle, mine, and exosuit spell
+  paths have had smoke testing.
+- LAN join/casting smoke test passed.
+- Psi items/models/textures are broadly visible; the known broken-texture pass
+  was resolved.
+- Custom particles render again through the updated particle mixin.
+- Conjured blocks render with animated CAD-colored bridge particles.
+
+Latest project checks:
+
+```powershell
+.\gradlew.bat build -x pmdMain --console=plain
+.\gradlew.bat checkSyntax --console=plain
+```
+
+Both pass as of this checkpoint.
+
+Remaining known risks:
+
+- Many `@EventBusSubscriber` / `@SubscribeEvent` methods still exist only as
+  NeoForge compatibility stubs. Core paths that were tested have direct Fabric
+  hooks now, but less-used hooks may still need explicit Fabric ports.
+- Item attribute modifier events for broken psimetal tools/armor are still
+  NeoForge-style and should be revisited.
+- Some optional client polish is still incomplete, especially old world/FOV
+  render hooks and the Patchouli secret book sound handler.
+- The compatibility capability layer is still a pragmatic shim, not a final
+  Fabric component/lookup design.
+- Translation quality still needs a separate pass.
+
 ## Current State
 
 - Branch: `port/fabric-1.21.1`

@@ -33,6 +33,7 @@ public class ItemProjectileSpellBullet extends ItemSpellBullet {
 		projectile.setInfo(context.caster, colorizer, stack);
 		projectile.context = context;
 		projectile.getCommandSenderWorld().addFreshEntity(projectile);
+		projectile.spawnLaunchParticles();
 		ArrayList<Entity> spellEntities = new ArrayList<>();
 		spellEntities.add(projectile);
 		return spellEntities;

@@ -55,6 +55,8 @@ public class PieceTrickConjureBlock extends PieceTrick {
 				ItemStack cad = PsiAPI.getPlayerCAD(context.caster);
 				if(tile instanceof TileConjured && !cad.isEmpty()) {
 					((TileConjured) tile).colorizer = ((ICAD) cad.getItem()).getComponentInSlot(cad, EnumCADComponent.DYE);
+					tile.setChanged();
+					world.sendBlockUpdated(pos, state, state, 3);
 				}
 
 			}

@@ -13,7 +13,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ItemContainerContents;
@@ -21,10 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,18 +31,10 @@ import vazkii.psi.common.item.base.ModDataComponents;
 
 import java.util.List;
 
-@EventBusSubscriber(modid = PsiAPI.MOD_ID)
 public class ItemPsimetalShovel extends ShovelItem implements IPsimetalTool {
 
 	public ItemPsimetalShovel(Item.Properties properties) {
 		super(PsiAPI.PSIMETAL_TOOL_MATERIAL, properties.attributes(AxeItem.createAttributes(PsiAPI.PSIMETAL_TOOL_MATERIAL, 1.5F, -3.0F)).component(ModDataComponents.BULLETS.get(), ItemContainerContents.EMPTY));
-	}
-
-	@SubscribeEvent
-	public static void adjustAttributes(ItemAttributeModifierEvent event) {
-		if(event.getItemStack().getItem() instanceof ItemPsimetalShovel && !IPsimetalTool.isEnabled(event.getItemStack())) {
-			event.removeAllModifiersFor(Attributes.ATTACK_DAMAGE);
-		}
 	}
 
 	@Override

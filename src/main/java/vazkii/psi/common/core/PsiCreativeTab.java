@@ -28,11 +28,8 @@ public class PsiCreativeTab {
 	public static final ResourceKey<CreativeModeTab> PSI_CREATIVE_TAB = ResourceKey.create(Registries.CREATIVE_MODE_TAB, Psi.location("creative_tab"));
 
 	public static void register() {
-		Psi.logger.info("Registering Psi creative tab {}", PSI_CREATIVE_TAB.location());
-		CreativeModeTab tab = Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, PSI_CREATIVE_TAB, makeTab());
+		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, PSI_CREATIVE_TAB, makeTab());
 		ItemGroupEvents.modifyEntriesEvent(PSI_CREATIVE_TAB).register(PsiCreativeTab::addDisplayItems);
-
-		Psi.logger.info("Psi creative tab registered as {}", BuiltInRegistries.CREATIVE_MODE_TAB.getKey(tab));
 	}
 
 	private static CreativeModeTab makeTab() {
@@ -113,7 +110,7 @@ public class PsiCreativeTab {
 		output.accept(ModItems.exosuitSensorWater.get());
 		output.accept(ModItems.exosuitSensorTrigger.get());
 
-		output.acceptAll(ItemCAD.getCreativeTabItems());
+		output.accept(ItemCAD.getCreativeTabItems().getLast());
 
 		output.accept(ModItems.vectorRuler.get());
 		output.accept(ModItems.psimetalShovel.get());

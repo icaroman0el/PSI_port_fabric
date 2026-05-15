@@ -8,19 +8,17 @@
  */
 package vazkii.psi.common.entity;
 
-import net.minecraft.core.registries.Registries;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityType;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.registries.RegisterEvent;
 
-import vazkii.psi.api.PsiAPI;
 import vazkii.psi.common.Psi;
 import vazkii.psi.common.lib.LibEntityNames;
 
 import static net.minecraft.world.entity.MobCategory.MISC;
 
-@EventBusSubscriber(modid = PsiAPI.MOD_ID)
 public final class ModEntities {
 	public static EntityType<EntitySpellProjectile> spellProjectile;
 	public static EntityType<EntitySpellCircle> spellCircle;
@@ -28,31 +26,46 @@ public final class ModEntities {
 	public static EntityType<EntitySpellCharge> spellCharge;
 	public static EntityType<EntitySpellMine> spellMine;
 
-	@SubscribeEvent
-	public static void register(RegisterEvent evt) {
-		evt.register(Registries.ENTITY_TYPE, helper -> {
-			spellProjectile = EntityType.Builder.of((EntityType.EntityFactory<EntitySpellProjectile>) EntitySpellProjectile::new, MISC)
-					.sized(0, 0)
-					.build("");
-			spellCircle = EntityType.Builder.of(EntitySpellCircle::new, MISC)
-					.sized(3.0f, 0.3f)
-					.fireImmune()
-					.build("");
-			spellGrenade = EntityType.Builder.of((EntityType.EntityFactory<EntitySpellGrenade>) EntitySpellGrenade::new, MISC)
-					.sized(0, 0)
-					.build("");
-			spellCharge = EntityType.Builder.of((EntityType.EntityFactory<EntitySpellCharge>) EntitySpellCharge::new, MISC)
-					.sized(0, 0)
-					.build("");
-			spellMine = EntityType.Builder.of((EntityType.EntityFactory<EntitySpellMine>) EntitySpellMine::new, MISC)
-					.sized(0, 0)
-					.build("");
+	@SuppressWarnings("unchecked")
+	private static <T extends Entity> EntityType<T> build(EntityType.Builder<T> builder) {
+		return ((FabricEntityType.Builder<T>) builder).build();
+	}
 
-			helper.register(Psi.location(LibEntityNames.SPELL_PROJECTILE), spellProjectile);
-			helper.register(Psi.location(LibEntityNames.SPELL_CIRCLE), spellCircle);
-			helper.register(Psi.location(LibEntityNames.SPELL_GRENADE), spellGrenade);
-			helper.register(Psi.location(LibEntityNames.SPELL_CHARGE), spellCharge);
-			helper.register(Psi.location(LibEntityNames.SPELL_MINE), spellMine);
-		});
+	public static void register() {
+		if(spellProjectile != null) {
+			return;
+		}
+
+		spellProjectile = Registry.register(BuiltInRegistries.ENTITY_TYPE, Psi.location(LibEntityNames.SPELL_PROJECTILE),
+				build(EntityType.Builder.of((EntityType.EntityFactory<EntitySpellProjectile>) EntitySpellProjectile::new, MISC)
+						.clientTrackingRange(256)
+						.updateInterval(10)
+						.alwaysUpdateVelocity(true)
+						.sized(0.0F, 0.0F)));
+		spellCircle = Registry.register(BuiltInRegistries.ENTITY_TYPE, Psi.location(LibEntityNames.SPELL_CIRCLE),
+				build(EntityType.Builder.of(EntitySpellCircle::new, MISC)
+						.clientTrackingRange(256)
+						.updateInterval(10)
+						.alwaysUpdateVelocity(false)
+						.sized(3.0f, 0.3f)
+						.fireImmune()));
+		spellGrenade = Registry.register(BuiltInRegistries.ENTITY_TYPE, Psi.location(LibEntityNames.SPELL_GRENADE),
+				build(EntityType.Builder.of((EntityType.EntityFactory<EntitySpellGrenade>) EntitySpellGrenade::new, MISC)
+						.clientTrackingRange(256)
+						.updateInterval(10)
+						.alwaysUpdateVelocity(true)
+						.sized(0.0F, 0.0F)));
+		spellCharge = Registry.register(BuiltInRegistries.ENTITY_TYPE, Psi.location(LibEntityNames.SPELL_CHARGE),
+				build(EntityType.Builder.of((EntityType.EntityFactory<EntitySpellCharge>) EntitySpellCharge::new, MISC)
+						.clientTrackingRange(256)
+						.updateInterval(10)
+						.alwaysUpdateVelocity(true)
+						.sized(0.0F, 0.0F)));
+		spellMine = Registry.register(BuiltInRegistries.ENTITY_TYPE, Psi.location(LibEntityNames.SPELL_MINE),
+				build(EntityType.Builder.of((EntityType.EntityFactory<EntitySpellMine>) EntitySpellMine::new, MISC)
+						.clientTrackingRange(256)
+						.updateInterval(10)
+						.alwaysUpdateVelocity(true)
+						.sized(0.0F, 0.0F)));
 	}
 }

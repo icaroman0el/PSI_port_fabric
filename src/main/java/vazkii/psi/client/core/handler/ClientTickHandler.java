@@ -12,19 +12,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RenderFrameEvent;
 
-import vazkii.psi.api.PsiAPI;
 import vazkii.psi.api.exosuit.PsiArmorEvent;
 import vazkii.psi.common.core.handler.PlayerDataHandler;
 import vazkii.psi.common.network.MessageRegister;
 import vazkii.psi.common.network.message.MessageTriggerJumpSpell;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(value = Dist.CLIENT, modid = PsiAPI.MOD_ID)
 public class ClientTickHandler {
 
 	public static int ticksInGame = 0;
@@ -39,23 +33,6 @@ public class ClientTickHandler {
 		total = (float) ticksInGame + partialTicks;
 	}
 
-	@SubscribeEvent
-	public static void renderTick(RenderFrameEvent.Pre event) {
-		partialTicks = event.getPartialTick().getGameTimeDeltaPartialTick(false);
-
-	}
-
-	@SubscribeEvent
-	public static void renderTick(RenderFrameEvent.Post event) {
-		calcDelta();
-	}
-
-	@SubscribeEvent
-	public static void clientTick(ClientTickEvent.Pre event) {
-		Minecraft mc = Minecraft.getInstance();
-		handleInputTick(mc);
-	}
-
 	private static void handleInputTick(Minecraft mc) {
 		boolean pressed = mc.options.keyJump.consumeClick();
 
@@ -65,13 +42,6 @@ public class ClientTickHandler {
 		}
 
 		lastJumpKeyState = pressed;
-	}
-
-	@SubscribeEvent
-	public static void clientTick(ClientTickEvent.Post event) {
-		Minecraft mc = Minecraft.getInstance();
-
-		tickClient(mc);
 	}
 
 	public static void tickClient(Minecraft mc) {

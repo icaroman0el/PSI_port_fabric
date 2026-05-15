@@ -22,12 +22,16 @@ import vazkii.psi.client.fx.ModParticles;
 import vazkii.psi.common.attribute.base.ModAttributes;
 import vazkii.psi.common.block.base.ModBlocks;
 import vazkii.psi.common.core.PsiCreativeTab;
+import vazkii.psi.common.core.handler.AdditiveMotionHandler;
 import vazkii.psi.common.core.handler.ContributorSpellCircleHandler;
 import vazkii.psi.common.core.handler.InternalMethodHandler;
+import vazkii.psi.common.core.handler.LoopcastTrackingHandler;
 import vazkii.psi.common.core.handler.PlayerDataHandler;
+import vazkii.psi.common.core.handler.PsiSoundHandler;
 import vazkii.psi.common.core.proxy.IProxy;
 import vazkii.psi.common.core.proxy.ServerProxy;
 import vazkii.psi.common.crafting.ModCraftingRecipes;
+import vazkii.psi.common.entity.ModEntities;
 import vazkii.psi.common.item.base.ModDataComponents;
 import vazkii.psi.common.item.base.ModItems;
 import vazkii.psi.common.item.component.DefaultStats;
@@ -51,9 +55,11 @@ public class Psi implements ModInitializer {
 		ModCraftingRecipes.RECIPE_SERIALIZERS.register();
 		ModCraftingRecipes.CONDITION_CODECS.register();
 		ModParticles.PARTICLE_TYPES.register();
+		PsiSoundHandler.registerFabricSounds();
 		ModBlocks.BLOCKS.register();
 		ModBlocks.BLOCK_TYPES.register();
 		ModBlocks.MENU.register();
+		ModEntities.register();
 		ModItems.ITEMS.register();
 		if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
 			vazkii.psi.client.render.spell.SpellPieceMaterial.SPELL_PIECE_MATERIAL.register();
@@ -63,6 +69,8 @@ public class Psi implements ModInitializer {
 		ModSpellPieces.ADVANCEMENT_GROUPS.register();
 		MessageRegister.register();
 		PlayerDataHandler.registerFabricCallbacks();
+		AdditiveMotionHandler.registerFabricCallbacks();
+		LoopcastTrackingHandler.registerFabricCallbacks();
 		commonSetup();
 		proxy = new ServerProxy();
 	}

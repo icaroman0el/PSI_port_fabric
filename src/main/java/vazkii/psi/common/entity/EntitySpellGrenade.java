@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EntitySpellGrenade extends EntitySpellProjectile {
+	private static final float GRENADE_LAUNCH_VELOCITY = 0.75F;
 	boolean sound = false;
 
 	public EntitySpellGrenade(EntityType<? extends ThrowableProjectile> type, Level worldIn) {
@@ -36,7 +37,7 @@ public class EntitySpellGrenade extends EntitySpellProjectile {
 	}
 
 	protected EntitySpellGrenade(EntityType<? extends ThrowableProjectile> type, Level worldIn, LivingEntity throwerIn) {
-		super(type, worldIn, throwerIn);
+		super(type, worldIn, throwerIn, GRENADE_LAUNCH_VELOCITY);
 
 		double speed = 0.65;
 		setDeltaMovement(getDeltaMovement().multiply(speed, speed, speed));

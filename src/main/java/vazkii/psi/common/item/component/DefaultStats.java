@@ -9,17 +9,13 @@
 package vazkii.psi.common.item.component;
 
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 
-import vazkii.psi.api.PsiAPI;
 import vazkii.psi.api.cad.CADStatEvent;
 import vazkii.psi.api.cad.EnumCADComponent;
 import vazkii.psi.api.cad.EnumCADStat;
 import vazkii.psi.api.cad.ICAD;
 import vazkii.psi.common.item.base.ModItems;
 
-@EventBusSubscriber(modid = PsiAPI.MOD_ID)
 public class DefaultStats {
 
 	public static void registerStats() {
@@ -115,7 +111,6 @@ public class DefaultStats {
 		ItemCADComponent.addStatToStack(ModItems.cadBatteryUltradense.get(), EnumCADStat.OVERFLOW, 400);
 	}
 
-	@SubscribeEvent
 	public static void modifyCreativeAssemblyStats(CADStatEvent event) {
 		ItemStack cad = event.getCad();
 		ICAD cadItem = (ICAD) cad.getItem();

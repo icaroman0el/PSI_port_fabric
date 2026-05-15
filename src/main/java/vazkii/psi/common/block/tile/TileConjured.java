@@ -29,9 +29,16 @@ import java.util.Arrays;
 public class TileConjured extends BlockEntity {
 	private static final String TAG_COLORIZER = "colorizer";
 	public ItemStack colorizer = ItemStack.EMPTY;
+	private int particleTicks;
 
 	public TileConjured(BlockPos pos, BlockState state) {
 		super(ModBlocks.conjuredType.get(), pos, state);
+	}
+
+	public void tickParticles() {
+		if(++particleTicks % 4 == 0) {
+			doParticles();
+		}
 	}
 
 	public void doParticles() {

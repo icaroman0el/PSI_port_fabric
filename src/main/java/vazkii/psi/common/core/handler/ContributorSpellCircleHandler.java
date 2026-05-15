@@ -8,11 +8,6 @@
  */
 package vazkii.psi.common.core.handler;
 
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-
-import vazkii.psi.api.PsiAPI;
 import vazkii.psi.api.cad.ICADColorizer;
 import vazkii.psi.common.Psi;
 
@@ -25,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Stream;
 
-@EventBusSubscriber(modid = PsiAPI.MOD_ID)
 public final class ContributorSpellCircleHandler {
 
 	private static volatile Map<String, int[]> colormap = Collections.emptyMap();
@@ -58,13 +52,6 @@ public final class ContributorSpellCircleHandler {
 
 	public static boolean isContributor(String name) {
 		return colormap.containsKey(name);
-	}
-
-	@SubscribeEvent
-	public static void craftColorizer(PlayerEvent.ItemCraftedEvent event) {
-		if(ContributorSpellCircleHandler.isContributor(event.getEntity().getName().getString().toLowerCase(Locale.ROOT)) && event.getCrafting().getItem() instanceof ICADColorizer) {
-			((ICADColorizer) event.getCrafting().getItem()).setContributorName(event.getCrafting(), event.getEntity().getName().getString());
-		}
 	}
 
 	private static class ThreadContributorListLoader extends Thread {

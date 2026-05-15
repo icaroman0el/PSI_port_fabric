@@ -11,7 +11,11 @@ package vazkii.psi.common.core.handler;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.client.Minecraft;
@@ -38,24 +42,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent.LivingJumpEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import vazkii.psi.api.PsiAPI;
 import vazkii.psi.api.cad.*;
-import vazkii.psi.api.exosuit.IPsiEventArmor;
 import vazkii.psi.api.exosuit.PsiArmorEvent;
 import vazkii.psi.api.internal.IPlayerData;
 import vazkii.psi.api.internal.PsiRenderHelper;
@@ -71,7 +64,6 @@ import vazkii.psi.common.network.MessageRegister;
 import vazkii.psi.common.network.message.MessageDataSync;
 import vazkii.psi.common.network.message.MessageDeductPsi;
 import vazkii.psi.common.network.message.MessagePsiOverflow;
-import vazkii.psi.common.network.message.MessageTriggerJumpSpell;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -127,6 +119,19 @@ public class PlayerDataHandler {
 			}
 		});
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> syncPlayerData(handler.player));
+		ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamageTaken, damageTaken, blocked) -> {
+			if(entity instanceof Player player) {
+				handleEntityDamage(player, source, damageTaken);
+			}
+		});
+		UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+			if(world.isClientSide) {
+				return InteractionResult.PASS;
+			}
+
+			return handleArmorStandInteract(player, hand, entity);
+		});
+		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> clearDimensionData(player));
 	}
 
 	private static void tickDelayedContexts() {
@@ -161,123 +166,53 @@ public class PlayerDataHandler {
 		MessageRegister.sendToPlayer(player, message);
 	}
 
-	@EventBusSubscriber(modid = PsiAPI.MOD_ID)
-	public static class EventHandler {
+	private static void handleEntityDamage(Player player, DamageSource source, float damage) {
+		PlayerDataHandler.get(player).damage(damage);
 
-		@SubscribeEvent
-		public static void onServerTick(ServerTickEvent.Post event) {
-			tickDelayedContexts();
+		LivingEntity attacker = null;
+		if(source.getEntity() instanceof LivingEntity living) {
+			attacker = living;
 		}
 
-		@SubscribeEvent
-		public static void onPlayerTick(PlayerTickEvent.Pre event) {
-			tickPlayer(event.getEntity());
+		PsiArmorEvent.post(new PsiArmorEvent(player, PsiArmorEvent.DAMAGE, damage, attacker));
+		if(source.is(DamageTypes.ON_FIRE) || source.is(DamageTypes.IN_FIRE)) {
+			PsiArmorEvent.post(new PsiArmorEvent(player, PsiArmorEvent.ON_FIRE));
+		}
+	}
+
+	private static InteractionResult handleArmorStandInteract(Player player, InteractionHand hand, Entity target) {
+		if(!player.isSecondaryUseActive()) {
+			return InteractionResult.PASS;
 		}
 
-		@SubscribeEvent
-		public static void onEntityDamage(LivingDamageEvent.Pre event) {
-			if(event.getEntity() instanceof Player player) {
-				PlayerDataHandler.get(player).damage(event.getNewDamage());
-
-				LivingEntity attacker = null;
-				if(event.getSource().getEntity() != null && event.getSource().getEntity() instanceof LivingEntity) {
-					attacker = (LivingEntity) event.getSource().getEntity();
-				}
-
-				PsiArmorEvent.post(new PsiArmorEvent(player, PsiArmorEvent.DAMAGE, event.getNewDamage(), attacker));
-				if(event.getSource().is(DamageTypes.ON_FIRE) || event.getSource().is(DamageTypes.IN_FIRE)) {
-					PsiArmorEvent.post(new PsiArmorEvent(player, PsiArmorEvent.ON_FIRE));
-				}
-			}
+		if(!(target instanceof ArmorStand)) {
+			return InteractionResult.PASS;
 		}
 
-		@SubscribeEvent
-		public static void onPlayerInteractArmorStand(PlayerInteractEvent.EntityInteractSpecific event) {
-			Player player = event.getEntity();
+		ItemStack itemStackIn = player.getItemInHand(hand);
+		ItemStack playerCad = PsiAPI.getPlayerCAD(player);
 
-			if(!player.isSecondaryUseActive()) {
-				return;
-			}
-
-			if(!(event.getTarget() instanceof ArmorStand)) {
-				return;
-			}
-
-			ItemStack itemStackIn = player.getItemInHand(event.getHand());
-			ItemStack playerCad = PsiAPI.getPlayerCAD(player);
-
-			if(playerCad != itemStackIn) {
-				return;
-			}
-
-			event.setCanceled(true);
-			event.setCancellationResult(InteractionResult.PASS);
+		if(playerCad != itemStackIn) {
+			return InteractionResult.PASS;
 		}
 
-		@SubscribeEvent
-		public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-			if(event.getEntity() instanceof ServerPlayer) {
-				syncPlayerData((ServerPlayer) event.getEntity());
+		return InteractionResult.FAIL;
+	}
+
+	private static void clearDimensionData(Player player) {
+		get(player).eidosChangelog.clear();
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void renderFabricWorld(WorldRenderContext context) {
+		Minecraft mc = Minecraft.getInstance();
+		Entity cameraEntity = mc.getCameraEntity();
+		if(cameraEntity != null && mc.level != null) {
+			float partialTicks = context.tickCounter().getGameTimeDeltaPartialTick(false);
+			for(Player player : mc.level.players()) {
+				PlayerDataHandler.get(player).render(player, partialTicks, context.matrixStack());
 			}
 		}
-
-		@SubscribeEvent
-		public static void onEntityJump(LivingJumpEvent event) {
-			if(event.getEntity() instanceof Player player && event.getEntity().level().isClientSide && !event.getEntity().isSpectator()) {
-				PsiArmorEvent.post(new PsiArmorEvent(player, PsiArmorEvent.JUMP));
-				MessageRegister.sendToServer(new MessageTriggerJumpSpell());
-			}
-		}
-
-		@SubscribeEvent
-		public static void onPsiArmorEvent(PsiArmorEvent event) {
-			if(event.getEntity().isSpectator()) {
-				return;
-			}
-
-			for(int i = 0; i < 4; i++) {
-				ItemStack armor = event.getEntity().getInventory().armor.get(i);
-				if(!armor.isEmpty() && armor.getItem() instanceof IPsiEventArmor handler) {
-					handler.onEvent(armor, event);
-				}
-			}
-		}
-
-		@SubscribeEvent
-		public static void onChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-			get(event.getEntity()).eidosChangelog.clear();
-		}
-
-		@SubscribeEvent
-		@OnlyIn(Dist.CLIENT)
-		public static void onRenderWorldLast(RenderLevelStageEvent event) {
-			if(event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
-				Minecraft mc = Minecraft.getInstance();
-				Entity cameraEntity = mc.getCameraEntity();
-				if(cameraEntity != null && mc.level != null) {
-					float partialTicks = event.getPartialTick().getGameTimeDeltaPartialTick(false);
-					for(Player player : mc.level.players()) {
-						PlayerDataHandler.get(player).render(player, partialTicks, event.getPoseStack());
-					}
-				}
-			}
-		}
-
-		@SubscribeEvent
-		@OnlyIn(Dist.CLIENT)
-		public static void onFOVUpdate(ComputeFovModifierEvent event) {
-			PlayerData data = get(Minecraft.getInstance().player);
-			if(data.isAnchored) {
-				float fov = event.getNewFovModifier();
-				if(data.eidosAnchorTime > 0) {
-					fov *= Math.min(5, data.eidosAnchorTime - ClientTickHandler.partialTicks) / 5;
-				} else {
-					fov *= (10 - Math.min(10, data.postAnchorRecallTime + ClientTickHandler.partialTicks)) / 10;
-				}
-				event.setNewFovModifier(fov);
-			}
-		}
-
 	}
 
 	public static class PlayerData implements IPlayerData {
@@ -889,8 +824,8 @@ public class PlayerDataHandler {
 			overflowed = cmp.getBoolean(TAG_OVERFLOWED);
 
 			double x = cmp.getDouble(TAG_EIDOS_ANCHOR_X);
-			double y = cmp.getDouble(TAG_EIDOS_ANCHOR_X);
-			double z = cmp.getDouble(TAG_EIDOS_ANCHOR_X);
+			double y = cmp.getDouble(TAG_EIDOS_ANCHOR_Y);
+			double z = cmp.getDouble(TAG_EIDOS_ANCHOR_Z);
 			eidosAnchor.set(x, y, z);
 			eidosAnchorPitch = cmp.getDouble(TAG_EIDOS_ANCHOR_PITCH);
 			eidosAnchorYaw = cmp.getDouble(TAG_EIDOS_ANCHOR_YAW);

@@ -20,15 +20,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import org.jetbrains.annotations.NotNull;
 
-import vazkii.psi.api.PsiAPI;
 import vazkii.psi.common.network.message.*;
 
 public class MessageRegister {
@@ -41,7 +37,6 @@ public class MessageRegister {
 			pBuffer.writeVec3(pVec3);
 		}
 	};
-	private static final String VERSION = "3";
 	private static boolean registered;
 
 	public static void register() {
@@ -88,30 +83,6 @@ public class MessageRegister {
 
 	private static <T extends CustomPacketPayload> void registerS2C(CustomPacketPayload.Type<T> type, StreamCodec<RegistryFriendlyByteBuf, T> codec) {
 		PayloadTypeRegistry.playS2C().register(type, codec);
-	}
-
-	@SubscribeEvent
-	public static void onRegisterPayloadHandler(RegisterPayloadHandlersEvent event) {
-		final PayloadRegistrar registrar = event.registrar(PsiAPI.MOD_ID)
-				.versioned(VERSION)
-				.optional();
-		registrar.playBidirectional(MessageAdditiveMotion.TYPE, MessageAdditiveMotion.CODEC, MessageAdditiveMotion::handle);
-		registrar.playBidirectional(MessageBlink.TYPE, MessageBlink.CODEC, MessageBlink::handle);
-		registrar.playBidirectional(MessageChangeControllerSlot.TYPE, MessageChangeControllerSlot.CODEC, MessageChangeControllerSlot::handle);
-		registrar.playBidirectional(MessageChangeSocketableSlot.TYPE, MessageChangeSocketableSlot.CODEC, MessageChangeSocketableSlot::handle);
-		registrar.playBidirectional(MessageDataSync.TYPE, MessageDataSync.CODEC, MessageDataSync::handle);
-		registrar.playBidirectional(MessageDeductPsi.TYPE, MessageDeductPsi.CODEC, MessageDeductPsi::handle);
-		registrar.playBidirectional(MessageEidosSync.TYPE, MessageEidosSync.CODEC, MessageEidosSync::handle);
-		registrar.playBidirectional(MessageLoopcastSync.TYPE, MessageLoopcastSync.CODEC, MessageLoopcastSync::handle);
-		registrar.playBidirectional(MessageParticleTrail.TYPE, MessageParticleTrail.CODEC, MessageParticleTrail::handle);
-		registrar.playBidirectional(MessageSpamlessChat.TYPE, MessageSpamlessChat.CODEC, MessageSpamlessChat::handle);
-		registrar.playBidirectional(MessageSpellError.TYPE, MessageSpellError.CODEC, MessageSpellError::handle);
-		registrar.playBidirectional(MessageSpellModified.TYPE, MessageSpellModified.CODEC, MessageSpellModified::handle);
-		registrar.playBidirectional(MessageFlashRingSync.TYPE, MessageFlashRingSync.CODEC, MessageFlashRingSync::handle);
-		registrar.playBidirectional(MessageTriggerJumpSpell.TYPE, MessageTriggerJumpSpell.CODEC, MessageTriggerJumpSpell::handle);
-		registrar.playBidirectional(MessageVisualEffect.TYPE, MessageVisualEffect.CODEC, MessageVisualEffect::handle);
-		registrar.playBidirectional(MessagePsiOverflow.TYPE, MessagePsiOverflow.CODEC, MessagePsiOverflow::handle);
-
 	}
 
 	public static <MSG extends CustomPacketPayload> void sendToServer(MSG message) {

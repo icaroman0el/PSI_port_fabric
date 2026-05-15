@@ -10,6 +10,7 @@ package vazkii.psi.api.exosuit;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
@@ -52,8 +53,25 @@ public class PsiArmorEvent extends PlayerEvent {
 	public static void post(PsiArmorEvent event) {
 		if(!posting) {
 			posting = true;
-			NeoForge.EVENT_BUS.post(event);
-			posting = false;
+			try {
+				NeoForge.EVENT_BUS.post(event);
+				dispatchArmorEvent(event);
+			} finally {
+				posting = false;
+			}
+		}
+	}
+
+	private static void dispatchArmorEvent(PsiArmorEvent event) {
+		if(event.getEntity().isSpectator()) {
+			return;
+		}
+
+		for(int i = 0; i < 4; i++) {
+			ItemStack armor = event.getEntity().getInventory().armor.get(i);
+			if(!armor.isEmpty() && armor.getItem() instanceof IPsiEventArmor handler) {
+				handler.onEvent(armor, event);
+			}
 		}
 	}
 

@@ -11,7 +11,7 @@ package vazkii.psi.common.item;
 import net.minecraft.world.item.ItemStack;
 
 import vazkii.psi.api.exosuit.PsiArmorEvent;
-import vazkii.psi.client.core.handler.ColorHandler;
+import vazkii.psi.common.core.helper.PsiColorHelper;
 
 public class ItemTriggerExosuitSensor extends ItemExosuitSensor {
 
@@ -21,7 +21,7 @@ public class ItemTriggerExosuitSensor extends ItemExosuitSensor {
 
 	@Override
 	public int getColor(ItemStack stack) {
-		return ColorHandler.pulseColor(0xBC650F, 0.1f, 96);
+		return PsiColorHelper.pulseColor(0xBC650F, 0.1F, 96);
 	}
 
 	@Override

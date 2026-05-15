@@ -20,6 +20,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -33,6 +35,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import vazkii.psi.common.Psi;
 import vazkii.psi.common.block.tile.TileConjured;
@@ -63,6 +66,20 @@ public class BlockConjured extends Block implements EntityBlock, SimpleWaterlogg
 		if(inWorld instanceof TileConjured) {
 			((TileConjured) inWorld).doParticles();
 		}
+	}
+
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> blockEntityType) {
+		if(!level.isClientSide || blockEntityType != vazkii.psi.common.block.base.ModBlocks.conjuredType.get()) {
+			return null;
+		}
+
+		return (tickerLevel, pos, tickerState, blockEntity) -> {
+			if(blockEntity instanceof TileConjured conjured) {
+				conjured.tickParticles();
+			}
+		};
 	}
 
 	public Integer getBeaconColorMultiplier(@NotNull BlockState state, LevelReader world, @NotNull BlockPos pos, @NotNull BlockPos beaconPos) {

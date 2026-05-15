@@ -12,29 +12,13 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 
 import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
 import net.minecraft.client.renderer.ShaderInstance;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 
-import vazkii.psi.api.PsiAPI;
 import vazkii.psi.common.Psi;
 import vazkii.psi.common.lib.LibResources;
 
-import java.io.IOException;
-
-@EventBusSubscriber(modid = PsiAPI.MOD_ID, value = Dist.CLIENT)
 public final class ShaderHandler {
 
 	private static ShaderInstance psiBarShader;
-
-	@SubscribeEvent
-	static void registerShaders(RegisterShadersEvent event) throws IOException {
-		event.registerShader(
-				new ShaderInstance(event.getResourceProvider(), Psi.location(LibResources.SHADER_PSI_BAR).toString(), DefaultVertexFormat.POSITION_TEX_COLOR),
-				shader -> psiBarShader = shader
-		);
-	}
 
 	public static void registerFabricShaders() {
 		CoreShaderRegistrationCallback.EVENT.register(context -> context.register(

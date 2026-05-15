@@ -49,9 +49,9 @@ public record MessageParticleTrail(Vec3 position, Vec3 direction, double length,
 
 			int color = Psi.proxy.getColorForCAD(cad);
 
-			float red = PsiRenderHelper.r(color);
-			float green = PsiRenderHelper.g(color);
-			float blue = PsiRenderHelper.b(color);
+			float red = PsiRenderHelper.r(color) / 255F;
+			float green = PsiRenderHelper.g(color) / 255F;
+			float blue = PsiRenderHelper.b(color) / 255F;
 
 			Vec3 ray = direction.normalize().scale(1f / STEPS_PER_UNIT);
 			int steps = (int) (length * STEPS_PER_UNIT);

@@ -8,38 +8,32 @@
  */
 package vazkii.psi.common.core.handler;
 
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-import vazkii.psi.api.PsiAPI;
 import vazkii.psi.common.network.MessageRegister;
 import vazkii.psi.common.network.message.MessageLoopcastSync;
 
-@EventBusSubscriber(modid = PsiAPI.MOD_ID)
 public class LoopcastTrackingHandler {
-	@SubscribeEvent
-	public static void onPlayerStartTracking(PlayerEvent.StartTracking event) {
-		if(event.getTarget() instanceof Player) {
-			syncDataFor((Player) event.getTarget(), (ServerPlayer) event.getEntity());
+	private static boolean fabricCallbacksRegistered;
+
+	public static void registerFabricCallbacks() {
+		if(fabricCallbacksRegistered) {
+			return;
 		}
-	}
 
-	@SubscribeEvent
-	public static void onPlayerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-		syncDataFor(event.getEntity(), (ServerPlayer) event.getEntity());
-	}
-
-	@SubscribeEvent
-	public static void onPlayerLogIn(PlayerEvent.PlayerLoggedInEvent event) {
-		syncDataFor(event.getEntity(), (ServerPlayer) event.getEntity());
-	}
-
-	@SubscribeEvent
-	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-		syncDataFor(event.getEntity(), (ServerPlayer) event.getEntity());
+		fabricCallbacksRegistered = true;
+		ServerPlayerEvents.JOIN.register(player -> syncDataFor(player, player));
+		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> syncDataFor(newPlayer, newPlayer));
+		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> syncDataFor(player, player));
+		EntityTrackingEvents.START_TRACKING.register((tracked, player) -> {
+			if(tracked instanceof Player trackedPlayer) {
+				syncDataFor(trackedPlayer, player);
+			}
+		});
 	}
 
 	public static void syncDataFor(Player player, ServerPlayer receiver) {

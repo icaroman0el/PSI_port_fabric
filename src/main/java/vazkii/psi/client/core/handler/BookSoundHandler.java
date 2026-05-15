@@ -8,25 +8,20 @@
  */
 package vazkii.psi.client.core.handler;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.InputEvent;
 
 import org.lwjgl.glfw.GLFW;
 
 import vazkii.patchouli.api.PatchouliAPI;
-import vazkii.psi.api.PsiAPI;
 import vazkii.psi.common.core.handler.PsiSoundHandler;
 import vazkii.psi.common.lib.LibResources;
 
 import java.util.Objects;
 
 // https://github.com/Vazkii/Botania/blob/faeaf7285b0c9ef0918ad1cb2cbff88ed3ea1d65/src/main/java/vazkii/botania/client/core/handler/KonamiHandler.java
-@EventBusSubscriber(modid = PsiAPI.MOD_ID, value = Dist.CLIENT)
 public class BookSoundHandler {
 	private static final int[] SECRET_CODE = {
 			GLFW.GLFW_KEY_Q, GLFW.GLFW_KEY_U,
@@ -36,36 +31,53 @@ public class BookSoundHandler {
 	};
 	private static int nextLetter = 0;
 	private static int bookTime = 0;
+	private static boolean waitingForRelease = false;
 
 	private static boolean isBookOpen() {
 		return Objects.equals(PatchouliAPI.get().getOpenBookGui(), LibResources.PATCHOULI_BOOK);
 	}
 
-	@SubscribeEvent
-	public static void clientTick(ClientTickEvent.Pre evt) {
+	public static void tickFabric(Minecraft mc) {
 		if(bookTime > 0) {
 			bookTime--;
 		}
 
 		if(!isBookOpen()) {
 			nextLetter = 0;
+			waitingForRelease = false;
+			return;
+		}
+
+		long window = mc.getWindow().getWindow();
+		if(waitingForRelease) {
+			waitingForRelease = pressedSecretKey(window) != -1;
+			return;
+		}
+
+		int key = pressedSecretKey(window);
+		if(key == -1) {
+			return;
+		}
+
+		waitingForRelease = true;
+		if(bookTime == 0 && key == SECRET_CODE[nextLetter]) {
+			nextLetter++;
+			if(nextLetter >= SECRET_CODE.length) {
+				mc.getSoundManager().play(SimpleSoundInstance.forUI(PsiSoundHandler.book, 1.0F));
+				nextLetter = 0;
+				bookTime = 320;
+			}
+		} else {
+			nextLetter = 0;
 		}
 	}
 
-	@SubscribeEvent
-	public static void handleInput(InputEvent.Key evt) {
-		Minecraft mc = Minecraft.getInstance();
-		if(evt.getModifiers() == 0 && evt.getAction() == GLFW.GLFW_PRESS && isBookOpen()) {
-			if(bookTime == 0 && evt.getKey() == SECRET_CODE[nextLetter]) {
-				nextLetter++;
-				if(nextLetter >= SECRET_CODE.length) {
-					mc.getSoundManager().play(SimpleSoundInstance.forUI(PsiSoundHandler.book, 1.0F));
-					nextLetter = 0;
-					bookTime = 320;
-				}
-			} else {
-				nextLetter = 0;
+	private static int pressedSecretKey(long window) {
+		for(int key : SECRET_CODE) {
+			if(InputConstants.isKeyDown(window, key)) {
+				return key;
 			}
 		}
+		return -1;
 	}
 }

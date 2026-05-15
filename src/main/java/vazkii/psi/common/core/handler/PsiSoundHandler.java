@@ -8,16 +8,12 @@
  */
 package vazkii.psi.common.core.handler;
 
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.registries.RegisterEvent;
 
-import vazkii.psi.api.PsiAPI;
 import vazkii.psi.common.Psi;
 
-@EventBusSubscriber(modid = PsiAPI.MOD_ID)
 public final class PsiSoundHandler {
 
 	public static final SoundEvent bulletCreate = SoundEvent.createVariableRangeEvent(Psi.location("bullet_create"));
@@ -30,18 +26,15 @@ public final class PsiSoundHandler {
 	public static final SoundEvent bookFlip = SoundEvent.createVariableRangeEvent(Psi.location("book_flip"));
 	public static final SoundEvent bookOpen = SoundEvent.createVariableRangeEvent(Psi.location("book_open"));
 
-	@SubscribeEvent
-	public static void registerSounds(RegisterEvent evt) {
-		evt.register(Registries.SOUND_EVENT, helper -> {
-			helper.register(bulletCreate.getLocation(), bulletCreate);
-			helper.register(cadCreate.getLocation(), cadCreate);
-			helper.register(cadShoot.getLocation(), cadShoot);
-			helper.register(compileError.getLocation(), compileError);
-			helper.register(levelUp.getLocation(), levelUp);
-			helper.register(loopcast.getLocation(), loopcast);
-			helper.register(book.getLocation(), book);
-			helper.register(bookFlip.getLocation(), bookFlip);
-			helper.register(bookOpen.getLocation(), bookOpen);
-		});
+	public static void registerFabricSounds() {
+		Registry.register(BuiltInRegistries.SOUND_EVENT, bulletCreate.getLocation(), bulletCreate);
+		Registry.register(BuiltInRegistries.SOUND_EVENT, cadCreate.getLocation(), cadCreate);
+		Registry.register(BuiltInRegistries.SOUND_EVENT, cadShoot.getLocation(), cadShoot);
+		Registry.register(BuiltInRegistries.SOUND_EVENT, compileError.getLocation(), compileError);
+		Registry.register(BuiltInRegistries.SOUND_EVENT, levelUp.getLocation(), levelUp);
+		Registry.register(BuiltInRegistries.SOUND_EVENT, loopcast.getLocation(), loopcast);
+		Registry.register(BuiltInRegistries.SOUND_EVENT, book.getLocation(), book);
+		Registry.register(BuiltInRegistries.SOUND_EVENT, bookFlip.getLocation(), bookFlip);
+		Registry.register(BuiltInRegistries.SOUND_EVENT, bookOpen.getLocation(), bookOpen);
 	}
 }

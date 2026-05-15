@@ -8,147 +8,27 @@
  */
 package vazkii.psi.client.core.proxy;
 
-import com.mojang.blaze3d.vertex.ByteBufferBuilder;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.ModelEvent;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
-import net.neoforged.neoforge.registries.NewRegistryEvent;
 
-import org.jetbrains.annotations.NotNull;
-
-import vazkii.psi.api.ClientPsiAPI;
-import vazkii.psi.api.PsiAPI;
 import vazkii.psi.api.cad.ICAD;
 import vazkii.psi.api.cad.ICADColorizer;
-import vazkii.psi.api.spell.ISpellAcceptor;
-import vazkii.psi.api.spell.SpellPiece;
 import vazkii.psi.client.fx.*;
-import vazkii.psi.client.gui.GuiCADAssembler;
 import vazkii.psi.client.gui.GuiFlashRing;
 import vazkii.psi.client.gui.GuiProgrammer;
-import vazkii.psi.client.model.ArmorModels;
-import vazkii.psi.client.model.ModModelLayers;
-import vazkii.psi.client.model.ModelPsimetalExosuit;
-import vazkii.psi.client.render.entity.RenderSpellCircle;
-import vazkii.psi.client.render.entity.RenderSpellProjectile;
-import vazkii.psi.client.render.spell.SpellPieceMaterial;
-import vazkii.psi.client.render.tile.RenderTileProgrammer;
-import vazkii.psi.common.Psi;
-import vazkii.psi.common.block.base.ModBlocks;
 import vazkii.psi.common.block.tile.TileProgrammer;
 import vazkii.psi.common.core.proxy.IProxy;
-import vazkii.psi.common.entity.ModEntities;
-import vazkii.psi.mixin.client.AccessorRenderBuffers;
-
-import java.util.Objects;
-import java.util.SequencedMap;
-
-import static vazkii.psi.common.block.base.ModBlocks.containerCADAssembler;
-import static vazkii.psi.common.item.base.ModItems.*;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(value = Dist.CLIENT, modid = PsiAPI.MOD_ID)
 public class ClientProxy implements IProxy {
-
-	@SubscribeEvent
-	public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers evt) {
-		evt.registerBlockEntityRenderer(ModBlocks.programmerType.get(), RenderTileProgrammer::new);
-		evt.registerEntityRenderer(ModEntities.spellCircle, RenderSpellCircle::new);
-		evt.registerEntityRenderer(ModEntities.spellCharge, RenderSpellProjectile::new);
-		evt.registerEntityRenderer(ModEntities.spellGrenade, RenderSpellProjectile::new);
-		evt.registerEntityRenderer(ModEntities.spellProjectile, RenderSpellProjectile::new);
-		evt.registerEntityRenderer(ModEntities.spellMine, RenderSpellProjectile::new);
-	}
-
-	@SubscribeEvent
-	public static void registerEntityLayers(EntityRenderersEvent.RegisterLayerDefinitions evt) {
-		evt.registerLayerDefinition(ModModelLayers.PSIMETAL_EXOSUIT_INNER_ARMOR, () -> LayerDefinition.create(ModelPsimetalExosuit.createInsideMesh(), 64, 128));
-		evt.registerLayerDefinition(ModModelLayers.PSIMETAL_EXOSUIT_OUTER_ARMOR, () -> LayerDefinition.create(ModelPsimetalExosuit.createOutsideMesh(), 64, 128));
-	}
-
-	@SubscribeEvent
-	public static void registerParticles(RegisterParticleProvidersEvent evt) {
-		evt.registerSpriteSet(ModParticles.WISP.get(), FXWisp.Factory::new);
-		evt.registerSpriteSet(ModParticles.SPARKLE.get(), FXSparkle.Factory::new);
-	}
-
-	@SubscribeEvent
-	public static void registerMenuScreens(RegisterMenuScreensEvent evt) {
-		evt.register(containerCADAssembler.get(), GuiCADAssembler::new);
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	@SubscribeEvent
-	public static void initializeClient(RegisterClientExtensionsEvent event) {
-		event.registerItem(new IClientItemExtensions() {
-			@Override
-			public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity livingEntity, @NotNull ItemStack itemStack, @NotNull EquipmentSlot equipmentSlot, @NotNull HumanoidModel<?> original) {
-				return Objects.requireNonNull(ArmorModels.get(itemStack));
-			}
-		}, psimetalExosuitHelmet, psimetalExosuitChestplate, psimetalExosuitLeggings, psimetalExosuitBoots);
-
-		ResourceLocation activeProperty = Psi.location("active");
-		ClampedItemPropertyFunction hasSpellPredicate = (stack, level, entity, seed) -> ISpellAcceptor.hasSpell(stack) ? 1.0F : 0.0F;
-		ItemProperties.register(spellBullet.get(), activeProperty, hasSpellPredicate);
-		ItemProperties.register(chargeSpellBullet.get(), activeProperty, hasSpellPredicate);
-		ItemProperties.register(projectileSpellBullet.get(), activeProperty, hasSpellPredicate);
-		ItemProperties.register(loopSpellBullet.get(), activeProperty, hasSpellPredicate);
-		ItemProperties.register(circleSpellBullet.get(), activeProperty, hasSpellPredicate);
-		ItemProperties.register(mineSpellBullet.get(), activeProperty, hasSpellPredicate);
-		ItemProperties.register(flashRing.get(), activeProperty, hasSpellPredicate);
-	}
-
-	@Override
-	public void registerHandlers(IEventBus bus) {
-		bus.addListener(this::modelBake);
-		bus.addListener(this::addCADModels);
-		bus.addListener(this::loadComplete);
-		bus.addListener(this::registerRegistries);
-
-		SpellPieceMaterial.SPELL_PIECE_MATERIAL.register(bus);
-	}
-
-	private void registerRegistries(NewRegistryEvent event) {
-		event.register(ClientPsiAPI.SPELL_PIECE_MATERIAL_REGISTRY);
-	}
-
-	private void loadComplete(FMLLoadCompleteEvent event) {
-		event.enqueueWork(() -> {
-			SequencedMap<RenderType, ByteBufferBuilder> map = ((AccessorRenderBuffers) Minecraft.getInstance().renderBuffers().bufferSource()).getFixedBuffers();
-			RenderType layer = SpellPiece.getLayer();
-			map.put(layer, new ByteBufferBuilder(layer.bufferSize()));
-			map.put(GuiProgrammer.LAYER, new ByteBufferBuilder(GuiProgrammer.LAYER.bufferSize()));
-		});
-	}
-
-	private void modelBake(ModelEvent.ModifyBakingResult event) {}
-
-	private void addCADModels(ModelEvent.RegisterAdditional event) {}
 
 	@Override
 	public boolean hasAdvancement(ResourceLocation advancementLocation, Player playerEntity) {

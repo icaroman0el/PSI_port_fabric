@@ -66,6 +66,7 @@ import vazkii.psi.common.core.handler.capability.CADData;
 import vazkii.psi.common.crafting.ModCraftingRecipes;
 import vazkii.psi.common.item.base.ModDataComponents;
 import vazkii.psi.common.item.base.ModItems;
+import vazkii.psi.common.item.component.DefaultStats;
 import vazkii.psi.common.lib.LibPieceGroups;
 import vazkii.psi.common.network.MessageRegister;
 import vazkii.psi.common.network.message.MessageVisualEffect;
@@ -526,6 +527,7 @@ public class ItemCAD extends Item implements ICAD {
 
 		CADStatEvent event = new CADStatEvent(stat, stack, componentStack, statValue);
 		NeoForge.EVENT_BUS.post(event);
+		DefaultStats.modifyCreativeAssemblyStats(event);
 		return event.getStatValue();
 	}
 

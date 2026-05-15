@@ -36,15 +36,16 @@ public class MultiCraftingProcessor implements IComponentProcessor {
 
 	@Override
 	public void setup(Level level, IVariableProvider variables) {
+		this.recipes = new ArrayList<>();
 		if(Minecraft.getInstance().level == null) {
 			return;
 		}
 
 		List<RecipeHolder<CraftingRecipe>> recipeMap = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
 		List<String> names = variables.get("recipes", level.registryAccess()).asStream(level.registryAccess()).map(IVariable::asString).toList();
-		this.recipes = new ArrayList<>();
 		for(String name : names) {
-			Optional<RecipeHolder<CraftingRecipe>> recipe = recipeMap.stream().filter(x -> x.id() == ResourceLocation.parse(name)).findFirst();
+			ResourceLocation recipeId = ResourceLocation.parse(name);
+			Optional<RecipeHolder<CraftingRecipe>> recipe = recipeMap.stream().filter(x -> x.id().equals(recipeId)).findFirst();
 			if(recipe.isPresent()) {
 				recipes.add(recipe.get().value());
 				if(shapeless) {

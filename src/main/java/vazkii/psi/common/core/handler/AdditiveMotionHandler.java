@@ -8,25 +8,31 @@
  */
 package vazkii.psi.common.core.handler;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
-import vazkii.psi.api.PsiAPI;
 import vazkii.psi.common.network.MessageRegister;
 import vazkii.psi.common.network.message.MessageAdditiveMotion;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-@EventBusSubscriber(modid = PsiAPI.MOD_ID)
 public class AdditiveMotionHandler {
 	private static final Map<Entity, Vec3> toUpdate = new WeakHashMap<>();
+	private static boolean fabricCallbacksRegistered;
+
+	public static void registerFabricCallbacks() {
+		if(fabricCallbacksRegistered) {
+			return;
+		}
+
+		fabricCallbacksRegistered = true;
+		ServerTickEvents.END_SERVER_TICK.register(server -> flushMotionUpdates());
+	}
 
 	public static void addMotion(Entity entity, double x, double y, double z) {
 		if(x == 0 && y == 0 && z == 0) {
@@ -38,46 +44,31 @@ public class AdditiveMotionHandler {
 		}
 	}
 
-	@SubscribeEvent
-	public static void onPlayerTick(LevelTickEvent.Post e) {
-		if(!e.getLevel().isClientSide()) {
-			for(Entity entity : toUpdate.keySet()) {
-				if(!entity.hurtMarked) { // Allow velocity change packets to take priority.
-					Vec3 vec = toUpdate.get(entity);
-					if(vec != null) { // Edge case where the entity expired in the ms between calls
-						MessageAdditiveMotion motion = new MessageAdditiveMotion(entity.getId(), vec.x, vec.y, vec.z);
-						//We want a player's motion to be handled client-side to ensure movement consistency
-						//Otherwise it feels jerky.
-						if(entity instanceof ServerPlayer) {
-							MessageRegister.sendToPlayer((ServerPlayer) entity, motion);
-						} else {
-							entity.push(vec.x, vec.y, vec.z);
-						}
-						if(entity.level() instanceof ServerLevel) {
-							MessageRegister.sendToPlayersTrackingEntity(entity, motion);
-						}
+	private static void flushMotionUpdates() {
+		if(toUpdate.isEmpty()) {
+			return;
+		}
 
-					}
-				}
+		for(Map.Entry<Entity, Vec3> entry : new ArrayList<>(toUpdate.entrySet())) {
+			Entity entity = entry.getKey();
+			Vec3 vec = entry.getValue();
+			if(entity == null || vec == null || entity.level().isClientSide || entity.hurtMarked) {
+				continue;
 			}
 
-			toUpdate.clear();
+			MessageAdditiveMotion motion = new MessageAdditiveMotion(entity.getId(), vec.x, vec.y, vec.z);
+			// We want a player's motion to be handled client-side to ensure movement consistency.
+			if(entity instanceof ServerPlayer player) {
+				MessageRegister.sendToPlayer(player, motion);
+			} else {
+				entity.push(vec.x, vec.y, vec.z);
+			}
+			if(entity.level() instanceof ServerLevel) {
+				MessageRegister.sendToPlayersTrackingEntity(entity, motion);
+			}
 		}
-	}
 
-	/**
-	 * [VanillaCopy] of {@see net.minecraft.server.network.ServerGamePacketListenerImpl#getMaximumFlyingTicks}
-	 * but without the extra processing and endpoint bumping
-	 */
-
-	private static int getMaximumFlyingTicks(Entity entity) {
-		double d0 = entity.getGravity();
-		if(d0 < 1.0E-5F) {
-			return Integer.MAX_VALUE;
-		} else {
-			double d1 = 0.08 / d0;
-			return Mth.ceil(80.0 * Math.max(d1, 1.0));
-		}
+		toUpdate.clear();
 	}
 
 }

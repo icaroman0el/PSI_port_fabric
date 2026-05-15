@@ -46,6 +46,7 @@ sourceSets.main.java {
     exclude 'vazkii/psi/data/PsiItemModelGenerator.java'
     exclude 'vazkii/psi/data/PsiItemTagProvider.java'
     exclude 'vazkii/psi/data/PsiRecipeGenerator.java'
+    exclude 'vazkii/psi/mixin/client/HumanoidArmorLayerMixin.java'
 }
 
 spotless {

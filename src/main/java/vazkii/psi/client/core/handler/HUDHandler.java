@@ -21,9 +21,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
 import org.lwjgl.opengl.GL11;
@@ -45,7 +42,6 @@ import vazkii.psi.common.lib.LibResources;
 
 import java.util.regex.Pattern;
 
-@EventBusSubscriber(modid = PsiAPI.MOD_ID, value = Dist.CLIENT)
 public final class HUDHandler {
 
 	public static final LayeredDraw.Layer SOCKETABLE_EQUIPPED_NAME = (graphics, deltatracker) -> {
@@ -76,15 +72,6 @@ public final class HUDHandler {
 			renderRemainingItems(graphics, deltatracker);
 		}
 	};
-
-	@SubscribeEvent
-	@OnlyIn(Dist.CLIENT)
-	public static void register(RegisterGuiLayersEvent event) {
-		event.registerAboveAll(PsiAPI.location("psi_bar"), PSI_BAR);
-		event.registerAboveAll(PsiAPI.location("socketable_equipped_name"), SOCKETABLE_EQUIPPED_NAME);
-		event.registerAboveAll(PsiAPI.location("remaining_items"), REMAINING_ITEMS);
-		event.registerAboveAll(PsiAPI.location("hud_item"), HUD_ITEM);
-	}
 
 	@OnlyIn(Dist.CLIENT)
 	public static void renderFabricHud(GuiGraphics graphics, DeltaTracker deltatracker) {

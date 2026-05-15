@@ -1,43 +1,70 @@
 package vazkii.psi.client;
 
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
+import vazkii.psi.api.spell.ISpellAcceptor;
+import vazkii.psi.api.spell.SpellPiece;
+import vazkii.psi.client.core.handler.BookSoundHandler;
 import vazkii.psi.client.core.handler.ClientTickHandler;
 import vazkii.psi.client.core.handler.HUDHandler;
 import vazkii.psi.client.core.handler.KeybindHandler;
 import vazkii.psi.client.core.handler.ShaderHandler;
 import vazkii.psi.client.core.proxy.ClientProxy;
+import vazkii.psi.client.fx.FXSparkle;
+import vazkii.psi.client.fx.FXWisp;
+import vazkii.psi.client.fx.ModParticles;
 import vazkii.psi.client.gui.GuiCADAssembler;
+import vazkii.psi.client.gui.GuiProgrammer;
 import vazkii.psi.client.model.ArmorModels;
 import vazkii.psi.client.model.ModModelLayers;
 import vazkii.psi.client.model.ModelArmor;
 import vazkii.psi.client.model.ModelCAD;
 import vazkii.psi.client.model.ModelPsimetalExosuit;
 import vazkii.psi.client.network.ClientNetworkHelper;
+import vazkii.psi.client.render.entity.RenderSpellCircle;
+import vazkii.psi.client.render.entity.RenderSpellProjectile;
 import vazkii.psi.client.render.spell.SpellPieceMaterial;
+import vazkii.psi.client.render.tile.RenderTileConjured;
+import vazkii.psi.client.render.tile.RenderTileProgrammer;
 import vazkii.psi.common.Psi;
 import vazkii.psi.common.block.base.ModBlocks;
+import vazkii.psi.common.core.handler.PlayerDataHandler;
+import vazkii.psi.common.entity.ModEntities;
 import vazkii.psi.common.item.ItemCAD;
 import vazkii.psi.common.item.ItemExosuitSensor;
 import vazkii.psi.common.item.armor.ItemPsimetalArmor;
 import vazkii.psi.common.item.base.ModItems;
 import vazkii.psi.common.item.component.ItemCADColorizer;
 import vazkii.psi.common.lib.LibResources;
+import vazkii.psi.mixin.client.AccessorRenderBuffers;
+
+import java.util.SequencedMap;
 
 public class PsiClient implements ClientModInitializer {
 	@Override
@@ -45,8 +72,11 @@ public class PsiClient implements ClientModInitializer {
 		Psi.proxy = new ClientProxy();
 		SpellPieceMaterial.SPELL_PIECE_MATERIAL.register();
 		MenuScreens.register(ModBlocks.containerCADAssembler.get(), GuiCADAssembler::new);
+		registerEntityRendering();
+		registerParticleProviders();
 		registerArmorRendering();
 		registerCADModels();
+		registerItemProperties();
 		registerColorProviders();
 		registerClientEvents();
 		ShaderHandler.registerFabricShaders();
@@ -55,8 +85,33 @@ public class PsiClient implements ClientModInitializer {
 
 	private static void registerClientEvents() {
 		KeyBindingHelper.registerKeyBinding(KeybindHandler.keybind);
-		ClientTickEvents.END_CLIENT_TICK.register(ClientTickHandler::tickClient);
+		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			ClientTickHandler.tickClient(client);
+			BookSoundHandler.tickFabric(client);
+		});
 		HudRenderCallback.EVENT.register(HUDHandler::renderFabricHud);
+		WorldRenderEvents.AFTER_ENTITIES.register(PlayerDataHandler::renderFabricWorld);
+		ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
+			SequencedMap<RenderType, ByteBufferBuilder> map = ((AccessorRenderBuffers) client.renderBuffers().bufferSource()).getFixedBuffers();
+			RenderType layer = SpellPiece.getLayer();
+			map.put(layer, new ByteBufferBuilder(layer.bufferSize()));
+			map.put(GuiProgrammer.LAYER, new ByteBufferBuilder(GuiProgrammer.LAYER.bufferSize()));
+		});
+	}
+
+	private static void registerEntityRendering() {
+		BlockEntityRendererRegistry.register(ModBlocks.conjuredType.get(), RenderTileConjured::new);
+		BlockEntityRendererRegistry.register(ModBlocks.programmerType.get(), RenderTileProgrammer::new);
+		EntityRendererRegistry.register(ModEntities.spellCircle, RenderSpellCircle::new);
+		EntityRendererRegistry.register(ModEntities.spellCharge, RenderSpellProjectile::new);
+		EntityRendererRegistry.register(ModEntities.spellGrenade, RenderSpellProjectile::new);
+		EntityRendererRegistry.register(ModEntities.spellProjectile, RenderSpellProjectile::new);
+		EntityRendererRegistry.register(ModEntities.spellMine, RenderSpellProjectile::new);
+	}
+
+	private static void registerParticleProviders() {
+		ParticleFactoryRegistry.getInstance().register(ModParticles.WISP.get(), FXWisp.Factory::new);
+		ParticleFactoryRegistry.getInstance().register(ModParticles.SPARKLE.get(), FXSparkle.Factory::new);
 	}
 
 	private static void registerColorProviders() {
@@ -114,6 +169,19 @@ public class PsiClient implements ClientModInitializer {
 				return model;
 			});
 		});
+	}
+
+	private static void registerItemProperties() {
+		ResourceLocation activeProperty = Psi.location("active");
+		ClampedItemPropertyFunction hasSpellPredicate = (stack, level, entity, seed) -> ISpellAcceptor.hasSpell(stack) ? 1.0F : 0.0F;
+		ItemProperties.register(ModItems.spellBullet.get(), activeProperty, hasSpellPredicate);
+		ItemProperties.register(ModItems.chargeSpellBullet.get(), activeProperty, hasSpellPredicate);
+		ItemProperties.register(ModItems.projectileSpellBullet.get(), activeProperty, hasSpellPredicate);
+		ItemProperties.register(ModItems.loopSpellBullet.get(), activeProperty, hasSpellPredicate);
+		ItemProperties.register(ModItems.circleSpellBullet.get(), activeProperty, hasSpellPredicate);
+		ItemProperties.register(ModItems.grenadeSpellBullet.get(), activeProperty, hasSpellPredicate);
+		ItemProperties.register(ModItems.mineSpellBullet.get(), activeProperty, hasSpellPredicate);
+		ItemProperties.register(ModItems.flashRing.get(), activeProperty, hasSpellPredicate);
 	}
 
 	private static void registerArmorRendering() {
