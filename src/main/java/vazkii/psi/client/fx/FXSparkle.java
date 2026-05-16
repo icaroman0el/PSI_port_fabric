@@ -88,7 +88,7 @@ public class FXSparkle extends TextureSheetParticle {
 	@NotNull
 	@Override
 	public ParticleRenderType getRenderType() {
-		return PsiParticleRenderTypes.PARTICLE_SHEET_ADDITIVE;
+		return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
 	}
 
 	public static class Factory implements ParticleProvider<SparkleParticleData> {

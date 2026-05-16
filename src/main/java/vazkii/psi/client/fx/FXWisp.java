@@ -69,7 +69,7 @@ public class FXWisp extends TextureSheetParticle {
 	@NotNull
 	@Override
 	public ParticleRenderType getRenderType() {
-		return PsiParticleRenderTypes.PARTICLE_SHEET_ADDITIVE;
+		return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
 	}
 
 	// [VanillaCopy] of super, without drag when onGround is true
