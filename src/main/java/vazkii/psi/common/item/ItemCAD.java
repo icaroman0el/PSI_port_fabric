@@ -48,13 +48,11 @@ import org.jetbrains.annotations.Nullable;
 
 import vazkii.psi.api.PsiAPI;
 import vazkii.psi.api.cad.*;
-import vazkii.psi.api.internal.PsiRenderHelper;
 import vazkii.psi.api.internal.TooltipHelper;
 import vazkii.psi.api.internal.Vector3;
 import vazkii.psi.api.recipe.ITrickRecipe;
 import vazkii.psi.api.spell.*;
 import vazkii.psi.api.spell.piece.PieceCraftingTrick;
-import vazkii.psi.common.Psi;
 import vazkii.psi.common.block.BlockProgrammer;
 import vazkii.psi.common.block.base.ModBlocks;
 import vazkii.psi.common.core.handler.ConfigHandler;
@@ -69,6 +67,7 @@ import vazkii.psi.common.item.base.ModItems;
 import vazkii.psi.common.item.component.DefaultStats;
 import vazkii.psi.common.lib.LibPieceGroups;
 import vazkii.psi.common.network.MessageRegister;
+import vazkii.psi.common.network.message.MessageCADShotEffect;
 import vazkii.psi.common.network.message.MessageVisualEffect;
 import vazkii.psi.common.spell.trick.block.PieceTrickBreakBlock;
 
@@ -139,33 +138,13 @@ public class ItemCAD extends Item implements ICAD {
 					if(cost != 0 && sound > 0) {
 						if(!world.isClientSide) {
 							world.playSound(null, player.getX(), player.getY(), player.getZ(), PsiSoundHandler.cadShoot, SoundSource.PLAYERS, sound, (float) (0.5 + Math.random() * 0.5));
-						} else {
-							int color = Psi.proxy.getColorForCAD(cad);
-							float r = PsiRenderHelper.r(color) / 255F;
-							float g = PsiRenderHelper.g(color) / 255F;
-							float b = PsiRenderHelper.b(color) / 255F;
-							for(int i = 0; i < particles; i++) {
-								double x = player.getX() + (Math.random() - 0.5) * 2.1 * player.getBbWidth();
-								double y = player.getY() + 0.35D;
-								double z = player.getZ() + (Math.random() - 0.5) * 2.1 * player.getBbWidth();
-								float grav = -0.15F - (float) Math.random() * 0.03F;
-								Psi.proxy.sparkleFX(x, y, z, r, g, b, grav, 0.25F, 15);
-							}
-
-							double x = player.getX();
-							double y = player.getY() + player.getEyeHeight() - 0.1;
-							double z = player.getZ();
-							Vector3 lookOrig = new Vector3(player.getLookAngle());
-							for(int i = 0; i < 25; i++) {
-								Vector3 look = lookOrig.copy();
-								double spread = 0.25;
-								look.x += (Math.random() - 0.5) * spread;
-								look.y += (Math.random() - 0.5) * spread;
-								look.z += (Math.random() - 0.5) * spread;
-								look.normalize().multiply(0.15);
-
-								Psi.proxy.sparkleFX(x, y, z, r, g, b, (float) look.x, (float) look.y, (float) look.z, 0.3F, 5);
-							}
+							MessageRegister.sendToPlayersTrackingEntityAndSelf(player, new MessageCADShotEffect(
+									player.position(),
+									player.getEyePosition().subtract(0, 0.1D, 0),
+									player.getLookAngle(),
+									player.getBbWidth(),
+									particles,
+									cad.copy()));
 						}
 					}
 					ArrayList<Entity> SpellEntities = new ArrayList<>();

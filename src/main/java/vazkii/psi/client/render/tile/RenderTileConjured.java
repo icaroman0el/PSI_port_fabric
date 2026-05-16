@@ -69,8 +69,6 @@ public class RenderTileConjured implements BlockEntityRenderer<TileConjured> {
 
 		if(state.getValue(BlockConjured.SOLID)) {
 			renderMovingEdges(tile, state, buffer, mat, r, g, b, time);
-		} else if(state.getValue(BlockConjured.LIGHT)) {
-			renderLightParticles(buffer, mat, r, g, b, time);
 		}
 	}
 
@@ -126,16 +124,6 @@ public class RenderTileConjured implements BlockEntityRenderer<TileConjured> {
 
 			float trail = frac(progress - 0.08F);
 			renderMovingParticle(buffer, mat, lerp(x1, x2, trail), lerp(y1, y2, trail), lerp(z1, z2, trail), PARTICLE_SIZE * 0.68F, r, g, b, 70);
-		}
-	}
-
-	private static void renderLightParticles(VertexConsumer buffer, Matrix4f mat, int r, int g, int b, float time) {
-		for(int i = 0; i < 6; i++) {
-			float angle = time * 0.12F + i * 1.047F;
-			float y = 0.5F + (float) Math.sin(time * 0.09F + i) * 0.18F;
-			float x = 0.5F + (float) Math.cos(angle) * 0.22F;
-			float z = 0.5F + (float) Math.sin(angle) * 0.22F;
-			renderMovingParticle(buffer, mat, x, y, z, PARTICLE_SIZE, r, g, b, 160);
 		}
 	}
 

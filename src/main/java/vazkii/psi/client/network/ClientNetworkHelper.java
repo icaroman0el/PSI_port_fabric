@@ -28,6 +28,7 @@ public final class ClientNetworkHelper {
 		registeredReceivers = true;
 		ClientPlayNetworking.registerGlobalReceiver(MessageAdditiveMotion.TYPE, (payload, context) -> payload.handle(new ClientPayloadContext(context.player())));
 		ClientPlayNetworking.registerGlobalReceiver(MessageBlink.TYPE, (payload, context) -> payload.handle(new ClientPayloadContext(context.player())));
+		ClientPlayNetworking.registerGlobalReceiver(MessageCADShotEffect.TYPE, (payload, context) -> payload.handle(new ClientPayloadContext(context.player())));
 		ClientPlayNetworking.registerGlobalReceiver(MessageDataSync.TYPE, (payload, context) -> payload.handle(new ClientPayloadContext(context.player())));
 		ClientPlayNetworking.registerGlobalReceiver(MessageDeductPsi.TYPE, (payload, context) -> payload.handle(new ClientPayloadContext(context.player())));
 		ClientPlayNetworking.registerGlobalReceiver(MessageEidosSync.TYPE, (payload, context) -> payload.handle(new ClientPayloadContext(context.player())));

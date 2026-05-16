@@ -7,8 +7,7 @@
     "server.ServerPlaceRecipeMixin"
   ],
   "client": [
-    "client.AccessorRenderBuffers",
-    "client.ParticleEngineMixin"
+    "client.AccessorRenderBuffers"
   ],
   "injectors": {
     "defaultRequire": 1

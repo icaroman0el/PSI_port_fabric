@@ -8,60 +8,26 @@
  */
 package vazkii.psi.client.fx;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
-import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.opengl.GL11;
 
 // https://github.com/Vazkii/Botania/blob/1.15/src/main/java/vazkii/botania/client/fx/FXSparkle.java
 @OnlyIn(Dist.CLIENT)
 public class FXSparkle extends TextureSheetParticle {
 
-	private static final ParticleRenderType NORMAL_RENDER = new PsiParticleRenderType() {
-		@Override
-		public BufferBuilder begin(@NotNull Tesselator tessellator, @NotNull TextureManager textureManager) {
-			Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
-			RenderSystem.enableDepthTest();
-			RenderSystem.depthMask(false);
-			RenderSystem.enableBlend();
-			RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-			RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
-			AbstractTexture tex = textureManager.getTexture(TextureAtlas.LOCATION_PARTICLES);
-			tex.setFilter(true, false);
-			return tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-		}
-
-		@Override
-		public void end() {
-			RenderSystem.disableBlend();
-			RenderSystem.depthMask(true);
-		}
-
-		@Override
-		public String toString() {
-			return "psi:sparkle";
-		}
-	};
+	private final SpriteSet sprite;
 
 	public FXSparkle(ClientLevel world, double x, double y, double z, float size,
 			float red, float green, float blue, int m, double mx, double my, double mz, SpriteSet sprite) {
 		super(world, x, y, z, 0.0D, 0.0D, 0.0D);
+		this.sprite = sprite;
 		rCol = red;
 		gCol = green;
 		bCol = blue;
@@ -106,6 +72,7 @@ public class FXSparkle extends TextureSheetParticle {
 		xd *= 0.9f;
 		yd *= 0.9f;
 		zd *= 0.9f;
+		setSpriteFromAge(sprite);
 
 		if(onGround) {
 			xd *= 0.7f;
@@ -113,10 +80,15 @@ public class FXSparkle extends TextureSheetParticle {
 		}
 	}
 
+	@Override
+	protected int getLightColor(float partialTicks) {
+		return 0xF000F0;
+	}
+
 	@NotNull
 	@Override
 	public ParticleRenderType getRenderType() {
-		return NORMAL_RENDER;
+		return PsiParticleRenderTypes.PARTICLE_SHEET_ADDITIVE;
 	}
 
 	public static class Factory implements ParticleProvider<SparkleParticleData> {

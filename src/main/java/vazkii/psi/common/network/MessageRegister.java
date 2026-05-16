@@ -53,6 +53,7 @@ public class MessageRegister {
 
 		registerS2C(MessageAdditiveMotion.TYPE, MessageAdditiveMotion.CODEC);
 		registerS2C(MessageBlink.TYPE, MessageBlink.CODEC);
+		registerS2C(MessageCADShotEffect.TYPE, MessageCADShotEffect.CODEC);
 		registerS2C(MessageDataSync.TYPE, MessageDataSync.CODEC);
 		registerS2C(MessageDeductPsi.TYPE, MessageDeductPsi.CODEC);
 		registerS2C(MessageEidosSync.TYPE, MessageEidosSync.CODEC);
