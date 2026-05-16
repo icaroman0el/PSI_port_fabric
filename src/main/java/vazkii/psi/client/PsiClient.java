@@ -50,7 +50,6 @@ import vazkii.psi.client.network.ClientNetworkHelper;
 import vazkii.psi.client.render.entity.RenderSpellCircle;
 import vazkii.psi.client.render.entity.RenderSpellProjectile;
 import vazkii.psi.client.render.spell.SpellPieceMaterial;
-import vazkii.psi.client.render.tile.RenderTileConjured;
 import vazkii.psi.client.render.tile.RenderTileProgrammer;
 import vazkii.psi.common.Psi;
 import vazkii.psi.common.block.base.ModBlocks;
@@ -62,8 +61,11 @@ import vazkii.psi.common.item.armor.ItemPsimetalArmor;
 import vazkii.psi.common.item.base.ModItems;
 import vazkii.psi.common.item.component.ItemCADColorizer;
 import vazkii.psi.common.lib.LibResources;
+import vazkii.psi.mixin.client.AccessorParticleEngine;
 import vazkii.psi.mixin.client.AccessorRenderBuffers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.SequencedMap;
 
 public class PsiClient implements ClientModInitializer {
@@ -73,6 +75,7 @@ public class PsiClient implements ClientModInitializer {
 		SpellPieceMaterial.SPELL_PIECE_MATERIAL.register();
 		MenuScreens.register(ModBlocks.containerCADAssembler.get(), GuiCADAssembler::new);
 		registerEntityRendering();
+		registerParticleRenderTypes();
 		registerParticleProviders();
 		registerArmorRendering();
 		registerCADModels();
@@ -100,7 +103,6 @@ public class PsiClient implements ClientModInitializer {
 	}
 
 	private static void registerEntityRendering() {
-		BlockEntityRendererRegistry.register(ModBlocks.conjuredType.get(), RenderTileConjured::new);
 		BlockEntityRendererRegistry.register(ModBlocks.programmerType.get(), RenderTileProgrammer::new);
 		EntityRendererRegistry.register(ModEntities.spellCircle, RenderSpellCircle::new);
 		EntityRendererRegistry.register(ModEntities.spellCharge, RenderSpellProjectile::new);
@@ -112,6 +114,20 @@ public class PsiClient implements ClientModInitializer {
 	private static void registerParticleProviders() {
 		ParticleFactoryRegistry.getInstance().register(ModParticles.WISP.get(), FXWisp.Factory::new);
 		ParticleFactoryRegistry.getInstance().register(ModParticles.SPARKLE.get(), FXSparkle.Factory::new);
+	}
+
+	private static void registerParticleRenderTypes() {
+		List<net.minecraft.client.particle.ParticleRenderType> current = AccessorParticleEngine.psi$getRenderOrder();
+		if(current.contains(FXWisp.NORMAL_RENDER) && current.contains(FXSparkle.NORMAL_RENDER)) {
+			return;
+		}
+
+		List<net.minecraft.client.particle.ParticleRenderType> renderOrder = new ArrayList<>(current);
+		int customIndex = renderOrder.indexOf(net.minecraft.client.particle.ParticleRenderType.CUSTOM);
+		int insertAt = customIndex >= 0 ? customIndex : renderOrder.size();
+		renderOrder.add(insertAt, FXSparkle.NORMAL_RENDER);
+		renderOrder.add(insertAt, FXWisp.NORMAL_RENDER);
+		AccessorParticleEngine.psi$setRenderOrder(List.copyOf(renderOrder));
 	}
 
 	private static void registerColorProviders() {

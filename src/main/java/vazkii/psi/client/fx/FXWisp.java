@@ -8,19 +8,57 @@
  */
 package vazkii.psi.client.fx;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL11;
 
 // https://github.com/Vazkii/Botania/blob/1.15/src/main/java/vazkii/botania/client/fx/FXWisp.java
 @OnlyIn(Dist.CLIENT)
 public class FXWisp extends TextureSheetParticle {
+
+	public static final ParticleRenderType NORMAL_RENDER = new PsiParticleRenderType() {
+		@Override
+		public BufferBuilder begin(@NotNull Tesselator tessellator, @NotNull TextureManager textureManager) {
+			Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
+			RenderSystem.depthMask(false);
+			RenderSystem.enableBlend();
+			RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+			RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
+			AbstractTexture tex = textureManager.getTexture(TextureAtlas.LOCATION_PARTICLES);
+			tex.setFilter(true, false);
+			return tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+		}
+
+		@Override
+		public void end() {
+			RenderSystem.disableBlend();
+			RenderSystem.depthMask(true);
+			Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_PARTICLES).setFilter(false, false);
+		}
+
+		@Override
+		public String toString() {
+			return "psi:wisp";
+		}
+	};
 
 	private final float moteParticleScale;
 	private final int moteHalfLife;
@@ -69,7 +107,7 @@ public class FXWisp extends TextureSheetParticle {
 	@NotNull
 	@Override
 	public ParticleRenderType getRenderType() {
-		return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+		return NORMAL_RENDER;
 	}
 
 	// [VanillaCopy] of super, without drag when onGround is true
