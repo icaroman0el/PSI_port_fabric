@@ -34,7 +34,7 @@ public record MessageParticleTrail(Vec3 position, Vec3 direction, double length,
 			MessageRegister.VEC3, MessageParticleTrail::direction,
 			ByteBufCodecs.DOUBLE, MessageParticleTrail::length,
 			ByteBufCodecs.INT, MessageParticleTrail::time,
-			ItemStack.STREAM_CODEC, MessageParticleTrail::cad,
+			ItemStack.OPTIONAL_STREAM_CODEC, MessageParticleTrail::cad,
 			MessageParticleTrail::new);
 	private static final int STEPS_PER_UNIT = 4;
 
@@ -46,6 +46,9 @@ public record MessageParticleTrail(Vec3 position, Vec3 direction, double length,
 	public void handle(IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Level world = Psi.proxy.getClientWorld();
+			if(world == null) {
+				return;
+			}
 
 			int color = Psi.proxy.getColorForCAD(cad);
 

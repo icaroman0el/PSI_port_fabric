@@ -36,7 +36,7 @@ public record MessageCADShotEffect(Vec3 playerPosition, Vec3 shotPosition, Vec3 
 			MessageRegister.VEC3, MessageCADShotEffect::look,
 			ByteBufCodecs.DOUBLE, MessageCADShotEffect::width,
 			ByteBufCodecs.INT, MessageCADShotEffect::particles,
-			ItemStack.STREAM_CODEC, MessageCADShotEffect::cad,
+			ItemStack.OPTIONAL_STREAM_CODEC, MessageCADShotEffect::cad,
 			MessageCADShotEffect::new);
 
 	@Override

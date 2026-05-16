@@ -67,7 +67,9 @@ public class ClientProxy implements IProxy {
 
 	@Override
 	public int getColorForCAD(ItemStack cadStack) {
-		ICAD icad = (ICAD) cadStack.getItem();
+		if(cadStack.isEmpty() || !(cadStack.getItem() instanceof ICAD icad)) {
+			return ICADColorizer.DEFAULT_SPELL_COLOR;
+		}
 		return icad.getSpellColor(cadStack);
 	}
 
