@@ -10,10 +10,10 @@ package vazkii.psi.common.item.base;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.*;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 import vazkii.psi.api.PsiAPI;
+import vazkii.psi.api.registry.DeferredHolder;
+import vazkii.psi.api.registry.DeferredRegister;
 import vazkii.psi.common.block.base.ModBlocks;
 import vazkii.psi.common.item.*;
 import vazkii.psi.common.item.armor.ItemPsimetalExosuitBoots;

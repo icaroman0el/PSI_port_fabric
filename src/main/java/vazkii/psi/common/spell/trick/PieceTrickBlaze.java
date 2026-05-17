@@ -12,10 +12,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.BlockSnapshot;
-import net.neoforged.neoforge.event.level.BlockEvent;
 
+import vazkii.psi.api.event.BlockEvent;
+import vazkii.psi.api.event.BlockSnapshot;
+import vazkii.psi.api.event.PsiEventBus;
 import vazkii.psi.api.internal.Vector3;
 import vazkii.psi.api.spell.*;
 import vazkii.psi.api.spell.param.ParamVector;
@@ -59,7 +59,7 @@ public class PieceTrickBlaze extends PieceTrick {
 		pos = pos.below();
 		BlockState state = context.focalPoint.getCommandSenderWorld().getBlockState(pos);
 		BlockEvent.EntityPlaceEvent placeEvent = new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(context.focalPoint.getCommandSenderWorld().dimension(), context.focalPoint.getCommandSenderWorld(), pos), context.focalPoint.getCommandSenderWorld().getBlockState(pos.relative(Direction.UP)), context.caster);
-		NeoForge.EVENT_BUS.post(placeEvent);
+		PsiEventBus.post(placeEvent);
 		if(placeEvent.isCanceled()) {
 			return null;
 		}

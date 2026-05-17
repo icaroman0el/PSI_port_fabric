@@ -10,10 +10,10 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemContainerContents;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 import vazkii.psi.api.PsiAPI;
+import vazkii.psi.api.registry.DeferredHolder;
+import vazkii.psi.api.registry.DeferredRegister;
 import vazkii.psi.api.spell.Spell;
 import vazkii.psi.common.core.handler.capability.CADData;
 

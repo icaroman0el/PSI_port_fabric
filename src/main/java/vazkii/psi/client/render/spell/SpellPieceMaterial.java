@@ -8,20 +8,20 @@
  */
 package vazkii.psi.client.render.spell;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 import vazkii.psi.api.ClientPsiAPI;
 import vazkii.psi.api.PsiAPI;
+import vazkii.psi.api.registry.DeferredHolder;
+import vazkii.psi.api.registry.DeferredRegister;
 import vazkii.psi.common.lib.LibPieceNames;
 
 @SuppressWarnings("unused")
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public final class SpellPieceMaterial {
 
 	// ========== REGISTRIES ==========

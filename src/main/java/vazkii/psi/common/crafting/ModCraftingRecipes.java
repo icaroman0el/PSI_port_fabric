@@ -15,13 +15,13 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
-import net.neoforged.neoforge.common.conditions.ICondition;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import vazkii.psi.api.PsiAPI;
 import vazkii.psi.api.recipe.ITrickRecipe;
+import vazkii.psi.api.recipe.condition.ICondition;
+import vazkii.psi.api.registry.DeferredHolder;
+import vazkii.psi.api.registry.DeferredRegister;
+import vazkii.psi.api.registry.PsiRegistries;
 import vazkii.psi.common.crafting.recipe.*;
 import vazkii.psi.data.MagicalPsiCondition;
 
@@ -56,7 +56,7 @@ public class ModCraftingRecipes {
 	public static final DeferredHolder<RecipeType<?>, PsiTrickRecipeType<DimensionTrickRecipe>> DIMENSION_TRICK_RECIPE_TYPE = RECIPE_TYPES.register("dimension_trick_crafting", PsiTrickRecipeType::new);
 	public static final DeferredHolder<RecipeSerializer<?>, DimensionTrickRecipe.Serializer> DIMENSION_TRICK_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("dimension_trick_crafting", DimensionTrickRecipe.Serializer::new);
 
-	public static final DeferredRegister<MapCodec<? extends ICondition>> CONDITION_CODECS = DeferredRegister.create(NeoForgeRegistries.Keys.CONDITION_CODECS, PsiAPI.MOD_ID);
+	public static final DeferredRegister<MapCodec<? extends ICondition>> CONDITION_CODECS = DeferredRegister.create(PsiRegistries.Keys.CONDITION_CODECS, PsiAPI.MOD_ID);
 	public static DeferredHolder<MapCodec<? extends ICondition>, MapCodec<MagicalPsiCondition>> MAGICALPSI_CONDITION = CONDITION_CODECS.register("magipsi_enabled", () -> MagicalPsiCondition.CODEC);
 
 	public static class PsiRecipeType<T extends Recipe<?>> implements RecipeType<T> {

@@ -9,13 +9,13 @@
 package vazkii.psi.common.block.tile.container.slot;
 
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.SlotItemHandler;
 
 import org.jetbrains.annotations.NotNull;
 
 import vazkii.psi.api.cad.ISocketable;
 import vazkii.psi.api.inventory.InventorySocketable;
+import vazkii.psi.api.item.IItemHandlerModifiable;
+import vazkii.psi.api.item.SlotItemHandler;
 
 public class SlotSocketable extends SlotItemHandler {
 

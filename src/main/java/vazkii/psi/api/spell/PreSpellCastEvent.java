@@ -10,11 +10,11 @@ package vazkii.psi.api.spell;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
 
 import org.jetbrains.annotations.Nullable;
 
+import vazkii.psi.api.event.PsiCancellableEvent;
+import vazkii.psi.api.event.PsiEvent;
 import vazkii.psi.api.internal.IPlayerData;
 
 /**
@@ -22,7 +22,7 @@ import vazkii.psi.api.internal.IPlayerData;
  * <p>
  * This event is {@link ICancellableEvent}.
  */
-public class PreSpellCastEvent extends Event implements ICancellableEvent {
+public class PreSpellCastEvent extends PsiEvent implements PsiCancellableEvent {
 
 	private final Player player;
 	private final IPlayerData playerData;

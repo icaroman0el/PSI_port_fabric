@@ -14,9 +14,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.level.BlockEvent;
 
+import vazkii.psi.api.event.BlockEvent;
+import vazkii.psi.api.event.PsiEventBus;
 import vazkii.psi.api.internal.Vector3;
 import vazkii.psi.api.spell.*;
 import vazkii.psi.api.spell.param.ParamVector;
@@ -82,7 +82,7 @@ public class PieceTrickMoveBlock extends PieceTrick {
 		}
 
 		BlockEvent.BreakEvent event = PieceTrickBreakBlock.createBreakEvent(state, context.caster, world, pos);
-		NeoForge.EVENT_BUS.post(event);
+		PsiEventBus.post(event);
 		if(event.isCanceled()) {
 			return null;
 		}

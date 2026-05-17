@@ -38,14 +38,6 @@ loom {
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
 sourceSets.main.java {
-    exclude 'vazkii/psi/data/DataGenerator.java'
-    exclude 'vazkii/psi/data/PsiBlockLootProvider.java'
-    exclude 'vazkii/psi/data/PsiBlockModelGenerator.java'
-    exclude 'vazkii/psi/data/PsiBlockTagProvider.java'
-    exclude 'vazkii/psi/data/PsiDamageTypeTagsProvider.java'
-    exclude 'vazkii/psi/data/PsiItemModelGenerator.java'
-    exclude 'vazkii/psi/data/PsiItemTagProvider.java'
-    exclude 'vazkii/psi/data/PsiRecipeGenerator.java'
     exclude 'vazkii/psi/mixin/client/HumanoidArmorLayerMixin.java'
 }
 

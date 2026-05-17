@@ -27,15 +27,15 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.ItemStackHandler;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import vazkii.psi.api.PsiAPI;
 import vazkii.psi.api.cad.*;
+import vazkii.psi.api.event.PsiEventBus;
+import vazkii.psi.api.item.IItemHandlerModifiable;
+import vazkii.psi.api.item.ItemStackHandler;
 import vazkii.psi.common.block.base.ModBlocks;
 import vazkii.psi.common.block.tile.container.ContainerCADAssembler;
 import vazkii.psi.common.core.handler.PsiSoundHandler;
@@ -76,7 +76,7 @@ public class TileCADAssembler extends BlockEntity implements ITileCADAssembler, 
 
 			AssembleCADEvent assembling = new AssembleCADEvent(cad, this, player);
 
-			NeoForge.EVENT_BUS.post(assembling);
+			PsiEventBus.post(assembling);
 
 			if(assembling.isCanceled()) {
 				cad = ItemStack.EMPTY;
@@ -133,7 +133,7 @@ public class TileCADAssembler extends BlockEntity implements ITileCADAssembler, 
 
 	@Override
 	public void onCraftCAD(ItemStack cad) {
-		NeoForge.EVENT_BUS.post(new PostCADCraftEvent(cad, this));
+		PsiEventBus.post(new PostCADCraftEvent(cad, this));
 		for(int i = 1; i < 6; i++) {
 			inventory.setStackInSlot(i, ItemStack.EMPTY);
 		}

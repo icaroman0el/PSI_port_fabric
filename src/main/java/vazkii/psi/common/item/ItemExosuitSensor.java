@@ -8,10 +8,10 @@
  */
 package vazkii.psi.common.item;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import vazkii.psi.api.cad.ICADColorizer;
 import vazkii.psi.api.exosuit.IExosuitSensor;
@@ -36,7 +36,7 @@ public abstract class ItemExosuitSensor extends Item implements IExosuitSensor {
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public int getColor(ItemStack stack) {
 		return defaultColor;
 	}

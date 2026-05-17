@@ -8,16 +8,16 @@
  */
 package vazkii.psi.client.gui.widget;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class CallbackTextFieldWidget extends EditBox {
 	protected final CallbackTextFieldWidget.IPressable pressable;
 
@@ -48,7 +48,7 @@ public class CallbackTextFieldWidget extends EditBox {
 		pressable.onPress(this);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public interface IPressable {
 		void onPress(AbstractWidget p_onPress_1_);
 	}

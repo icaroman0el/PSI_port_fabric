@@ -13,18 +13,19 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.fml.ModList;
-import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 
 import org.jetbrains.annotations.Nullable;
+
+import vazkii.psi.api.util.LazyStreamCodecs;
+import vazkii.psi.common.platform.FabricModLookup;
 
 import java.util.*;
 
@@ -44,7 +45,7 @@ public final class Spell {
 			ModInformation.STREAM_CODEC.apply(ByteBufCodecs.list()), Spell::getModInformationForCodec,
 			ByteBufCodecs.VAR_LONG, s -> s.uuid.getMostSignificantBits(),
 			ByteBufCodecs.VAR_LONG, s -> s.uuid.getLeastSignificantBits(),
-			NeoForgeStreamCodecs.lazy(() -> SpellGrid.STREAM_CODEC), s -> s.grid,
+			LazyStreamCodecs.lazy(() -> SpellGrid.STREAM_CODEC), s -> s.grid,
 			Spell::fromCodecData
 	);
 	private static final String TAG_VALID = "validSpell";
@@ -93,7 +94,7 @@ public final class Spell {
 		return spell;
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void draw(PoseStack pPoseStack, MultiBufferSource buffers, int light) {
 		grid.draw(pPoseStack, buffers, light);
 	}
@@ -127,12 +128,12 @@ public final class Spell {
 	private List<ModInformation> getModInformationForCodec() {
 		List<ModInformation> info = new ArrayList<>();
 		for(var namespace : this.getPieceNamespaces()) {
-			var optionalMod = ModList.get().getModContainerById(namespace);
+			var optionalMod = FabricModLookup.getMod(namespace);
 			if(optionalMod.isEmpty()) {
 				continue;
 			}
 			var mod = optionalMod.get();
-			info.add(new ModInformation(mod.getModId(), mod.getModInfo().getVersion().toString()));
+			info.add(new ModInformation(mod.id(), mod.version()));
 		}
 
 		info.sort(Comparator.comparing(i -> i.name));
@@ -146,9 +147,7 @@ public final class Spell {
 		for(String namespace : getPieceNamespaces()) {
 			CompoundTag nbt = new CompoundTag();
 			nbt.putString(TAG_MOD_NAME, namespace);
-			if(ModList.get().getModContainerById(namespace).isPresent()) {
-				nbt.putString(TAG_MOD_VERSION, ModList.get().getModContainerById(namespace).get().getModInfo().getVersion().toString());
-			}
+			FabricModLookup.getVersion(namespace).ifPresent(version -> nbt.putString(TAG_MOD_VERSION, version));
 			modList.add(nbt);
 		}
 		cmp.put(TAG_MODS_REQUIRED, modList);

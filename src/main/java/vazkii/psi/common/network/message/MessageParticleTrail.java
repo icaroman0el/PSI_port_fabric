@@ -16,13 +16,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import org.jetbrains.annotations.NotNull;
 
 import vazkii.psi.api.internal.PsiRenderHelper;
 import vazkii.psi.common.Psi;
 import vazkii.psi.common.network.MessageRegister;
+import vazkii.psi.common.network.PayloadContext;
 
 public record MessageParticleTrail(Vec3 position, Vec3 direction, double length, int time,
 		ItemStack cad) implements CustomPacketPayload {
@@ -43,7 +43,7 @@ public record MessageParticleTrail(Vec3 position, Vec3 direction, double length,
 		return TYPE;
 	}
 
-	public void handle(IPayloadContext ctx) {
+	public void handle(PayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Level world = Psi.proxy.getClientWorld();
 			if(world == null) {

@@ -22,23 +22,23 @@ public class ModTags {
 	public static final TagKey<Item> IVORY_SUBSTANCE = tag("ivory_substance");
 	public static final TagKey<Item> EBONY_SUBSTANCE = tag("ebony_substance");
 
-	public static final TagKey<Item> INGOT_PSIMETAL = forgeTag("ingots/psimetal");
-	public static final TagKey<Item> BLOCK_PSIMETAL = forgeTag("storage_blocks/psimetal");
+	public static final TagKey<Item> INGOT_PSIMETAL = commonTag("ingots/psimetal");
+	public static final TagKey<Item> BLOCK_PSIMETAL = commonTag("storage_blocks/psimetal");
 
-	public static final TagKey<Item> GEM_PSIGEM = forgeTag("gems/psigem");
-	public static final TagKey<Item> BLOCK_PSIGEM = forgeTag("storage_blocks/psigem");
+	public static final TagKey<Item> GEM_PSIGEM = commonTag("gems/psigem");
+	public static final TagKey<Item> BLOCK_PSIGEM = commonTag("storage_blocks/psigem");
 
-	public static final TagKey<Item> INGOT_EBONY_PSIMETAL = forgeTag("ingots/ebony_psimetal");
-	public static final TagKey<Item> BLOCK_EBONY_PSIMETAL = forgeTag("storage_blocks/ebony_psimetal");
+	public static final TagKey<Item> INGOT_EBONY_PSIMETAL = commonTag("ingots/ebony_psimetal");
+	public static final TagKey<Item> BLOCK_EBONY_PSIMETAL = commonTag("storage_blocks/ebony_psimetal");
 
-	public static final TagKey<Item> INGOT_IVORY_PSIMETAL = forgeTag("ingots/ivory_psimetal");
-	public static final TagKey<Item> BLOCK_IVORY_PSIMETAL = forgeTag("storage_blocks/ivory_psimetal");
+	public static final TagKey<Item> INGOT_IVORY_PSIMETAL = commonTag("ingots/ivory_psimetal");
+	public static final TagKey<Item> BLOCK_IVORY_PSIMETAL = commonTag("storage_blocks/ivory_psimetal");
 
 	private static TagKey<Item> tag(String name) {
 		return TagKey.create(Registries.ITEM, prefix(name));
 	}
 
-	private static TagKey<Item> forgeTag(String name) {
+	private static TagKey<Item> commonTag(String name) {
 		return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", name));
 	}
 

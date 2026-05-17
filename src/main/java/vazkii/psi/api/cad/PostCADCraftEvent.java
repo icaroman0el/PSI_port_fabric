@@ -9,13 +9,14 @@
 package vazkii.psi.api.cad;
 
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.Event;
+
+import vazkii.psi.api.event.PsiEvent;
 
 /**
  * Posted after a CAD is crafted in the assembler.
  * Editing the ItemStack does not and cannot guarantee the output item is changed.
  */
-public class PostCADCraftEvent extends Event {
+public class PostCADCraftEvent extends PsiEvent {
 
 	private final ItemStack cad;
 	private final ITileCADAssembler assembler;

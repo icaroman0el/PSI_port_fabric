@@ -13,10 +13,10 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.level.BlockEvent;
 
 import vazkii.psi.api.PsiAPI;
+import vazkii.psi.api.event.BlockEvent;
+import vazkii.psi.api.event.PsiEventBus;
 import vazkii.psi.api.internal.MathHelper;
 import vazkii.psi.api.internal.Vector3;
 import vazkii.psi.api.spell.*;
@@ -90,7 +90,7 @@ public class PieceTrickCollapseBlockSequence extends PieceTrick {
 					world.getBlockEntity(blockPos) == null) {
 
 				BlockEvent.BreakEvent event = PieceTrickBreakBlock.createBreakEvent(state, context.caster, world, blockPos);
-				NeoForge.EVENT_BUS.post(event);
+				PsiEventBus.post(event);
 				if(event.isCanceled()) {
 					return null;
 				}

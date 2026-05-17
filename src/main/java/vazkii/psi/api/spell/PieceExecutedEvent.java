@@ -9,16 +9,17 @@
 package vazkii.psi.api.spell;
 
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.Event;
 
 import org.jetbrains.annotations.NotNull;
+
+import vazkii.psi.api.event.PsiEvent;
 
 /**
  * Posted after a piece executed.
  * Hook in here to add your own locking mechanics like 1.12 Psi had
  * This event has no result and is not cancellable
  */
-public class PieceExecutedEvent extends Event {
+public class PieceExecutedEvent extends PsiEvent {
 
 	@NotNull
 	private final SpellPiece piece;

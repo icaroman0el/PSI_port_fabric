@@ -14,9 +14,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.level.BlockEvent;
 
+import vazkii.psi.api.event.BlockEvent;
+import vazkii.psi.api.event.PsiEventBus;
 import vazkii.psi.api.internal.Vector3;
 import vazkii.psi.api.spell.*;
 import vazkii.psi.api.spell.param.ParamVector;
@@ -66,7 +66,7 @@ public class PieceTrickSmeltBlock extends PieceTrick {
 		Block block = state.getBlock();
 		ItemStack stack = new ItemStack(block);
 		BlockEvent.BreakEvent event = PieceTrickBreakBlock.createBreakEvent(state, context.caster, context.focalPoint.level(), pos);
-		NeoForge.EVENT_BUS.post(event);
+		PsiEventBus.post(event);
 		if(event.isCanceled()) {
 			return null;
 		}

@@ -13,9 +13,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.level.BlockEvent;
 
+import vazkii.psi.api.event.BlockEvent;
+import vazkii.psi.api.event.PsiEventBus;
 import vazkii.psi.api.internal.MathHelper;
 import vazkii.psi.api.internal.Vector3;
 import vazkii.psi.api.spell.*;
@@ -113,7 +113,7 @@ public class PieceTrickMoveBlockSequence extends PieceTrick {
 
 			BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, blockPos, state, context.caster);
 
-			if(NeoForge.EVENT_BUS.post(event).isCanceled()) {
+			if(PsiEventBus.post(event).isCanceled()) {
 				immovableBlocks.add(blockPos);
 				continue;
 			}

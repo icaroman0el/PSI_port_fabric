@@ -20,10 +20,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 import vazkii.psi.api.PsiAPI;
+import vazkii.psi.api.registry.DeferredHolder;
+import vazkii.psi.api.registry.DeferredRegister;
 import vazkii.psi.common.block.BlockCADAssembler;
 import vazkii.psi.common.block.BlockConjured;
 import vazkii.psi.common.block.BlockProgrammer;

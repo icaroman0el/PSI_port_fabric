@@ -8,11 +8,11 @@
  */
 package vazkii.psi.common.item.component;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import vazkii.psi.api.cad.ICADColorizer;
 import vazkii.psi.common.item.base.ModDataComponents;
@@ -32,7 +32,7 @@ public class ItemCADColorizer extends ItemCADComponent implements ICADColorizer 
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public int getColor(ItemStack stack) {
 		return FastColor.ARGB32.opaque(color.getTextColor());
 	} //TODO check if text color is proper

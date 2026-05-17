@@ -8,12 +8,12 @@
  */
 package vazkii.psi.api.cad;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -116,7 +116,7 @@ public interface ICAD {
 	 * Gets the color of the spells projected by this CAD. Usually just goes back
 	 * to ICADColorizer.getColor().
 	 */
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	int getSpellColor(ItemStack stack);
 
 	/**

@@ -11,10 +11,11 @@ package vazkii.psi.api.exosuit;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-public class PsiArmorEvent extends PlayerEvent {
+import vazkii.psi.api.event.PsiEventBus;
+import vazkii.psi.api.event.PsiPlayerEvent;
+
+public class PsiArmorEvent extends PsiPlayerEvent {
 
 	// DO NOT FIRE AN EVENT WITH THIS
 	public static final String NONE = "psi.event.none";
@@ -54,7 +55,7 @@ public class PsiArmorEvent extends PlayerEvent {
 		if(!posting) {
 			posting = true;
 			try {
-				NeoForge.EVENT_BUS.post(event);
+				PsiEventBus.post(event);
 				dispatchArmorEvent(event);
 			} finally {
 				posting = false;

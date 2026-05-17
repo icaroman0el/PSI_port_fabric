@@ -12,9 +12,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.NeoForge;
 
 import vazkii.psi.api.PsiAPI;
+import vazkii.psi.api.event.PsiEventBus;
 
 import java.util.List;
 import java.util.Objects;
@@ -84,7 +84,7 @@ public interface IDetonationHandler {
 				.map(e -> Objects.requireNonNull(PsiAPI.getEntityCapability(e, PsiAPI.DETONATION_HANDLER_CAPABILITY)))
 				.collect(Collectors.toList());
 
-		if(!NeoForge.EVENT_BUS.post(new DetonationEvent(player, center, range, handlers)).isCanceled()) {
+		if(!PsiEventBus.post(new DetonationEvent(player, center, range, handlers)).isCanceled()) {
 			if(!handlers.isEmpty()) {
 				for(IDetonationHandler handler : handlers) {
 					handler.detonate();

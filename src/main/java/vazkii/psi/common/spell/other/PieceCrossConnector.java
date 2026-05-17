@@ -11,13 +11,13 @@ package vazkii.psi.common.spell.other;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import org.joml.Matrix4f;
 
@@ -78,7 +78,7 @@ public class PieceCrossConnector extends SpellPiece implements IGenericRedirecto
 		drawSide(pPoseStack, buffers, paramSides.get(out2), light, LINE_TWO);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	private void drawSide(PoseStack pPoseStack, MultiBufferSource buffers, SpellParam.Side side, int light, int color) {
 		if(side.isEnabled()) {
 			Material material = new Material(InventoryMenu.BLOCK_ATLAS, ResourceLocation.parse(LibResources.SPELL_CONNECTOR_LINES));

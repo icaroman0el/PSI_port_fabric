@@ -14,7 +14,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +21,7 @@ import vazkii.psi.api.internal.VanillaPacketDispatcher;
 import vazkii.psi.api.spell.Spell;
 import vazkii.psi.common.Psi;
 import vazkii.psi.common.block.tile.TileProgrammer;
+import vazkii.psi.common.network.PayloadContext;
 
 public record MessageSpellModified(BlockPos pos, Spell spell) implements CustomPacketPayload {
 
@@ -38,7 +38,7 @@ public record MessageSpellModified(BlockPos pos, Spell spell) implements CustomP
 		return TYPE;
 	}
 
-	public void handle(IPayloadContext ctx) {
+	public void handle(PayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			BlockEntity te = ctx.player().level().getBlockEntity(pos);
 			if(te instanceof TileProgrammer tile) {

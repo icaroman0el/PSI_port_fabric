@@ -11,6 +11,8 @@ package vazkii.psi.common.core.handler;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -40,15 +42,13 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.dimension.DimensionType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.NeoForge;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import vazkii.psi.api.PsiAPI;
 import vazkii.psi.api.cad.*;
+import vazkii.psi.api.event.PsiEventBus;
 import vazkii.psi.api.exosuit.PsiArmorEvent;
 import vazkii.psi.api.internal.IPlayerData;
 import vazkii.psi.api.internal.PsiRenderHelper;
@@ -203,7 +203,7 @@ public class PlayerDataHandler {
 		get(player).eidosChangelog.clear();
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public static void renderFabricWorld(WorldRenderContext context) {
 		Minecraft mc = Minecraft.getInstance();
 		Entity cameraEntity = mc.getCameraEntity();
@@ -528,7 +528,7 @@ public class PlayerDataHandler {
 		private void applyRegen(Player player, int max, ItemStack cadStack) {
 			RegenPsiEvent event = new RegenPsiEvent(player, this, cadStack);
 
-			if(!NeoForge.EVENT_BUS.post(event).isCanceled()) {
+			if(!PsiEventBus.post(event).isCanceled()) {
 				if(!cadStack.isEmpty()) {
 					ICAD cad = (ICAD) cadStack.getItem();
 					cad.regenPsi(cadStack, event.getCadRegen());
@@ -565,7 +565,7 @@ public class PlayerDataHandler {
 
 			if(loopcasting) {
 				loopcastFadeTime = 5;
-				NeoForge.EVENT_BUS.post(new LoopcastEndEvent(player, this, loopcastHand, loopcastAmount));
+				PsiEventBus.post(new LoopcastEndEvent(player, this, loopcastHand, loopcastAmount));
 			}
 			loopcasting = false;
 
@@ -727,7 +727,7 @@ public class PlayerDataHandler {
 
 			boolean hasAdvancement = hasAdvancement(group);
 			PieceKnowledgeEvent event = new PieceKnowledgeEvent(group, name, player, this, hasAdvancement);
-			NeoForge.EVENT_BUS.post(event);
+			PsiEventBus.post(event);
 
 			return !event.isCanceled();
 		}
@@ -757,7 +757,7 @@ public class PlayerDataHandler {
 			}
 
 			PieceExecutedEvent event = new PieceExecutedEvent(piece, player);
-			NeoForge.EVENT_BUS.post(event);
+			PsiEventBus.post(event);
 			Optional<Map.Entry<ResourceKey<Collection<Class<? extends SpellPiece>>>, Collection<Class<? extends SpellPiece>>>> advancementEntry = PsiAPI.ADVANCEMENT_GROUP_REGISTRY.entrySet().stream().filter((entry) -> entry.getValue().contains(piece.getClass())).findFirst();
 			if(advancementEntry.isEmpty()) {
 				return;
@@ -766,7 +766,7 @@ public class PlayerDataHandler {
 			ResourceLocation advancement = advancementEntry.get().getKey().location();
 			Object advancementMainPieceClass = advancementEntry.get().getValue().toArray()[0];
 			if(advancementMainPieceClass == piece.getClass() && !hasAdvancement(advancement)) {
-				NeoForge.EVENT_BUS.post(new PieceGroupAdvancementComplete(piece, player, advancement));
+				PsiEventBus.post(new PieceGroupAdvancementComplete(piece, player, advancement));
 			}
 		}
 
@@ -834,7 +834,7 @@ public class PlayerDataHandler {
 			customData = cmp.getCompound(TAG_CUSTOM_DATA);
 		}
 
-		@OnlyIn(Dist.CLIENT)
+		@Environment(EnvType.CLIENT)
 		public void render(Player player, float partTicks, PoseStack ms) {
 			EntityRenderDispatcher renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
 			double x = player.xOld + (player.getX() - player.xOld) * partTicks - renderManager.camera.getPosition().x;

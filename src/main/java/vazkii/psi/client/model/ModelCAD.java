@@ -8,6 +8,8 @@
  */
 package vazkii.psi.client.model;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.model.loading.v1.FabricBakedModelManager;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
@@ -23,9 +25,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.model.data.ModelData;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +36,7 @@ import vazkii.psi.common.Psi;
 
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class ModelCAD implements BakedModel {
 
 	public static final ResourceLocation DEFAULT_MODEL = Psi.location("item/cad_iron");
@@ -57,8 +56,8 @@ public class ModelCAD implements BakedModel {
 	}
 
 	/**
-	 * @deprecated Forge: Use {@link #getQuads(BlockState, Direction, RandomSource,
-	 *             net.neoforged.neoforge.client.model.data.ModelData,
+	 * @deprecated Use {@link #getQuads(BlockState, Direction, RandomSource,
+	 *             vazkii.psi.client.model.PsiModelData,
 	 *             net.minecraft.client.renderer.RenderType)}
 	 */
 	@Deprecated
@@ -67,7 +66,7 @@ public class ModelCAD implements BakedModel {
 		return original.getQuads(state, side, random);
 	}
 
-	public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @org.jetbrains.annotations.Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData data, @org.jetbrains.annotations.Nullable RenderType renderType) {
+	public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @org.jetbrains.annotations.Nullable Direction side, @NotNull RandomSource rand, @NotNull PsiModelData data, @org.jetbrains.annotations.Nullable RenderType renderType) {
 		return original.getQuads(state, side, rand);
 	}
 
@@ -92,7 +91,7 @@ public class ModelCAD implements BakedModel {
 	}
 
 	/**
-	 * @deprecated Forge: Use {@link #getParticleIcon(net.neoforged.neoforge.client.model.data.ModelData)}
+	 * @deprecated Use {@link #getParticleIcon(vazkii.psi.client.model.PsiModelData)}
 	 */
 	@NotNull
 	@Override
@@ -102,7 +101,7 @@ public class ModelCAD implements BakedModel {
 	}
 
 	@NotNull
-	public TextureAtlasSprite getParticleIcon(@NotNull ModelData data) {
+	public TextureAtlasSprite getParticleIcon(@NotNull PsiModelData data) {
 		return original.getParticleIcon();
 	}
 

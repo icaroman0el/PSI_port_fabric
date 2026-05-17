@@ -13,12 +13,12 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.data.loading.DatagenModLoader;
 
 import org.jetbrains.annotations.NotNull;
 
 import vazkii.psi.api.exosuit.ISensorHoldable;
 import vazkii.psi.common.crafting.ModCraftingRecipes;
+import vazkii.psi.common.platform.FabricDatagen;
 
 public class SensorRemoveRecipe extends CustomRecipe {
 	public SensorRemoveRecipe(CraftingBookCategory category) {
@@ -79,7 +79,7 @@ public class SensorRemoveRecipe extends CustomRecipe {
 
 	@Override
 	public @NotNull RecipeType<?> getType() {
-		return !DatagenModLoader.isRunningDataGen() ? RecipeType.CRAFTING : ModCraftingRecipes.SENSOR_REMOVE_TYPE.get();
+		return !FabricDatagen.isRunningDataGen() ? RecipeType.CRAFTING : ModCraftingRecipes.SENSOR_REMOVE_TYPE.get();
 	}
 
 	@NotNull

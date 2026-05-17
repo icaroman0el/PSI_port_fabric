@@ -25,12 +25,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import vazkii.psi.api.item.IItemHandler;
+import vazkii.psi.api.item.ItemHandlerHelper;
 import vazkii.psi.common.block.tile.TileCADAssembler;
 
 public class BlockCADAssembler extends HorizontalDirectionalBlock implements EntityBlock {

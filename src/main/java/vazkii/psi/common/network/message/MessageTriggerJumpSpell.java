@@ -12,12 +12,12 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import org.jetbrains.annotations.NotNull;
 
 import vazkii.psi.api.exosuit.PsiArmorEvent;
 import vazkii.psi.common.Psi;
+import vazkii.psi.common.network.PayloadContext;
 
 public record MessageTriggerJumpSpell() implements CustomPacketPayload {
 
@@ -37,7 +37,7 @@ public record MessageTriggerJumpSpell() implements CustomPacketPayload {
 		return TYPE;
 	}
 
-	public void handle(IPayloadContext ctx) {
+	public void handle(PayloadContext ctx) {
 		ctx.enqueueWork(() -> PsiArmorEvent.post(new PsiArmorEvent(ctx.player(), PsiArmorEvent.JUMP)));
 	}
 }

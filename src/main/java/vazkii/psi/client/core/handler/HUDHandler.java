@@ -10,6 +10,8 @@ package vazkii.psi.client.core.handler;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -19,9 +21,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.NeoForge;
 
 import org.lwjgl.opengl.GL11;
 
@@ -30,6 +29,7 @@ import vazkii.psi.api.cad.ICAD;
 import vazkii.psi.api.cad.ICADColorizer;
 import vazkii.psi.api.cad.IPsiBarDisplay;
 import vazkii.psi.api.cad.ISocketable;
+import vazkii.psi.api.event.PsiEventBus;
 import vazkii.psi.api.gui.PsiHudElementType;
 import vazkii.psi.api.gui.RenderPsiHudEvent;
 import vazkii.psi.api.internal.PsiRenderHelper;
@@ -45,12 +45,12 @@ import java.util.regex.Pattern;
 public final class HUDHandler {
 
 	public static final LayeredDraw.Layer SOCKETABLE_EQUIPPED_NAME = (graphics, deltatracker) -> {
-		if(!NeoForge.EVENT_BUS.post(new RenderPsiHudEvent(PsiHudElementType.SOCKETABLE_EQUIPPED_NAME)).isCanceled()) {
+		if(!PsiEventBus.post(new RenderPsiHudEvent(PsiHudElementType.SOCKETABLE_EQUIPPED_NAME)).isCanceled()) {
 			renderSocketableEquippedName(graphics, deltatracker);
 		}
 	};
 	public static final LayeredDraw.Layer HUD_ITEM = (graphics, deltatracker) -> {
-		if(!NeoForge.EVENT_BUS.post(new RenderPsiHudEvent(PsiHudElementType.HUD_ITEM)).isCanceled()) {
+		if(!PsiEventBus.post(new RenderPsiHudEvent(PsiHudElementType.HUD_ITEM)).isCanceled()) {
 			renderHUDItem(graphics, deltatracker);
 		}
 	};
@@ -60,7 +60,7 @@ public final class HUDHandler {
 	private static final int maxRemainingTicks = 30;
 	private static boolean registeredMask = false;
 	public static final LayeredDraw.Layer PSI_BAR = (graphics, deltatracker) -> {
-		if(!NeoForge.EVENT_BUS.post(new RenderPsiHudEvent(PsiHudElementType.PSI_BAR)).isCanceled()) {
+		if(!PsiEventBus.post(new RenderPsiHudEvent(PsiHudElementType.PSI_BAR)).isCanceled()) {
 			drawPsiBar(graphics, deltatracker);
 		}
 	};
@@ -68,12 +68,12 @@ public final class HUDHandler {
 	private static int remainingTime;
 	private static int remainingCount;
 	public static final LayeredDraw.Layer REMAINING_ITEMS = (graphics, deltatracker) -> {
-		if(!NeoForge.EVENT_BUS.post(new RenderPsiHudEvent(PsiHudElementType.REMAINING_ITEMS)).isCanceled()) {
+		if(!PsiEventBus.post(new RenderPsiHudEvent(PsiHudElementType.REMAINING_ITEMS)).isCanceled()) {
 			renderRemainingItems(graphics, deltatracker);
 		}
 	};
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public static void renderFabricHud(GuiGraphics graphics, DeltaTracker deltatracker) {
 		PSI_BAR.render(graphics, deltatracker);
 		SOCKETABLE_EQUIPPED_NAME.render(graphics, deltatracker);
@@ -100,7 +100,7 @@ public final class HUDHandler {
 		return false;
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public static void drawPsiBar(GuiGraphics graphics, DeltaTracker deltatracker) {
 		Minecraft mc = Minecraft.getInstance();
 		ItemStack cadStack = PsiAPI.getPlayerCAD(mc.player);
@@ -242,7 +242,7 @@ public final class HUDHandler {
 		graphics.pose().popPose();
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	private static void renderSocketableEquippedName(GuiGraphics graphics, DeltaTracker deltatracker) {
 		Minecraft mc = Minecraft.getInstance();
 		int ticks = 10;
@@ -280,7 +280,7 @@ public final class HUDHandler {
 		graphics.pose().popPose();
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	private static void renderRemainingItems(GuiGraphics graphics, DeltaTracker deltatracker) {
 		if(remainingTime <= 0 || remainingDisplayStack.isEmpty()) {
 			return;
@@ -328,7 +328,7 @@ public final class HUDHandler {
 		graphics.pose().popPose();
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	private static void renderHUDItem(GuiGraphics graphics, DeltaTracker deltatracker) {
 		Minecraft mc = Minecraft.getInstance();
 		if(mc.player == null) {
@@ -368,7 +368,7 @@ public final class HUDHandler {
 		setRemaining(displayStack, count);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public static void usePsiBarShader(final float percentile, final boolean shatter, final boolean overflowed) {
 		var psiBarShader = ShaderHandler.getPsiBarShader();
 		if(psiBarShader == null) {

@@ -8,6 +8,8 @@
  */
 package vazkii.psi.common.core.handler;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,8 +19,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import vazkii.psi.api.internal.IInternalMethodHandler;
 import vazkii.psi.api.internal.IPlayerData;
@@ -42,7 +42,7 @@ public final class InternalMethodHandler implements IInternalMethodHandler {
 		return GuiProgrammer.texture;
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	@Override
 	public RenderType getProgrammerLayer() {
 		return GuiProgrammer.LAYER;
@@ -72,7 +72,7 @@ public final class InternalMethodHandler implements IInternalMethodHandler {
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void renderTooltip(GuiGraphics graphics, int x, int y, List<Component> tooltipData, int color, int color2, int width, int height) {
 		if(!tooltipData.isEmpty()) {
 			Font fontRenderer = Minecraft.getInstance().font;

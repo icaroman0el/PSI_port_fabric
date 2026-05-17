@@ -9,11 +9,11 @@
 package vazkii.psi.api.cad;
 
 import net.minecraft.nbt.CompoundTag;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import vazkii.psi.api.internal.Vector3;
+import vazkii.psi.api.util.NbtSerializable;
 
-public interface ICADData extends INBTSerializable<CompoundTag> {
+public interface ICADData extends NbtSerializable<CompoundTag> {
 
 	/**
 	 * Gets the total amount of the CAD has been on the player's inventory

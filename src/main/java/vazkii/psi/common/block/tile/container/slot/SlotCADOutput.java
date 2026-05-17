@@ -17,11 +17,11 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.NeoForge;
 
 import org.jetbrains.annotations.NotNull;
 
 import vazkii.psi.api.cad.CADTakeEvent;
+import vazkii.psi.api.event.PsiEventBus;
 import vazkii.psi.common.block.tile.TileCADAssembler;
 import vazkii.psi.common.core.handler.PsiSoundHandler;
 
@@ -45,7 +45,7 @@ public class SlotCADOutput extends Slot {
 	public boolean mayPickup(@NotNull Player playerIn) {
 		CADTakeEvent event = new CADTakeEvent(getItem(), assembler, playerIn);
 		float sound = event.getSound();
-		if(NeoForge.EVENT_BUS.post(event).isCanceled()) {
+		if(PsiEventBus.post(event).isCanceled()) {
 			BlockPos assemblerPos = this.assembler.getBlockPos();
 			String cancelMessage = event.getCancellationMessage();
 			if(!playerIn.level().isClientSide) {

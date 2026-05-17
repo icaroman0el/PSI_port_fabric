@@ -10,10 +10,9 @@ package vazkii.psi.data;
 
 import com.mojang.serialization.MapCodec;
 
-import net.neoforged.neoforge.common.conditions.ICondition;
-
 import org.jetbrains.annotations.NotNull;
 
+import vazkii.psi.api.recipe.condition.ICondition;
 import vazkii.psi.common.Psi;
 
 public final class MagicalPsiCondition implements ICondition {

@@ -10,14 +10,14 @@ package vazkii.psi.api.spell;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.Event;
 
+import vazkii.psi.api.event.PsiEvent;
 import vazkii.psi.api.internal.IPlayerData;
 
 /**
  * Posted after a spell successfully executes.
  */
-public class SpellCastEvent extends Event {
+public class SpellCastEvent extends PsiEvent {
 
 	public final Spell spell;
 	public final SpellContext context;

@@ -10,8 +10,9 @@ package vazkii.psi.api.cad;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
+
+import vazkii.psi.api.event.PsiCancellableEvent;
+import vazkii.psi.api.event.PsiEvent;
 
 /**
  * Posted when a CAD ItemStack is constructed within the assembler,
@@ -26,7 +27,7 @@ import net.neoforged.bus.api.ICancellableEvent;
  * This event is Cancelable.
  * Canceling it will result in no CAD being assembled.
  */
-public class AssembleCADEvent extends Event implements ICancellableEvent {
+public class AssembleCADEvent extends PsiEvent implements PsiCancellableEvent {
 
 	private final ITileCADAssembler assembler;
 	private final Player player;

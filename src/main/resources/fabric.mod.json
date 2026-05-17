@@ -5,7 +5,15 @@
   "name": "${mod_name}",
   "description": "${mod_description}",
   "authors": [
-    "${mod_authors}"
+    "Vazkii",
+    "Wiiv",
+    "WireSegal",
+    "Kamefrede",
+    "Williewillus",
+    "Hubry",
+    "Dudblockman",
+    "TheidenHD",
+    "Icaro (RegulusXV) - Fabric port"
   ],
   "contact": {
     "homepage": "https://psi.vazkii.net/",

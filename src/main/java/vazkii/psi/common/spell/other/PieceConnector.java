@@ -11,13 +11,13 @@ package vazkii.psi.common.spell.other;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import org.joml.Matrix4f;
 
@@ -48,7 +48,7 @@ public class PieceConnector extends SpellPiece implements IRedirector {
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void drawAdditional(PoseStack pPoseStack, MultiBufferSource buffers, int light) {
 		drawSide(pPoseStack, buffers, light, paramSides.get(target));
 
@@ -64,7 +64,7 @@ public class PieceConnector extends SpellPiece implements IRedirector {
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	private void drawSide(PoseStack pPoseStack, MultiBufferSource buffers, int light, SpellParam.Side side) {
 		if(side.isEnabled()) {
 			Material material = new Material(InventoryMenu.BLOCK_ATLAS, LINES_TEXTURE);

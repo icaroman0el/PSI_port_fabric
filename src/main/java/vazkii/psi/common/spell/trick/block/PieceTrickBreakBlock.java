@@ -22,9 +22,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
-import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
 
 import vazkii.psi.api.PsiAPI;
+import vazkii.psi.api.event.BlockEvent.BreakEvent;
 import vazkii.psi.api.internal.Vector3;
 import vazkii.psi.api.spell.*;
 import vazkii.psi.api.spell.param.ParamVector;
@@ -94,7 +94,7 @@ public class PieceTrickBreakBlock extends PieceTrick {
 	/**
 	 * Item stack aware harvest check
 	 * Also sets global state {@link PieceTrickBreakBlock#doingHarvestCheck} to true during the check
-	 * //@see IForgeBlockState#canHarvestBlock(IBlockReader, BlockPos, PlayerEntity)
+	 * //@see BlockState harvest checks in older loader APIs
 	 */
 	public static boolean canHarvestBlock(BlockState state, Player player, Level world, BlockPos pos, ItemStack stack) {
 		// So the CAD can only be used as a tool when a harvest check is ongoing

@@ -17,23 +17,23 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.EntityCapability;
-import net.neoforged.neoforge.capabilities.ItemCapability;
-import net.neoforged.neoforge.common.SimpleTier;
-import net.neoforged.neoforge.items.ComponentItemHandler;
-import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import vazkii.psi.api.cad.ICAD;
 import vazkii.psi.api.cad.ICADData;
 import vazkii.psi.api.cad.IPsiBarDisplay;
 import vazkii.psi.api.cad.ISocketable;
+import vazkii.psi.api.capability.Capabilities;
+import vazkii.psi.api.capability.EntityCapability;
+import vazkii.psi.api.capability.ItemCapability;
 import vazkii.psi.api.internal.DummyMethodHandler;
 import vazkii.psi.api.internal.IInternalMethodHandler;
+import vazkii.psi.api.item.ComponentItemHandler;
+import vazkii.psi.api.registry.PsiRegistryBuilder;
 import vazkii.psi.api.spell.ISpellAcceptor;
 import vazkii.psi.api.spell.ISpellImmune;
 import vazkii.psi.api.spell.SpellPiece;
 import vazkii.psi.api.spell.detonator.IDetonationHandler;
+import vazkii.psi.api.util.SimpleTier;
 import vazkii.psi.common.core.capability.CapabilityTriggerSensor;
 import vazkii.psi.common.core.handler.capability.CADData;
 import vazkii.psi.common.entity.EntitySpellCharge;
@@ -55,11 +55,11 @@ public final class PsiAPI {
 	public static final ItemCapability<ICADData, Void> CAD_DATA_CAPABILITY = ItemCapability.createVoid(PsiAPI.location("cad_data"), ICADData.class);
 	public static final ItemCapability<ISocketable, Void> SOCKETABLE_CAPABILITY = ItemCapability.createVoid(PsiAPI.location("socketable"), ISocketable.class);
 	public static final ResourceKey<Registry<Class<? extends SpellPiece>>> SPELL_PIECE_REGISTRY_TYPE_KEY = ResourceKey.createRegistryKey(PsiAPI.location("spell_piece_registry_type_key"));
-	public static final Registry<Class<? extends SpellPiece>> SPELL_PIECE_REGISTRY = (new RegistryBuilder<>(SPELL_PIECE_REGISTRY_TYPE_KEY)).create();
+	public static final Registry<Class<? extends SpellPiece>> SPELL_PIECE_REGISTRY = (new PsiRegistryBuilder<>(SPELL_PIECE_REGISTRY_TYPE_KEY)).create();
 
 	// The main piece for the group is the one that comes first.
 	public static final ResourceKey<Registry<Collection<Class<? extends SpellPiece>>>> ADVANCEMENT_GROUP_REGISTRY_KEY = ResourceKey.createRegistryKey(PsiAPI.location("advancement_group_registry_key"));
-	public static final Registry<Collection<Class<? extends SpellPiece>>> ADVANCEMENT_GROUP_REGISTRY = (new RegistryBuilder<>(ADVANCEMENT_GROUP_REGISTRY_KEY)).create();
+	public static final Registry<Collection<Class<? extends SpellPiece>>> ADVANCEMENT_GROUP_REGISTRY = (new PsiRegistryBuilder<>(ADVANCEMENT_GROUP_REGISTRY_KEY)).create();
 
 	public static final Tier PSIMETAL_TOOL_MATERIAL = new SimpleTier(BlockTags.INCORRECT_FOR_DIAMOND_TOOL, 900, 7.8F, 2F, 12, () -> Ingredient.of(ModItems.psimetal.get()));
 	/**

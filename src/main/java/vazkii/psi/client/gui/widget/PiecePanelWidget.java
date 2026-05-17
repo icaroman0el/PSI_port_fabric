@@ -19,12 +19,12 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.NeoForge;
 
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import vazkii.psi.api.PsiAPI;
+import vazkii.psi.api.event.PsiEventBus;
 import vazkii.psi.api.spell.EnumPieceType;
 import vazkii.psi.api.spell.SpellParam;
 import vazkii.psi.api.spell.SpellPiece;
@@ -134,7 +134,7 @@ public class PiecePanelWidget extends AbstractWidget implements GuiEventListener
 		PlayerDataHandler.PlayerData playerData = PlayerDataHandler.get(parent.getMinecraft().player);
 		ProgrammerPopulateEvent event = new ProgrammerPopulateEvent(parent.getMinecraft().player, PsiAPI.SPELL_PIECE_REGISTRY);
 		List<SpellPiece> shownPieces = new ArrayList<>();
-		NeoForge.EVENT_BUS.post(event);
+		PsiEventBus.post(event);
 		for(ResourceLocation key : event.getSpellPieceRegistry().keySet()) {
 			Class<? extends SpellPiece> clazz = event.getSpellPieceRegistry().get(key);
 			Optional<Map.Entry<ResourceKey<Collection<Class<? extends SpellPiece>>>, Collection<Class<? extends SpellPiece>>>> advancementEntry = PsiAPI.ADVANCEMENT_GROUP_REGISTRY.entrySet().stream().filter((entry) -> entry.getValue().contains(clazz)).findFirst();

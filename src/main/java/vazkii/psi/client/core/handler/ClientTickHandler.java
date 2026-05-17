@@ -8,17 +8,17 @@
  */
 package vazkii.psi.client.core.handler;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import vazkii.psi.api.exosuit.PsiArmorEvent;
 import vazkii.psi.common.core.handler.PlayerDataHandler;
 import vazkii.psi.common.network.MessageRegister;
 import vazkii.psi.common.network.message.MessageTriggerJumpSpell;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class ClientTickHandler {
 
 	public static int ticksInGame = 0;

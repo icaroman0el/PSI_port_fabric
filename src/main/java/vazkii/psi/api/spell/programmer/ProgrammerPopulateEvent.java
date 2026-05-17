@@ -10,13 +10,13 @@ package vazkii.psi.api.spell.programmer;
 
 import net.minecraft.core.Registry;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.Event;
 
 import org.jetbrains.annotations.NotNull;
 
+import vazkii.psi.api.event.PsiEvent;
 import vazkii.psi.api.spell.SpellPiece;
 
-public class ProgrammerPopulateEvent extends Event {
+public class ProgrammerPopulateEvent extends PsiEvent {
 
 	@NotNull
 	private final Player entity;

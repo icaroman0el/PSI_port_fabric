@@ -14,11 +14,11 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import org.jetbrains.annotations.NotNull;
 
 import vazkii.psi.common.Psi;
+import vazkii.psi.common.network.PayloadContext;
 
 /**
  * This is needed instead of a serverside position set to avoid jittering, especially under lag.
@@ -39,7 +39,7 @@ public record MessageBlink(double offX, double offY, double offZ) implements Cus
 		return TYPE;
 	}
 
-	public void handle(IPayloadContext ctx) {
+	public void handle(PayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Entity entity = Psi.proxy.getClientPlayer();
 			if(entity != null) {

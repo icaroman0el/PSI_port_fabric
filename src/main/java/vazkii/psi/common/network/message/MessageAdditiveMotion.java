@@ -15,11 +15,11 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import org.jetbrains.annotations.NotNull;
 
 import vazkii.psi.common.Psi;
+import vazkii.psi.common.network.PayloadContext;
 
 public record MessageAdditiveMotion(int entityID, double motionX, double motionY,
 		double motionZ) implements CustomPacketPayload {
@@ -39,7 +39,7 @@ public record MessageAdditiveMotion(int entityID, double motionX, double motionY
 		return TYPE;
 	}
 
-	public void handle(IPayloadContext ctx) {
+	public void handle(PayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Level world = Psi.proxy.getClientWorld();
 			if(world != null) {

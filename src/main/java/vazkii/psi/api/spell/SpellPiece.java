@@ -17,6 +17,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.serialization.Codec;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -32,9 +34,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.fml.ModList;
 
 import org.joml.Matrix4f;
 
@@ -43,6 +42,7 @@ import vazkii.psi.api.PsiAPI;
 import vazkii.psi.api.internal.PsiRenderHelper;
 import vazkii.psi.api.internal.TooltipHelper;
 import vazkii.psi.api.spell.SpellParam.ArrowType;
+import vazkii.psi.common.platform.FabricModLookup;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -71,7 +71,7 @@ public abstract class SpellPiece {
 		p.writeToNBT(tag);
 		return tag;
 	});
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	private static RenderType layer;
 	public final ResourceLocation registryKey;
 	public final Spell spell;
@@ -88,7 +88,7 @@ public abstract class SpellPiece {
 		initParams();
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public static RenderType getLayer() {
 		if(layer == null) {
 			RenderType.CompositeState glState = RenderType.CompositeState.builder()
@@ -361,7 +361,7 @@ public abstract class SpellPiece {
 	 * All appropriate transformations are already done. Canvas is 16x16 starting from (0, 0, 0).<br>
 	 * To avoid z-fighting in the TE projection, translations are applied every step.
 	 */
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void draw(PoseStack pPoseStack, MultiBufferSource buffers, int light) {
 		pPoseStack.pushPose();
 		drawBackground(pPoseStack, buffers, light);
@@ -380,7 +380,7 @@ public abstract class SpellPiece {
 	/**
 	 * Draws this piece's background.
 	 */
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void drawBackground(PoseStack pPoseStack, MultiBufferSource buffers, int light) {
 		Material material = ClientPsiAPI.SPELL_PIECE_MATERIAL_REGISTRY.get(registryKey);
 		if(material == null) {
@@ -411,7 +411,7 @@ public abstract class SpellPiece {
 	 * Draws any additional stuff for this piece. Used in connectors
 	 * to draw the lines.
 	 */
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void drawAdditional(PoseStack pPoseStack, MultiBufferSource buffers, int light) {
 		// NO-OP
 	}
@@ -419,7 +419,7 @@ public abstract class SpellPiece {
 	/**
 	 * Draws the little comment indicator in this piece, if one exists.
 	 */
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void drawComment(PoseStack pPoseStack, MultiBufferSource buffers, int light) {
 		if(comment != null && !comment.isEmpty()) {
 			VertexConsumer buffer = buffers.getBuffer(PsiAPI.internalHandler.getProgrammerLayer());
@@ -441,7 +441,7 @@ public abstract class SpellPiece {
 	/**
 	 * Draws the parameters coming into this piece.
 	 */
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void drawParams(PoseStack pPoseStack, MultiBufferSource buffers, int light) {
 		VertexConsumer buffer = buffers.getBuffer(PsiAPI.internalHandler.getProgrammerLayer());
 		for(SpellParam<?> param : paramSides.keySet()) {
@@ -449,7 +449,7 @@ public abstract class SpellPiece {
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void drawParam(PoseStack pPoseStack, VertexConsumer buffer, int light, SpellParam<?> param) {
 		SpellParam.Side side = paramSides.get(param);
 		if(!side.isEnabled() || param.getArrowType() == ArrowType.NONE) {
@@ -474,7 +474,7 @@ public abstract class SpellPiece {
 		drawParam(pPoseStack, buffer, light, side, param.color, param.getArrowType(), percent);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void drawParam(PoseStack pPoseStack, VertexConsumer buffer, int light, SpellParam.Side side, int color, SpellParam.ArrowType arrowType, float percent) {
 		if(arrowType == ArrowType.NONE) {
 			return;
@@ -506,7 +506,7 @@ public abstract class SpellPiece {
 		buffer.addVertex(mat, minX, minY, 0).setColor(r, g, b, a).setUv(minU, minV).setLight(light);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public int getParamArrowCount(SpellParam.Side side) {
 		int count = 0;
 		for(SpellParam<?> p : paramSides.keySet()) {
@@ -517,7 +517,7 @@ public abstract class SpellPiece {
 		return count;
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public int getParamArrowIndex(SpellParam<?> param) {
 		SpellParam.Side side = paramSides.get(param);
 		int count = 0;
@@ -535,7 +535,7 @@ public abstract class SpellPiece {
 	/**
 	 * Draws this piece's tooltip.
 	 */
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void drawTooltip(GuiGraphics graphics, int tooltipX, int tooltipY, List<Component> tooltip, Screen screen) {
 		PsiAPI.internalHandler.renderTooltip(graphics, tooltipX, tooltipY, tooltip, 0x505000ff, 0xf0100010, screen.width, screen.height);
 	}
@@ -543,12 +543,12 @@ public abstract class SpellPiece {
 	/**
 	 * Draws this piece's comment tooltip.
 	 */
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void drawCommentText(GuiGraphics graphics, int tooltipX, int tooltipY, List<Component> commentText, Screen screen) {
 		PsiAPI.internalHandler.renderTooltip(graphics, tooltipX, tooltipY - 9 - commentText.size() * 10, commentText, 0x5000a000, 0xf0001e00, screen.width, screen.height);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void getTooltip(List<Component> tooltip) {
 		tooltip.add(Component.translatable(getUnlocalizedName()));
 		tooltip.add(Component.translatable(getUnlocalizedDesc()).withStyle(ChatFormatting.GRAY));
@@ -559,14 +559,11 @@ public abstract class SpellPiece {
 
 		String addon = registryKey.getNamespace();
 		if(!addon.equals("psi")) {
-
-			if(ModList.get().getModContainerById(addon).isPresent()) {
-				tooltip.add(Component.translatable("psimisc.provider_mod", ModList.get().getModContainerById(addon).get().getNamespace()));
-			}
+			FabricModLookup.getMod(addon).ifPresent(mod -> tooltip.add(Component.translatable("psimisc.provider_mod", mod.id())));
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void addToTooltipAfterShift(List<Component> tooltip) {
 		tooltip.add(Component.literal(""));
 		MutableComponent eval = getEvaluationTypeString().plainCopy().withStyle(ChatFormatting.GOLD);
@@ -579,7 +576,7 @@ public abstract class SpellPiece {
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void addToTooltipAfterCtrl(List<Component> tooltip) {
 		tooltip.add(Component.literal(""));
 
@@ -593,7 +590,7 @@ public abstract class SpellPiece {
 	 * Checks whether this piece should intercept keystrokes in the programmer interface.
 	 * This is used for the number constant piece to change its value.
 	 */
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public boolean interceptKeystrokes() {
 		return false;
 	}
@@ -603,22 +600,22 @@ public abstract class SpellPiece {
 	 * It is technically possible but it is unadvisable.
 	 */
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public boolean onCharTyped(char character, int keyCode, boolean doit) {
 		return false;
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public boolean onKeyPressed(int keyCode, int scanCode, boolean doit) {
 		return false;
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public boolean hasConfig() {
 		return !params.isEmpty();
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void getShownPieces(List<SpellPiece> pieces) {
 		pieces.add(this);
 	}

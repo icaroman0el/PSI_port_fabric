@@ -21,12 +21,12 @@ import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.BlockSnapshot;
-import net.neoforged.neoforge.event.level.BlockEvent;
 
 import org.jetbrains.annotations.Nullable;
 
+import vazkii.psi.api.event.BlockEvent;
+import vazkii.psi.api.event.BlockSnapshot;
+import vazkii.psi.api.event.PsiEventBus;
 import vazkii.psi.api.internal.Vector3;
 import vazkii.psi.api.spell.*;
 import vazkii.psi.api.spell.param.ParamVector;
@@ -102,7 +102,7 @@ public class PieceTrickTorrent extends PieceTrick {
 		}
 		BlockPos pos = SpellHelpers.getBlockPos(this, context, position, true, false);
 		BlockEvent.EntityPlaceEvent placeEvent = new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(context.focalPoint.getCommandSenderWorld().dimension(), context.focalPoint.getCommandSenderWorld(), pos), context.focalPoint.getCommandSenderWorld().getBlockState(pos.relative(Direction.UP)), context.caster);
-		NeoForge.EVENT_BUS.post(placeEvent);
+		PsiEventBus.post(placeEvent);
 		if(placeEvent.isCanceled()) {
 			return null;
 		}

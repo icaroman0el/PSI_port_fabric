@@ -10,9 +10,9 @@ package vazkii.psi.api.cad;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
 
+import vazkii.psi.api.event.PsiCancellableEvent;
+import vazkii.psi.api.event.PsiEvent;
 import vazkii.psi.api.internal.IPlayerData;
 
 /**
@@ -24,7 +24,7 @@ import vazkii.psi.api.internal.IPlayerData;
  * This event is {@link ICancellableEvent}.
  * If canceled, no regen will occur and the regen cooldown will not change.
  */
-public class RegenPsiEvent extends Event implements ICancellableEvent {
+public class RegenPsiEvent extends PsiEvent implements PsiCancellableEvent {
 
 	private final int playerPsiCapacity;
 	private final int playerPsi;

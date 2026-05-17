@@ -22,10 +22,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.BlockSnapshot;
-import net.neoforged.neoforge.event.level.BlockEvent;
 
+import vazkii.psi.api.event.BlockEvent;
+import vazkii.psi.api.event.BlockSnapshot;
+import vazkii.psi.api.event.PsiEventBus;
 import vazkii.psi.api.internal.Vector3;
 import vazkii.psi.api.spell.*;
 import vazkii.psi.api.spell.param.ParamVector;
@@ -57,7 +57,7 @@ public class PieceTrickPlaceBlock extends PieceTrick {
 
 		BlockState state = world.getBlockState(pos);
 		BlockEvent.EntityPlaceEvent placeEvent = new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(world.dimension(), world, pos), world.getBlockState(pos.relative(Direction.UP)), player);
-		NeoForge.EVENT_BUS.post(placeEvent);
+		PsiEventBus.post(placeEvent);
 		if(state.isAir() || state.canBeReplaced() && !placeEvent.isCanceled()) {
 
 			if(conjure) {

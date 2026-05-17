@@ -10,8 +10,9 @@ package vazkii.psi.api.spell.detonator;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
+
+import vazkii.psi.api.event.PsiCancellableEvent;
+import vazkii.psi.api.event.PsiEvent;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ import java.util.List;
  * This event is {@link ICancellableEvent}.
  * Canceling it will cause the detonator's default behavior to be suppressed.
  */
-public class DetonationEvent extends Event implements ICancellableEvent {
+public class DetonationEvent extends PsiEvent implements PsiCancellableEvent {
 
 	private final Player player;
 	private final Entity focalPoint;

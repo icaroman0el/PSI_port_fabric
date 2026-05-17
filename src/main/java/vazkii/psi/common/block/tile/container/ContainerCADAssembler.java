@@ -10,6 +10,8 @@ package vazkii.psi.common.block.tile.container;
 
 import com.mojang.datafixers.util.Pair;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -20,10 +22,6 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.SlotItemHandler;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,6 +29,8 @@ import vazkii.psi.api.cad.EnumCADComponent;
 import vazkii.psi.api.cad.ICADComponent;
 import vazkii.psi.api.cad.ISocketable;
 import vazkii.psi.api.inventory.InventorySocketable;
+import vazkii.psi.api.item.IItemHandlerModifiable;
+import vazkii.psi.api.item.SlotItemHandler;
 import vazkii.psi.api.spell.ISpellAcceptor;
 import vazkii.psi.common.block.base.ModBlocks;
 import vazkii.psi.common.block.tile.TileCADAssembler;
@@ -120,7 +120,7 @@ public class ContainerCADAssembler extends AbstractContainerMenu {
 					return !stack.isEmpty() && player.getEquipmentSlotForItem(stack) == slot;
 				}
 
-				@OnlyIn(Dist.CLIENT)
+				@Environment(EnvType.CLIENT)
 				@Override
 				public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
 					ResourceLocation texture = switch(slot) {
@@ -136,7 +136,7 @@ public class ContainerCADAssembler extends AbstractContainerMenu {
 		}
 
 		addSlot(new Slot(playerInventory, playerSize - 1, 219, 143) {
-			@OnlyIn(Dist.CLIENT)
+			@Environment(EnvType.CLIENT)
 			@Override
 			public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
 				return Pair.of(InventoryMenu.BLOCK_ATLAS, InventoryMenu.EMPTY_ARMOR_SLOT_SHIELD);

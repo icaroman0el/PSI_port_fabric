@@ -8,39 +8,39 @@
  */
 package vazkii.psi.common.core.handler;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
-
 import org.apache.commons.lang3.tuple.Pair;
+
+import vazkii.psi.common.platform.SimpleConfigSpec;
 
 public class ConfigHandler {
 
 	public static final Client CLIENT;
-	public static final ModConfigSpec CLIENT_SPEC;
+	public static final SimpleConfigSpec CLIENT_SPEC;
 	public static final Common COMMON;
-	public static final ModConfigSpec COMMON_SPEC;
+	public static final SimpleConfigSpec COMMON_SPEC;
 
 	static {
-		final Pair<Client, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Client::new);
+		final Pair<Client, SimpleConfigSpec> specPair = new SimpleConfigSpec.Builder().configure(Client::new);
 		CLIENT_SPEC = specPair.getRight();
 		CLIENT = specPair.getLeft();
 	}
 
 	static {
-		final Pair<Common, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Common::new);
+		final Pair<Common, SimpleConfigSpec> specPair = new SimpleConfigSpec.Builder().configure(Common::new);
 		COMMON_SPEC = specPair.getRight();
 		COMMON = specPair.getLeft();
 	}
 
 	public static class Client {
 
-		public final ModConfigSpec.BooleanValue useShaders;
-		public final ModConfigSpec.BooleanValue psiBarOnRight;
-		public final ModConfigSpec.BooleanValue contextSensitiveBar;
-		public final ModConfigSpec.BooleanValue pauseGameInProgrammer;
-		public final ModConfigSpec.IntValue maxPsiBarScale;
-		public final ModConfigSpec.BooleanValue changeGridCoordinatesToLetterNumber;
+		public final SimpleConfigSpec.BooleanValue useShaders;
+		public final SimpleConfigSpec.BooleanValue psiBarOnRight;
+		public final SimpleConfigSpec.BooleanValue contextSensitiveBar;
+		public final SimpleConfigSpec.BooleanValue pauseGameInProgrammer;
+		public final SimpleConfigSpec.IntValue maxPsiBarScale;
+		public final SimpleConfigSpec.BooleanValue changeGridCoordinatesToLetterNumber;
 
-		public Client(ModConfigSpec.Builder builder) {
+		public Client(SimpleConfigSpec.Builder builder) {
 			useShaders = builder.comment("Controls whether Psi's shaders are used. If you're using the GLSL Shaders mod and are having graphical troubles with Psi stuff, you may want to turn this off.")
 					.define("client.useShaders", true);
 
@@ -64,11 +64,11 @@ public class ConfigHandler {
 
 	public static class Common {
 
-		public final ModConfigSpec.BooleanValue magiPsiClientSide;
-		public final ModConfigSpec.IntValue spellCacheSize;
-		public final ModConfigSpec.IntValue cadHarvestLevel;
+		public final SimpleConfigSpec.BooleanValue magiPsiClientSide;
+		public final SimpleConfigSpec.IntValue spellCacheSize;
+		public final SimpleConfigSpec.IntValue cadHarvestLevel;
 
-		public Common(ModConfigSpec.Builder builder) {
+		public Common(SimpleConfigSpec.Builder builder) {
 
 			magiPsiClientSide = builder.comment("Set this to true to disable all server side features from Magical Psi, to allow you to use it purely as a client side mod")
 					.define("common.magiPsiClientSide", false);

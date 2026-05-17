@@ -29,13 +29,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.neoforge.data.loading.DatagenModLoader;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import vazkii.psi.common.crafting.ModCraftingRecipes;
 import vazkii.psi.common.item.ItemSpellBullet;
+import vazkii.psi.common.platform.FabricDatagen;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -70,12 +70,12 @@ public class BulletUpgradeRecipe extends ShapelessRecipe {
 
 	@Override
 	public @NotNull RecipeType<?> getType() {
-		return !DatagenModLoader.isRunningDataGen() ? RecipeType.CRAFTING : ModCraftingRecipes.BULLET_UPGRADE_TYPE.get();
+		return !FabricDatagen.isRunningDataGen() ? RecipeType.CRAFTING : ModCraftingRecipes.BULLET_UPGRADE_TYPE.get();
 	}
 
 	@Override
 	public @NotNull RecipeSerializer<?> getSerializer() {
-		return !DatagenModLoader.isRunningDataGen() ? RecipeSerializer.SHAPELESS_RECIPE : ModCraftingRecipes.BULLET_UPGRADE_SERIALIZER.get();
+		return !FabricDatagen.isRunningDataGen() ? RecipeSerializer.SHAPELESS_RECIPE : ModCraftingRecipes.BULLET_UPGRADE_SERIALIZER.get();
 	}
 
 	public static class Builder implements RecipeBuilder {

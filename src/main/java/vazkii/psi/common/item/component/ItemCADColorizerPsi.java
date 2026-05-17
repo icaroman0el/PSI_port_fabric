@@ -8,9 +8,9 @@
  */
 package vazkii.psi.common.item.component;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import vazkii.psi.common.core.handler.ContributorSpellCircleHandler;
 import vazkii.psi.common.core.helper.PsiColorHelper;
@@ -25,7 +25,7 @@ public class ItemCADColorizerPsi extends ItemCADColorizer {
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public int getColor(ItemStack stack) {
 		if(!getContributorName(stack).isEmpty() && ContributorSpellCircleHandler.isContributor(getContributorName(stack).toLowerCase(Locale.ROOT))) {
 			return PsiColorHelper.slideColor(ContributorSpellCircleHandler.getColors(getContributorName(stack).toLowerCase(Locale.ROOT)), 0.0125F);

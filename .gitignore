@@ -29,6 +29,22 @@ Thumbs.db
 
 ## Private Stuffs
 /private.properties
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+
+## Local helper scripts
+*.bat
+!gradlew.bat
+
+## Local QA / handoff notes
+/test_spells/
+/README_PORT_FABRIC_NEXT_AGENT.md
 
 ## Jars
 *.jar

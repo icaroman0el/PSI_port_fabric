@@ -8,16 +8,16 @@
  */
 package vazkii.psi.api.internal;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.List;
 
 public final class TooltipHelper {
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public static void tooltipIfShift(List<Component> tooltip, Runnable r) {
 		if(Screen.hasShiftDown()) {
 			r.run();
@@ -26,7 +26,7 @@ public final class TooltipHelper {
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public static void tooltipIfCtrl(List<Component> tooltip, Runnable r) {
 		if(Screen.hasControlDown()) {
 			r.run();

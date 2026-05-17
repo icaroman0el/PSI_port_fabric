@@ -17,12 +17,12 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import org.jetbrains.annotations.NotNull;
 
 import vazkii.psi.common.Psi;
 import vazkii.psi.common.core.handler.PlayerDataHandler;
+import vazkii.psi.common.network.PayloadContext;
 
 public record MessageLoopcastSync(int entityId, byte loopcastState) implements CustomPacketPayload {
 
@@ -43,7 +43,7 @@ public record MessageLoopcastSync(int entityId, byte loopcastState) implements C
 		return TYPE;
 	}
 
-	public void handle(IPayloadContext ctx) {
+	public void handle(PayloadContext ctx) {
 		boolean isLoopcasting = (loopcastState & 0b1) != 0;
 
 		InteractionHand loopcastHand = isLoopcasting ? ((loopcastState & 0b10) != 0 ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND) : null;

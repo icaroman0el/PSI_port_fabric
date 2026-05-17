@@ -8,6 +8,8 @@
  */
 package vazkii.psi.common.item;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -38,16 +40,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.FakePlayer;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import vazkii.psi.api.PsiAPI;
 import vazkii.psi.api.cad.*;
+import vazkii.psi.api.event.PsiEventBus;
 import vazkii.psi.api.internal.TooltipHelper;
 import vazkii.psi.api.internal.Vector3;
 import vazkii.psi.api.recipe.ITrickRecipe;
@@ -69,6 +68,7 @@ import vazkii.psi.common.lib.LibPieceGroups;
 import vazkii.psi.common.network.MessageRegister;
 import vazkii.psi.common.network.message.MessageCADShotEffect;
 import vazkii.psi.common.network.message.MessageVisualEffect;
+import vazkii.psi.common.platform.PsiFakePlayer;
 import vazkii.psi.common.spell.trick.block.PieceTrickBreakBlock;
 
 import java.util.*;
@@ -115,7 +115,7 @@ public class ItemCAD extends Item implements ICAD {
 				if(context.cspell.metadata.evaluateAgainst(cad)) {
 					int cost = Math.max(getRealCost(cad, bullet, context.cspell.metadata.getStat(EnumSpellStat.COST)) - reservoir, 0);
 					PreSpellCastEvent event = new PreSpellCastEvent(cost, sound, particles, cd, spell, context, player, data, cad, bullet);
-					if(NeoForge.EVENT_BUS.post(event).isCanceled()) {
+					if(PsiEventBus.post(event).isCanceled()) {
 						String cancelMessage = event.getCancellationMessage();
 						if(cancelMessage != null && !cancelMessage.isEmpty()) {
 							player.sendSystemMessage(Component.translatable(cancelMessage).setStyle(Style.EMPTY.withColor(ChatFormatting.RED)));
@@ -151,7 +151,7 @@ public class ItemCAD extends Item implements ICAD {
 					if(!world.isClientSide) {
 						SpellEntities = spellContainer.castSpell(context);
 					}
-					NeoForge.EVENT_BUS.post(new SpellCastEvent(spell, context, player, data, cad, bullet));
+					PsiEventBus.post(new SpellCastEvent(spell, context, player, data, cad, bullet));
 					return Optional.of(SpellEntities);
 				} else if(!world.isClientSide) {
 					player.sendSystemMessage(Component.translatable("psimisc.weak_cad").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)));
@@ -190,7 +190,7 @@ public class ItemCAD extends Item implements ICAD {
 		}
 
 		String name = player.getName().getString();
-		return !(player instanceof FakePlayer || FAKE_PLAYER_PATTERN.matcher(name).matches());
+		return !(player instanceof PsiFakePlayer || FAKE_PLAYER_PATTERN.matcher(name).matches());
 	}
 
 	public static void setComponent(ItemStack stack, ItemStack componentStack) {
@@ -418,7 +418,7 @@ public class ItemCAD extends Item implements ICAD {
 			data.deductPsi(100, 60, true);
 
 			if(!data.hasAdvancement(LibPieceGroups.FAKE_LEVEL_PSIDUST)) {
-				NeoForge.EVENT_BUS.post(new PieceGroupAdvancementComplete(null, playerIn, LibPieceGroups.FAKE_LEVEL_PSIDUST));
+				PsiEventBus.post(new PieceGroupAdvancementComplete(null, playerIn, LibPieceGroups.FAKE_LEVEL_PSIDUST));
 			}
 			did = true;
 		}
@@ -505,13 +505,13 @@ public class ItemCAD extends Item implements ICAD {
 		}
 
 		CADStatEvent event = new CADStatEvent(stat, stack, componentStack, statValue);
-		NeoForge.EVENT_BUS.post(event);
+		PsiEventBus.post(event);
 		DefaultStats.modifyCreativeAssemblyStats(event);
 		return event.getStatValue();
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public int getSpellColor(ItemStack stack) {
 		ItemStack dye = getComponentInSlot(stack, EnumCADComponent.DYE);
 		if(!dye.isEmpty() && dye.getItem() instanceof ICADColorizer) {
@@ -616,7 +616,7 @@ public class ItemCAD extends Item implements ICAD {
 		return false;
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	@Override
 	public void appendHoverText(@NotNull ItemStack stack, @Nullable TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag advanced) {
 		TooltipHelper.tooltipIfShift(tooltip, () -> {

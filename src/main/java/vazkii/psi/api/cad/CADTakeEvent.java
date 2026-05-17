@@ -10,17 +10,18 @@ package vazkii.psi.api.cad;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
 
 import org.jetbrains.annotations.Nullable;
+
+import vazkii.psi.api.event.PsiCancellableEvent;
+import vazkii.psi.api.event.PsiEvent;
 
 /**
  * Posted when a CAD is being taken from the assembler.
  * <p>
  * This event is {@link ICancellableEvent}.
  */
-public class CADTakeEvent extends Event implements ICancellableEvent {
+public class CADTakeEvent extends PsiEvent implements PsiCancellableEvent {
 
 	private final ItemStack cad;
 	private final ITileCADAssembler assembler;

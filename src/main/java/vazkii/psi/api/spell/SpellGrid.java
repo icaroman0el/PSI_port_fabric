@@ -15,15 +15,16 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
+
+import vazkii.psi.api.util.LazyStreamCodecs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public final class SpellGrid {
 	public static final int GRID_SIZE = 9;
 	public static final int GRID_CENTER = (GRID_SIZE - 1) / 2;
 	public static final StreamCodec<RegistryFriendlyByteBuf, SpellGrid> STREAM_CODEC = StreamCodec.composite(
-			NeoForgeStreamCodecs.lazy(() -> PieceWithPosition.STREAM_CODEC.apply(ByteBufCodecs.list())), SpellGrid::getPiecesAsFlattenedList,
+			LazyStreamCodecs.lazy(() -> PieceWithPosition.STREAM_CODEC.apply(ByteBufCodecs.list())), SpellGrid::getPiecesAsFlattenedList,
 			SpellGrid::fromCodecData
 	);
 	private static final String TAG_SPELL_LIST = "spellList";
@@ -74,7 +75,7 @@ public final class SpellGrid {
 		return grid;
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void draw(PoseStack pPoseStack, MultiBufferSource buffers, int light) {
 		for(int i = 0; i < GRID_SIZE; i++) {
 			for(int j = 0; j < GRID_SIZE; j++) {
@@ -367,7 +368,7 @@ public final class SpellGrid {
 		).apply(instance, PieceWithPosition::new));
 
 		public static final StreamCodec<RegistryFriendlyByteBuf, PieceWithPosition> STREAM_CODEC = StreamCodec.composite(
-				NeoForgeStreamCodecs.lazy(() -> SpellPiece.STREAM_CODEC), PieceWithPosition::piece,
+				LazyStreamCodecs.lazy(() -> SpellPiece.STREAM_CODEC), PieceWithPosition::piece,
 				ByteBufCodecs.VAR_INT, PieceWithPosition::x,
 				ByteBufCodecs.VAR_INT, PieceWithPosition::y,
 				PieceWithPosition::new

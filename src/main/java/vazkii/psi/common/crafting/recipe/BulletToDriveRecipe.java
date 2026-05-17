@@ -13,7 +13,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.data.loading.DatagenModLoader;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,6 +20,7 @@ import vazkii.psi.api.spell.ISpellAcceptor;
 import vazkii.psi.api.spell.Spell;
 import vazkii.psi.common.crafting.ModCraftingRecipes;
 import vazkii.psi.common.item.ItemSpellDrive;
+import vazkii.psi.common.platform.FabricDatagen;
 
 public class BulletToDriveRecipe extends CustomRecipe {
 	public BulletToDriveRecipe(CraftingBookCategory craftingBookCategory) {
@@ -92,7 +92,7 @@ public class BulletToDriveRecipe extends CustomRecipe {
 
 	@Override
 	public @NotNull RecipeType<?> getType() {
-		return !DatagenModLoader.isRunningDataGen() ? RecipeType.CRAFTING : ModCraftingRecipes.BULLET_TO_DRIVE_TYPE.get();
+		return !FabricDatagen.isRunningDataGen() ? RecipeType.CRAFTING : ModCraftingRecipes.BULLET_TO_DRIVE_TYPE.get();
 	}
 
 	@NotNull

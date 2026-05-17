@@ -11,8 +11,8 @@ package vazkii.psi.client.network;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import vazkii.psi.common.network.PayloadContext;
 import vazkii.psi.common.network.message.*;
 
 public final class ClientNetworkHelper {
@@ -46,6 +46,6 @@ public final class ClientNetworkHelper {
 		}
 	}
 
-	private record ClientPayloadContext(Player player) implements IPayloadContext {
+	private record ClientPayloadContext(Player player) implements PayloadContext {
 	}
 }

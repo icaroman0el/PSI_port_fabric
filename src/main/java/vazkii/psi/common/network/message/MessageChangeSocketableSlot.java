@@ -16,7 +16,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +23,7 @@ import vazkii.psi.api.PsiAPI;
 import vazkii.psi.api.cad.ISocketable;
 import vazkii.psi.common.Psi;
 import vazkii.psi.common.core.handler.PlayerDataHandler;
+import vazkii.psi.common.network.PayloadContext;
 
 public record MessageChangeSocketableSlot(int slot) implements CustomPacketPayload {
 
@@ -39,7 +39,7 @@ public record MessageChangeSocketableSlot(int slot) implements CustomPacketPaylo
 		return TYPE;
 	}
 
-	public void handle(IPayloadContext ctx) {
+	public void handle(PayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();
 			ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);

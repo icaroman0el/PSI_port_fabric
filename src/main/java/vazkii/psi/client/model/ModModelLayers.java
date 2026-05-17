@@ -19,7 +19,7 @@ public class ModModelLayers {
 
 	private static ModelLayerLocation make(String layer) {
 		// Don't add to vanilla's ModelLayers. It seems to only be used for error checking
-		// And would be annoying to do under Forge's parallel mod loading
+		// And would be annoying to do during parallel mod loading
 		return new ModelLayerLocation(Psi.location("psimetal_exosuit"), layer);
 	}
 }

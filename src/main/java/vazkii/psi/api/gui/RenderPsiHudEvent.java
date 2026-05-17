@@ -8,12 +8,13 @@
  */
 package vazkii.psi.api.gui;
 
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import org.jetbrains.annotations.NotNull;
+
+import vazkii.psi.api.event.PsiCancellableEvent;
+import vazkii.psi.api.event.PsiEvent;
 
 /**
  * Posted when a part of the HUD is about to be rendered
@@ -21,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
  * This event is {@link ICancellableEvent}.
  * Canceling it will result in that HUD part not being rendered
  */
-@OnlyIn(Dist.CLIENT)
-public class RenderPsiHudEvent extends Event implements ICancellableEvent {
+@Environment(EnvType.CLIENT)
+public class RenderPsiHudEvent extends PsiEvent implements PsiCancellableEvent {
 
 	@NotNull
 	private final PsiHudElementType type;

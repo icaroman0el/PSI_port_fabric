@@ -8,10 +8,10 @@
  */
 package vazkii.psi.api.cad;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import vazkii.psi.api.PsiAPI;
 
@@ -26,10 +26,10 @@ public interface ICADAssembly {
 	/**
 	 * @return Path to a model json file, e.g. <code>psi:item/cad_iron</code>
 	 */
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	ResourceLocation getCADModel(ItemStack stack, ItemStack cad);
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	ResourceLocation getCadTexture(ItemStack stack, ItemStack cad);
 
 }

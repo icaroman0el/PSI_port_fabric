@@ -14,12 +14,12 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import org.jetbrains.annotations.NotNull;
 
 import vazkii.psi.common.Psi;
 import vazkii.psi.common.core.handler.PlayerDataHandler;
+import vazkii.psi.common.network.PayloadContext;
 
 public record MessageEidosSync(int reversionTime) implements CustomPacketPayload {
 
@@ -35,7 +35,7 @@ public record MessageEidosSync(int reversionTime) implements CustomPacketPayload
 		return TYPE;
 	}
 
-	public void handle(IPayloadContext ctx) {
+	public void handle(PayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Player player = Psi.proxy.getClientPlayer();
 			if(player != null) {

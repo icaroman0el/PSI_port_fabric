@@ -16,6 +16,8 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.JsonOps;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -40,9 +42,6 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.TooltipFlag;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.fml.ModList;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -64,13 +63,14 @@ import vazkii.psi.common.lib.LibBlockNames;
 import vazkii.psi.common.lib.LibResources;
 import vazkii.psi.common.network.MessageRegister;
 import vazkii.psi.common.network.message.MessageSpellModified;
+import vazkii.psi.common.platform.FabricModLookup;
 import vazkii.psi.common.spell.SpellCompiler;
 import vazkii.psi.common.spell.other.PieceConnector;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class GuiProgrammer extends Screen {
 
 	public static final ResourceLocation texture = ResourceLocation.parse(LibResources.GUI_PROGRAMMER);
@@ -245,7 +245,7 @@ public class GuiProgrammer extends Screen {
 									boolean sendMessage = false;
 									String modVersion = ((CompoundTag) mod).getString(Spell.TAG_MOD_VERSION);
 									int[] versionEntry = Arrays.stream(modVersion.replaceFirst("^\\D+", "").split("\\D+")).mapToInt(Integer::parseInt).toArray();
-									int[] currentVersion = Arrays.stream(ModList.get().getModContainerById("psi").get().getModInfo().getVersion().toString().replaceFirst("^\\D+", "").split("\\D+")).mapToInt(Integer::parseInt).toArray();
+									int[] currentVersion = Arrays.stream(FabricModLookup.getVersion("psi").orElse("0").replaceFirst("^\\D+", "").split("\\D+")).mapToInt(Integer::parseInt).toArray();
 									for(int i = 0; i < versionEntry.length; i++) {
 										if(versionEntry.length != currentVersion.length) {
 											// Newer versions have four digits.
@@ -370,14 +370,15 @@ public class GuiProgrammer extends Screen {
 				graphics.drawString(getMinecraft().font, requiredAddons, left - font.width(requiredAddons) - 5, top + 40, 0xFFFFFF, true);
 				int i = 1;
 				for(String addon : addons) {
-					if(ModList.get().getModContainerById(addon).isPresent()) {
-						String modName = ModList.get().getModContainerById(addon).get().getModInfo().getDisplayName();
+					var mod = FabricModLookup.getMod(addon);
+					if(mod.isPresent()) {
+						String modName = mod.get().displayName();
 						graphics.drawString(getMinecraft().font, "* " + modName, left - font.width(requiredAddons) - 5, top + 40 + 10 * i, 0xFFFFFF, true);
 						i++;
 					}
 				}
 			}
-			String version = "Psi " + ModList.get().getModContainerById("psi").get().getModInfo().getVersion().toString();
+			String version = "Psi " + FabricModLookup.getVersion("psi").orElse("unknown");
 			graphics.drawString(getMinecraft().font, version, left + xSize / 2 - font.width(version) / 2, top - 22, 0xFFFFFF, true);
 		}
 
@@ -419,7 +420,7 @@ public class GuiProgrammer extends Screen {
 				coords = I18n.get("psimisc.programmer_coords_no_cursor", convertIntToLetter(selectedX + 1), selectedY + 1);
 			}
 			graphics.drawString(getMinecraft().font, coords, left + 4, topY + ySize + 24, 0x44FFFFFF);
-			String version = "Psi " + ModList.get().getModContainerById("psi").get().getModInfo().getVersion().toString();
+			String version = "Psi " + FabricModLookup.getVersion("psi").orElse("unknown");
 			graphics.drawString(getMinecraft().font, version, left + xSize / 2 - font.width(version) / 2, topY + ySize + 24 + font.wordWrapHeight(coords, font.width(coords)) + 5, 0x44FFFFFF, true);
 		}
 

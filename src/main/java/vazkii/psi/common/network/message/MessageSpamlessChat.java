@@ -18,11 +18,11 @@ import net.minecraft.network.chat.MessageSignature;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import org.jetbrains.annotations.NotNull;
 
 import vazkii.psi.common.Psi;
+import vazkii.psi.common.network.PayloadContext;
 
 import java.nio.ByteBuffer;
 
@@ -58,7 +58,7 @@ public class MessageSpamlessChat implements CustomPacketPayload {
 		return TYPE;
 	}
 
-	public void handle(IPayloadContext ctx) {
+	public void handle(PayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			ChatComponent chatGui = Minecraft.getInstance().gui.getChat();
 			MessageSpamlessChat.deleteMessage(chatGui, signature);

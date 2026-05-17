@@ -10,15 +10,15 @@ package vazkii.psi.api.spell;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.Event;
 
+import vazkii.psi.api.event.PsiEvent;
 import vazkii.psi.api.internal.IPlayerData;
 
 /**
  * Posted when loopcast ends.
  * This event has no result and is not cancellable
  */
-public class LoopcastEndEvent extends Event {
+public class LoopcastEndEvent extends PsiEvent {
 
 	private final Player player;
 	private final IPlayerData playerData;

@@ -10,12 +10,12 @@ package vazkii.psi.api.spell;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import vazkii.psi.api.event.PsiCancellableEvent;
+import vazkii.psi.api.event.PsiEvent;
 import vazkii.psi.api.internal.IPlayerData;
 
 /**
@@ -27,7 +27,7 @@ import vazkii.psi.api.internal.IPlayerData;
  * This event is Cancelable.
  * Canceling it will result in no CAD being assembled.
  */
-public class PieceKnowledgeEvent extends Event implements ICancellableEvent {
+public class PieceKnowledgeEvent extends PsiEvent implements PsiCancellableEvent {
 	@NotNull
 	private final ResourceLocation pieceGroup;
 

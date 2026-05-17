@@ -13,8 +13,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.data.loading.DatagenModLoader;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +21,8 @@ import vazkii.psi.api.cad.ICAD;
 import vazkii.psi.api.cad.ICADColorizer;
 import vazkii.psi.common.crafting.ModCraftingRecipes;
 import vazkii.psi.common.item.ItemCAD;
+import vazkii.psi.common.platform.FabricDatagen;
+import vazkii.psi.common.platform.FabricHooks;
 
 public class ColorizerChangeRecipe extends CustomRecipe {
 	public ColorizerChangeRecipe(CraftingBookCategory category) {
@@ -98,7 +98,7 @@ public class ColorizerChangeRecipe extends CustomRecipe {
 				if(!stack.isEmpty() && stack.getItem() instanceof ICADColorizer) {
 					dyeIndex = i;
 				}
-				ret.set(i, CommonHooks.getCraftingRemainingItem(stack));
+				ret.set(i, FabricHooks.getCraftingRemainingItem(stack));
 			}
 		}
 		if(!cad.isEmpty() && dyeIndex != -1) {
@@ -111,7 +111,7 @@ public class ColorizerChangeRecipe extends CustomRecipe {
 
 	@Override
 	public @NotNull RecipeType<?> getType() {
-		return !DatagenModLoader.isRunningDataGen() ? RecipeType.CRAFTING : ModCraftingRecipes.COLORIZER_CHANGE_TYPE.get();
+		return !FabricDatagen.isRunningDataGen() ? RecipeType.CRAFTING : ModCraftingRecipes.COLORIZER_CHANGE_TYPE.get();
 	}
 
 	@NotNull

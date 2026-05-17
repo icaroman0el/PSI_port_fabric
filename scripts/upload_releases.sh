@@ -19,15 +19,15 @@ function release_github() {
 	   -f tag_name="${TAGNAME}")"
 	GH_RELEASE_PAGE=$(echo "$GH_RELEASE_RESPONSE" | jq -r .html_url)
 
-	echo >&2 'Uploading NeoForge Jar and Signature to GitHub'
-	gh release upload "${TAGNAME}" "${NEOFORGE_JAR}#NeoForge Jar"
-	gh release upload "${TAGNAME}" "${NEOFORGE_JAR}.asc#NeoForge Signature"
+	echo >&2 'Uploading Fabric Jar and Signature to GitHub'
+	gh release upload "${TAGNAME}" "${FABRIC_JAR}#Fabric Jar"
+	gh release upload "${TAGNAME}" "${FABRIC_JAR}.asc#Fabric Signature"
 }
 
 function release_modrinth() {
-	echo >&2 'Uploading NeoForge Jar to Modrinth'
-	local MODRINTH_NEOFORGE_SPEC
-	MODRINTH_NEOFORGE_SPEC=$(cat <<EOF
+	echo >&2 'Uploading Fabric Jar to Modrinth'
+	local MODRINTH_FABRIC_SPEC
+	MODRINTH_FABRIC_SPEC=$(cat <<EOF
 {
 	"dependencies": [
 			{
@@ -35,7 +35,7 @@ function release_modrinth() {
 			"dependency_type": "required"
 	}],
 	"version_type": "release",
-	"loaders": ["neoforge"],
+	"loaders": ["fabric"],
 	"featured": false,
 	"project_id": "pOeA0exL",
 	"file_parts": [
@@ -46,15 +46,15 @@ function release_modrinth() {
 EOF
 					   )
 
-	MODRINTH_NEOFORGE_SPEC=$(echo "${MODRINTH_NEOFORGE_SPEC}" | \
+	MODRINTH_FABRIC_SPEC=$(echo "${MODRINTH_FABRIC_SPEC}" | \
 							  jq --arg name "${VERSION}" \
 								 --arg mcver "${MC_VERSION}" \
 								 --arg changelog "${GH_RELEASE_PAGE}" \
 								 '.name=$ARGS.named.name | .version_number=$ARGS.named.name | .game_versions=[$ARGS.named.mcver] | .changelog=$ARGS.named.changelog')
 	curl 'https://api.modrinth.com/v2/version' \
 		 -H "Authorization: $MODRINTH_TOKEN" \
-		 -F "data=$MODRINTH_NEOFORGE_SPEC" \
-		 -F "jar=@${NEOFORGE_JAR}" # TODO modrinth doesn't allow asc files. Remember to readd "signature" to the spec when reenabling this. \ -F "signature=@${NEOFORGE_JAR}.asc"
+		 -F "data=$MODRINTH_FABRIC_SPEC" \
+		 -F "jar=@${FABRIC_JAR}" # TODO modrinth doesn't allow asc files. Remember to readd "signature" to the spec when reenabling this. \ -F "signature=@${FABRIC_JAR}.asc"
 }
 
 function release_curseforge() {
@@ -63,7 +63,7 @@ function release_curseforge() {
 	# Hardcoded from https://minecraft.curseforge.com/api/game/version-types (which is undocumented, btw)
 	# I'm not betting on these changing any time soon, so hardcoding is ok
 	local CURSEFORGE_JAVA_21_VERSION=11135 # Java 21
-	local CURSEFORGE_NEOFORGE_VERSION=10150 # TODO(Kamefrede): Change this
+	local CURSEFORGE_FABRIC_VERSION="${CURSEFORGE_FABRIC_VERSION:?Set this to the CurseForge Fabric loader game version id}"
 	local CURSEFORGE_CLIENT_VERSION=9638
 	local CURSEFORGE_SERVER_VERSION=9639
 	# For the Minecraft one, don't hardcode so we don't have to remember to come change this every time.
@@ -77,9 +77,9 @@ function release_curseforge() {
 								  jq --arg mcver "${MC_VERSION}" \
 									 'map(select(.name == $ARGS.named.mcver and .gameVersionTypeID != 1 and .gameVersionTypeID != 615)) | first | .id')
 
-	echo >&2 'Uploading NeoForge Jar to CurseForge'
-	local CURSEFORGE_NEOFORGE_SPEC
-	CURSEFORGE_NEOFORGE_SPEC=$(cat <<EOF
+	echo >&2 'Uploading Fabric Jar to CurseForge'
+	local CURSEFORGE_FABRIC_SPEC
+	CURSEFORGE_FABRIC_SPEC=$(cat <<EOF
 {
     "changelogType": "text",
     "releaseType": "release"
@@ -87,21 +87,21 @@ function release_curseforge() {
 EOF
 						 )
 
-	local CURSEFORGE_NEOFORGE_GAMEVERS="[\
+	local CURSEFORGE_FABRIC_GAMEVERS="[\
 $CURSEFORGE_JAVA_21_VERSION,\
 $CURSEFORGE_CLIENT_VERSION,\
 $CURSEFORGE_SERVER_VERSION,\
-$CURSEFORGE_NEOFORGE_VERSION,\
+$CURSEFORGE_FABRIC_VERSION,\
 $CURSEFORGE_GAME_VERSION]"
 
-	CURSEFORGE_NEOFORGE_SPEC=$(echo "$CURSEFORGE_NEOFORGE_SPEC" | \
+	CURSEFORGE_FABRIC_SPEC=$(echo "$CURSEFORGE_FABRIC_SPEC" | \
 								jq --arg changelog "$GH_RELEASE_PAGE" \
-								   --argjson gamevers "$CURSEFORGE_NEOFORGE_GAMEVERS" \
+								   --argjson gamevers "$CURSEFORGE_FABRIC_GAMEVERS" \
 								   '.gameVersions=$ARGS.named.gamevers | .changelog=$ARGS.named.changelog')
 	curl 'https://minecraft.curseforge.com/api/projects/241665/upload-file' \
 		 -H "X-Api-Token: $CURSEFORGE_TOKEN" \
-		 -F "metadata=$CURSEFORGE_NEOFORGE_SPEC" \
-		 -F "file=@$NEOFORGE_JAR"
+		 -F "metadata=$CURSEFORGE_FABRIC_SPEC" \
+		 -F "file=@$FABRIC_JAR"
 	# TODO: Upload the asc as an 'Additional file'
 }
 

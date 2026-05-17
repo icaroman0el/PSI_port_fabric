@@ -9,7 +9,8 @@
 package vazkii.psi.api.cad;
 
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.Event;
+
+import vazkii.psi.api.event.PsiEvent;
 
 /**
  * This event is posted when a CAD's stats are queried.
@@ -18,9 +19,9 @@ import net.neoforged.bus.api.Event;
  * The firing of an {@link CADStatEvent} does not necessarily mean that
  * anything has changed, meaning you shouldn't take in-world actions based on this event.
  * <p>
- * This event is not {@link net.neoforged.bus.api.ICancellableEvent}.
+ * This event is not {@link vazkii.psi.api.event.PsiCancellableEvent}.
  */
-public class CADStatEvent extends Event {
+public class CADStatEvent extends PsiEvent {
 
 	private final EnumCADComponent statProvider;
 	private final EnumCADStat stat;

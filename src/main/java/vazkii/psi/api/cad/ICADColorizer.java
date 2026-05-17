@@ -8,9 +8,9 @@
  */
 package vazkii.psi.api.cad;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * An item that implements this works as CAD colorizer, by which it can change
@@ -24,7 +24,7 @@ public interface ICADColorizer extends ICADComponent {
 	 * Gets the color of the spells projected by the CAD that has
 	 * this colorizer.
 	 */
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	int getColor(ItemStack stack);
 
 	@Override

@@ -7,7 +7,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +15,7 @@ import vazkii.psi.api.spell.ISpellAcceptor;
 import vazkii.psi.api.spell.Spell;
 import vazkii.psi.common.Psi;
 import vazkii.psi.common.item.ItemFlashRing;
+import vazkii.psi.common.network.PayloadContext;
 
 public record MessageFlashRingSync(Spell spell) implements CustomPacketPayload {
 
@@ -31,7 +31,7 @@ public record MessageFlashRingSync(Spell spell) implements CustomPacketPayload {
 		return TYPE;
 	}
 
-	public void handle(IPayloadContext ctx) {
+	public void handle(PayloadContext ctx) {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();
 			ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
